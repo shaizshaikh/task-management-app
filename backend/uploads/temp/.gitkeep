@@ -1,0 +1,2 @@
+# This file ensures the temp directory is created in git
+# Temporary files will be stored here and cleaned up automatically

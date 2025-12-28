@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Silent Check SSO</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    <script>
+        // Keycloak silent check SSO - this is expected behavior
+        try {
+            parent.postMessage(location.href, location.origin);
+        } catch (error) {
+            console.warn('Silent SSO check failed:', error);
+        }
+    </script>
+</body>
+</html>
