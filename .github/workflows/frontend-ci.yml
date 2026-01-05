@@ -16,22 +16,17 @@ on:
   workflow_dispatch:
     inputs:
       version_bump:
-        description: 'Version bump type'
+        description: Version bump type
         required: true
-        default: 'patch'
+        default: patch
         type: choice
-        options:
-          - patch
-          - minor
-          - major
+        options: [patch, minor, major]
       target_branch:
-        description: 'Target branch for deployment'
+        description: Target branch for deployment
         required: true
-        default: 'dev'
+        default: dev
         type: choice
-        options:
-          - dev
-          - main
+        options: [dev, main]
 
 env:
   IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/taskmanagement-frontend
@@ -46,79 +41,76 @@ jobs:
     if: github.actor != 'github-actions[bot]'
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       # --------------------------------------------------
-      # 🔍 Get latest version from Docker Hub (source of truth)
+      # 🔍 Resolve latest Docker Hub version (safe)
       # --------------------------------------------------
-      - name: Get latest version from Docker Hub
+      - name: Get latest Docker Hub version
         id: dockerhub_version
+        shell: bash
         run: |
-          echo "🔍 Fetching tags from Docker Hub..."
+          set -euo pipefail
 
-          TAGS=$(curl -s "https://hub.docker.com/v2/repositories/${DOCKER_NAMESPACE}/${DOCKER_REPO}/tags?page_size=100" \
-            | jq -r '.results[].name' \
-            | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' \
-            | sed 's/^v//' || true)
+          URL="https://hub.docker.com/v2/repositories/${DOCKER_NAMESPACE}/${DOCKER_REPO}/tags?page_size=100"
+          RESPONSE="$(curl -fsSL "$URL" || true)"
 
-          if [ -z "$TAGS" ]; then
+          if [[ -z "$RESPONSE" ]]; then
             LATEST="0.0.0"
-            echo ⚠️ No versioned tags found. Using v0.0.0"
           else
-            LATEST=$(echo "$TAGS" | sort -V | tail -n 1)
-            echo "📦 Latest Docker Hub tag: v$LATEST"
+            TAGS="$(echo "$RESPONSE" \
+              | jq -r '.results // [] | .[].name' \
+              | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' || true)"
+
+            if [[ -z "$TAGS" ]]; then
+              LATEST="0.0.0"
+            else
+              LATEST="$(echo "$TAGS" | sed 's/^v//' | sort -V | tail -n 1)"
+            fi
           fi
 
-          echo "current_version=$LATEST" >> $GITHUB_OUTPUT
+          echo "current_version=$LATEST" >> "$GITHUB_OUTPUT"
+          echo "Using current version: v$LATEST"
 
       # --------------------------------------------------
-      # 🔢 Calculate next semantic version
+      # 🔢 Semantic version bump
       # --------------------------------------------------
-      - name: Calculate new version
+      - name: Calculate next version
         id: semver
+        shell: bash
         run: |
+          set -euo pipefail
+
           CURRENT="${{ steps.dockerhub_version.outputs.current_version }}"
           IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT"
 
-          BUMP_TYPE="${{ github.event.inputs.version_bump }}"
-          [ -z "$BUMP_TYPE" ] && BUMP_TYPE="patch"
+          BUMP="${{ github.event.inputs.version_bump || 'patch' }}"
 
-          case "$BUMP_TYPE" in
-            major)
-              MAJOR=$((MAJOR + 1))
-              MINOR=0
-              PATCH=0
-              ;;
-            minor)
-              MINOR=$((MINOR + 1))
-              PATCH=0
-              ;;
-            patch)
-              PATCH=$((PATCH + 1))
-              ;;
+          case "$BUMP" in
+            major) ((MAJOR++)); MINOR=0; PATCH=0 ;;
+            minor) ((MINOR++)); PATCH=0 ;;
+            patch) ((PATCH++)) ;;
           esac
 
           NEW_VERSION="${MAJOR}.${MINOR}.${PATCH}"
-          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
-          echo "🚀 New version: v$NEW_VERSION (bump: $BUMP_TYPE)"
+          echo "new_version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
+          echo "Next version: v$NEW_VERSION"
 
       # --------------------------------------------------
       # 🐳 Docker build & push
       # --------------------------------------------------
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      - uses: docker/setup-buildx-action@v3
 
-      - name: Login to DockerHub
+      - name: DockerHub login
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push Docker image
+      - name: Build & push image
         uses: docker/build-push-action@v5
         with:
           context: ${{ env.BUILD_CONTEXT }}
@@ -127,83 +119,63 @@ jobs:
           tags: |
             ${{ env.IMAGE_NAME }}:v${{ steps.semver.outputs.new_version }}
             ${{ env.IMAGE_NAME }}:latest
-          cache-from: type=registry,ref=${{ env.IMAGE_NAME }}:buildcache
-          cache-to: type=registry,ref=${{ env.IMAGE_NAME }}:buildcache,mode=max
-          labels: |
-            org.opencontainers.image.source=${{ github.repositoryUrl }}
-            org.opencontainers.image.revision=${{ github.sha }}
-            org.opencontainers.image.version=v${{ steps.semver.outputs.new_version }}
 
       # --------------------------------------------------
-      # 📝 Update K8s manifest
+      # 📝 Update Kubernetes manifest
       # --------------------------------------------------
-      - name: Update k8s frontend.yaml with new image tag
+      - name: Update frontend image tag
+        shell: bash
         run: |
-          sed -i -E "s|(image:\s*).+|\1${IMAGE_NAME}:v${{ steps.semver.outputs.new_version }}|" k8s/frontend.yaml
-
-          echo "✅ Updated k8s/frontend.yaml:"
-          grep "image:" k8s/frontend.yaml | grep frontend
+          set -euo pipefail
+          sed -i -E "s|(^\s*image:\s*).+|\1${IMAGE_NAME}:v${{ steps.semver.outputs.new_version }}|" k8s/frontend.yaml
 
       # --------------------------------------------------
       # ✅ Validate manifest
       # --------------------------------------------------
-      - name: Validate updated K8s manifest
+      - name: Validate k8s YAML
         run: |
-          if ! grep -q "image:.*taskmanagement-frontend:v${{ steps.semver.outputs.new_version }}" k8s/frontend.yaml; then
-            echo "❌ ERROR: Image tag not updated correctly"
-            exit 1
-          fi
-
           python3 - <<EOF
           import yaml
           yaml.safe_load(open("k8s/frontend.yaml"))
-          print("✅ YAML syntax validation passed")
+          print("YAML valid")
           EOF
 
       # --------------------------------------------------
       # 🚀 Commit & push to dev
       # --------------------------------------------------
-      - name: Commit and push changes directly to dev
+      - name: Commit manifest update
         if: github.ref == 'refs/heads/dev'
+        shell: bash
         run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
 
           git add k8s/frontend.yaml
-          if git diff --staged --quiet; then
-            echo "⚠️ No changes to commit"
-          else
-            git commit -m "chore(frontend): update image to v${{ steps.semver.outputs.new_version }} [skip ci]"
-            git push origin dev
-          fi
+          git diff --staged --quiet || git commit -m "chore(frontend): deploy v${{ steps.semver.outputs.new_version }} [skip ci]"
+          git push origin dev
 
       # --------------------------------------------------
-      # 🔀 Create PR to main (manual prod deploy)
+      # 🔀 Optional PR to main
       # --------------------------------------------------
-      - name: Create Pull Request to main
+      - name: Create PR to main
         if: github.event_name == 'workflow_dispatch' && github.event.inputs.target_branch == 'main'
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "chore(frontend): update image to v${{ steps.semver.outputs.new_version }}"
-          title: "🎨 Frontend: Deploy v${{ steps.semver.outputs.new_version }} to Production"
           base: main
           branch: frontend-deploy-v${{ steps.semver.outputs.new_version }}
-          delete-branch: true
-          labels: |
-            frontend
-            production
-            deployment
-            automated
+          title: Frontend deploy v${{ steps.semver.outputs.new_version }}
+          commit-message: Frontend deploy v${{ steps.semver.outputs.new_version }}
 
       # --------------------------------------------------
       # 📦 Summary
       # --------------------------------------------------
-      - name: Summary
+      - name: Job summary
         run: |
-          echo "## 🎉 Frontend Build Complete!" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Previous Version:** v${{ steps.dockerhub_version.outputs.current_version }}" >> $GITHUB_STEP_SUMMARY
-          echo "**New Version:** v${{ steps.semver.outputs.new_version }}" >> $GITHUB_STEP_SUMMARY
-          echo "**Image:** \`${{ env.IMAGE_NAME }}:v${{ steps.semver.outputs.new_version }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "**Branch:** \`${{ github.ref_name }}\`" >> $GITHUB_STEP_SUMMARY
+          {
+            echo "## Frontend CI/CD Complete"
+            echo ""
+            echo "- Previous: v${{ steps.dockerhub_version.outputs.current_version }}"
+            echo "- New: v${{ steps.semver.outputs.new_version }}"
+            echo "- Image: ${{ env.IMAGE_NAME }}:v${{ steps.semver.outputs.new_version }}"
+          } >> "$GITHUB_STEP_SUMMARY"
