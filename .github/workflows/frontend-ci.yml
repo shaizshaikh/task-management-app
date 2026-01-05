@@ -53,7 +53,7 @@ jobs:
         run: |
           # Extract current version from k8s/frontend.yaml
           # Using more precise regex to avoid false matches
-          CURRENT_VERSION=$(grep -oP "image:\s*${{ secrets.DOCKERHUB_USERNAME }}/taskmanagement-frontend:v\K[0-9]+\.[0-9]+\.[0-9]+" k8s/frontend.yaml || echo "0.0.0")
+          CURRENT_VERSION=$(grep -oP "image:\s*\S+/taskmanagement-frontend:v\K[0-9]+\.[0-9]+\.[0-9]+" k8s/frontend.yaml || echo "0.0.0")
           echo "current_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
           echo "📦 Current version: v$CURRENT_VERSION"
 
@@ -119,10 +119,32 @@ jobs:
           NEW_VERSION="v${{ steps.semver.outputs.new_version }}"
           
           # More precise sed that only matches the exact image line
-          sed -i -E "s|(image:\s*)${{ secrets.DOCKERHUB_USERNAME }}/taskmanagement-frontend:v[0-9]+\.[0-9]+\.[0-9]+|\1${{ env.IMAGE_NAME }}:${NEW_VERSION}|g" k8s/frontend.yaml
+          sed -i -E "s|(image:\s*)\S+/taskmanagement-frontend:v[0-9]+\.[0-9]+\.[0-9]+|\1${{ env.IMAGE_NAME }}:${NEW_VERSION}|g" k8s/frontend.yaml
           
           echo "✅ Updated k8s/frontend.yaml:"
           grep "image:" k8s/frontend.yaml | grep frontend
+
+      - name: Validate updated K8s manifest
+        run: |
+          # Verify the sed operation succeeded
+          if ! grep -q "image:.*taskmanagement-frontend:v${{ steps.semver.outputs.new_version }}" k8s/frontend.yaml; then
+            echo "❌ ERROR: Failed to update image tag in k8s/frontend.yaml"
+            exit 1
+          fi
+          
+          # Validate YAML syntax using kubectl dry-run
+          if command -v kubectl &> /dev/null; then
+            echo "🔍 Validating YAML syntax with kubectl..."
+            kubectl apply --dry-run=client -f k8s/frontend.yaml
+            echo "✅ YAML validation passed"
+          else
+            echo "⚠️ kubectl not available, skipping YAML validation"
+            # Basic YAML syntax check as fallback
+            if ! python3 -c "import yaml; yaml.safe_load(open('k8s/frontend.yaml'))" 2>/dev/null; then
+              echo "❌ ERROR: Invalid YAML syntax"
+              exit 1
+            fi
+          fi
 
       - name: Commit and push changes directly to dev
         if: github.ref == 'refs/heads/dev'

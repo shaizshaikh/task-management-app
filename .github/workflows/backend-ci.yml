@@ -53,10 +53,9 @@ jobs:
         run: |
           # Extract current version from k8s/backend.yaml
           # Using more precise regex to avoid false matches
-          CURRENT_VERSION=$(grep -oP "image:\s*${{ secrets.DOCKERHUB_USERNAME }}/taskmanagement-backend:v\K[0-9]+\.[0-9]+\.[0-9]+" k8s/backend.yaml 
-|| echo "0.0.0")
+          CURRENT_VERSION=$(grep -oP "image:\s*\S+/taskmanagement-backend:v\K[0-9]+\.[0-9]+\.[0-9]+" k8s/backend.yaml || echo "0.0.0")
           echo "current_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
-          echo " Current version: v$CURRENT_VERSION"
+          echo "📦 Current version: v$CURRENT_VERSION"
 
       - name: Calculate new version
         id: semver
@@ -88,7 +87,7 @@ jobs:
           
           NEW_VERSION="${MAJOR}.${MINOR}.${PATCH}"
           echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
-          echo " New version: v$NEW_VERSION (bump: $BUMP_TYPE)"
+          echo "🚀 New version: v$NEW_VERSION (bump: $BUMP_TYPE)"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -120,11 +119,32 @@ jobs:
           NEW_VERSION="v${{ steps.semver.outputs.new_version }}"
           
           # More precise sed that only matches the exact image line
-          sed -i -E "s|(image:\s*)${{ secrets.DOCKERHUB_USERNAME }}/taskmanagement-backend:v[0-9]+\.[0-9]+\.[0-9]+|\1${{ env.IMAGE_NAME 
-}}:${NEW_VERSION}|g" k8s/backend.yaml
+          sed -i -E "s|(image:\s*)\S+/taskmanagement-backend:v[0-9]+\.[0-9]+\.[0-9]+|\1${{ env.IMAGE_NAME }}:${NEW_VERSION}|g" k8s/backend.yaml
           
-          echo " Updated k8s/backend.yaml:"
+          echo "✅ Updated k8s/backend.yaml:"
           grep "image:" k8s/backend.yaml | grep backend
+
+      - name: Validate updated K8s manifest
+        run: |
+          # Verify the sed operation succeeded
+          if ! grep -q "image:.*taskmanagement-backend:v${{ steps.semver.outputs.new_version }}" k8s/backend.yaml; then
+            echo "❌ ERROR: Failed to update image tag in k8s/backend.yaml"
+            exit 1
+          fi
+          
+          # Validate YAML syntax using kubectl dry-run
+          if command -v kubectl &> /dev/null; then
+            echo "🔍 Validating YAML syntax with kubectl..."
+            kubectl apply --dry-run=client -f k8s/backend.yaml
+            echo "✅ YAML validation passed"
+          else
+            echo "⚠️ kubectl not available, skipping YAML validation"
+            # Basic YAML syntax check as fallback
+            if ! python3 -c "import yaml; yaml.safe_load(open('k8s/backend.yaml'))" 2>/dev/null; then
+              echo "❌ ERROR: Invalid YAML syntax"
+              exit 1
+            fi
+          fi
 
       - name: Commit and push changes directly to dev
         if: github.ref == 'refs/heads/dev'
@@ -136,26 +156,26 @@ jobs:
           
           # Only commit if there are changes
           if git diff --staged --quiet; then
-            echo " No changes to commit"
+            echo "⚠️ No changes to commit"
           else
             git commit -m "chore(backend): update image to v${{ steps.semver.outputs.new_version }} [skip ci]"
             git push origin dev
-            echo " Changes pushed to dev branch"
+            echo "✅ Changes pushed to dev branch"
           fi
 
       - name: Create Pull Request to main
-        if: github.event.inputs.target_branch == 'main' || (github.ref == 'refs/heads/dev' && github.event_name == 'workflow_dispatch')
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.target_branch == 'main'
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "chore(backend): update image to v${{ steps.semver.outputs.new_version }}"
-          title: " Backend: Deploy v${{ steps.semver.outputs.new_version }} to Production"
+          title: "🚀 Backend: Deploy v${{ steps.semver.outputs.new_version }} to Production"
           body: |
             ## Backend Production Deployment
             
             **New Version:** `v${{ steps.semver.outputs.new_version }}`
             **Previous Version:** `v${{ steps.get_version.outputs.current_version }}`
-            **Branch:** `dev`  `main`
+            **Branch:** `dev` → `main`
             
             ### Changes
             - Built and pushed `${{ env.IMAGE_NAME }}:v${{ steps.semver.outputs.new_version }}`
@@ -192,7 +212,7 @@ jobs:
 
       - name: Summary
         run: |
-          echo "##  Backend Build Complete!" >> $GITHUB_STEP_SUMMARY
+          echo "## 🎉 Backend Build Complete!" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Version:** v${{ steps.semver.outputs.new_version }}" >> $GITHUB_STEP_SUMMARY
           echo "**Image:** \`${{ env.IMAGE_NAME }}:v${{ steps.semver.outputs.new_version }}\`" >> $GITHUB_STEP_SUMMARY
@@ -200,16 +220,16 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           
           if [ "${{ github.ref }}" == "refs/heads/dev" ]; then
-            echo "###  Auto-deployed to dev" >> $GITHUB_STEP_SUMMARY
+            echo "### ✅ Auto-deployed to dev" >> $GITHUB_STEP_SUMMARY
             echo "K8s manifest updated and committed to dev branch" >> $GITHUB_STEP_SUMMARY
           else
-            echo "###  Next Steps:" >> $GITHUB_STEP_SUMMARY
+            echo "### 📋 Next Steps:" >> $GITHUB_STEP_SUMMARY
             echo "1. Review and merge the Pull Request to main" >> $GITHUB_STEP_SUMMARY
             echo "2. Deploy to production Kubernetes cluster" >> $GITHUB_STEP_SUMMARY
           fi
           
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "###  Pull Image:" >> $GITHUB_STEP_SUMMARY
+          echo "### 🐳 Pull Image:" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
           echo "docker pull ${{ env.IMAGE_NAME }}:v${{ steps.semver.outputs.new_version }}" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
