@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: taskmanagement-backend:latest
+        image: shaikhshaiz/taskmanagement-backend:v0.0.0
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
