@@ -14,136 +14,122 @@ spec:
         app: backend
     spec:
       containers:
-      - name: backend
-        image: shaikhshaiz/taskmanagement-backend:v0.0.0
-        imagePullPolicy: IfNotPresent
-        ports:
-        - containerPort: 5000
-          name: http
-        env:
-        - name: DB_HOST
-          valueFrom:
-            configMapKeyRef:
-              name: app-config
-              key: DB_HOST
-        - name: DB_PORT
-          valueFrom:
-            configMapKeyRef:
-              name: app-config
-              key: DB_PORT
-        - name: DB_NAME
-          valueFrom:
-            configMapKeyRef:
-              name: app-config
-              key: DB_NAME
-        - name: DB_USER
-          valueFrom:
-            configMapKeyRef:
-              name: app-config
-              key: DB_USER
-        - name: DB_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: app-secrets
-              key: DB_PASSWORD
-        - name: DB_ROOT_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: app-secrets
-              key: DB_ROOT_PASSWORD
-        - name: KEYCLOAK_URL
-          valueFrom:
-            configMapKeyRef:
-              name: app-config
-              key: KEYCLOAK_URL
-        - name: KEYCLOAK_REALM
-          valueFrom:
-            configMapKeyRef:
-              name: app-config
-              key: KEYCLOAK_REALM
-        - name: KEYCLOAK_CLIENT_ID
-          valueFrom:
-            configMapKeyRef:
-              name: app-config
-              key: KEYCLOAK_CLIENT_ID
-        - name: KEYCLOAK_ADMIN_USERNAME
-          valueFrom:
-            configMapKeyRef:
-              name: app-config
-              key: KEYCLOAK_ADMIN_USERNAME
-        - name: KEYCLOAK_ADMIN_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: app-secrets
-              key: KEYCLOAK_ADMIN_PASSWORD
-        - name: KEYCLOAK_ADMIN_CLIENT_ID
-          valueFrom:
-            configMapKeyRef:
-              name: app-config
-              key: KEYCLOAK_ADMIN_CLIENT_ID
-        - name: SMTP_HOST
-          valueFrom:
-            configMapKeyRef:
-              name: app-config
-              key: SMTP_HOST
-        - name: SMTP_PORT
-          valueFrom:
-            configMapKeyRef:
-              name: app-config
-              key: SMTP_PORT
-        - name: SMTP_SECURE
-          valueFrom:
-            configMapKeyRef:
-              name: app-config
-              key: SMTP_SECURE
-        - name: SMTP_USER
-          valueFrom:
-            secretKeyRef:
-              name: app-secrets
-              key: SMTP_USER
-        - name: SMTP_PASS
-          valueFrom:
-            secretKeyRef:
-              name: app-secrets
-              key: SMTP_PASS
-        - name: SMTP_FROM
-          valueFrom:
-            configMapKeyRef:
-              name: app-config
-              key: SMTP_FROM
-        - name: FRONTEND_URL
-          valueFrom:
-            configMapKeyRef:
-              name: app-config
-              key: FRONTEND_URL
-        - name: BACKEND_PORT
-          valueFrom:
-            configMapKeyRef:
-              name: app-config
-              key: BACKEND_PORT
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 5000
-          initialDelaySeconds: 30
-          periodSeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: 5000
-          initialDelaySeconds: 15
-          periodSeconds: 5
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: backend-service
-  namespace: task-management
-spec:
-  selector:
-    app: backend
-  ports:
-  - port: 5000
-    targetPort: 5000
-    name: http
-  type: ClusterIP
+        - name: backend
+          image: shaikhshaiz/taskmanagement-backend:v0.0.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5000
+              name: http
+          env:
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: DB_HOST
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: DB_PORT
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: DB_NAME
+            - name: DB_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: DB_PASSWORD
+            - name: DB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: DB_ROOT_PASSWORD
+            - name: KEYCLOAK_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: KEYCLOAK_URL
+            - name: KEYCLOAK_REALM
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: KEYCLOAK_REALM
+            - name: KEYCLOAK_CLIENT_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: KEYCLOAK_CLIENT_ID
+            - name: KEYCLOAK_ADMIN_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: KEYCLOAK_ADMIN_USERNAME
+            - name: KEYCLOAK_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: KEYCLOAK_ADMIN_PASSWORD
+            - name: KEYCLOAK_ADMIN_CLIENT_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: KEYCLOAK_ADMIN_CLIENT_ID
+            - name: SMTP_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: SMTP_HOST
+            - name: SMTP_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: SMTP_PORT
+            - name: SMTP_SECURE
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: SMTP_SECURE
+            - name: SMTP_USER
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: SMTP_USER
+            - name: SMTP_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: SMTP_PASS
+            - name: SMTP_FROM
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: SMTP_FROM
+            - name: FRONTEND_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: FRONTEND_URL
+            - name: BACKEND_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: BACKEND_PORT
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 15
+            periodSeconds: 5
