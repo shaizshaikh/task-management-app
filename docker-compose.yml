@@ -3,8 +3,7 @@ services:
   frontend:
     build: ./frontend
     container_name: task-frontend
-    expose:
-      - "${FRONTEND_INTERNAL_PORT}"
+    # NO EXTERNAL PORTS - Internal only
     environment:
       - REACT_APP_KEYCLOAK_REALM=${REACT_APP_KEYCLOAK_REALM}
       - REACT_APP_KEYCLOAK_CLIENT_ID=${REACT_APP_KEYCLOAK_CLIENT_ID}
@@ -15,8 +14,7 @@ services:
   backend:
     build: ./backend
     container_name: task-backend
-    expose:
-      - "${BACKEND_PORT}"
+    # NO EXTERNAL PORTS - Internal only
     environment:
       - DB_HOST=${DB_HOST}
       - DB_PORT=${DB_PORT}
@@ -46,12 +44,13 @@ services:
     networks:
       - app-network
 
-  # Database (MySQL)
+  # Database (MySQL) - Internal only
   database:
     image: mysql:8.0
     container_name: task_management_db
     restart: always
     command: --default-authentication-plugin=mysql_native_password
+    # NO EXTERNAL PORTS - Internal only
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
       MYSQL_DATABASE: ${DB_NAME}
@@ -68,23 +67,29 @@ services:
     networks:
       - app-network
 
-  # Keycloak (Authentication Server)
+  # Keycloak (Authentication Server) - Internal only, proxied via Nginx
   keycloak:
     image: quay.io/keycloak/keycloak:23.0.0
     container_name: task-keycloak
-    ports:
-      - "${KEYCLOAK_PORT}:8080"
+    # NO EXTERNAL PORTS - Internal only
     environment:
       - KEYCLOAK_ADMIN=${KEYCLOAK_ADMIN_USERNAME}
       - KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD}
       - KC_DB=dev-file
       - KC_HEALTH_ENABLED=true
-    command: start-dev --import-realm
+      - KC_PROXY=edge
+      - KC_HOSTNAME_STRICT=false
+      - KC_HTTP_ENABLED=true
+      - KC_HTTP_RELATIVE_PATH=/auth
+      - KC_HOSTNAME_URL=http://localhost:8080/auth
+      - KC_HOSTNAME_ADMIN_URL=http://localhost:8080/auth
+      - KC_HOSTNAME_PORT=8080
+    command: start-dev --import-realm --http-relative-path=/auth
     volumes:
       - ./realm-export.json:/opt/keycloak/data/import/realm-export.json:ro
       - keycloak_data:/opt/keycloak/data
     healthcheck:
-      test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/8080 && echo -e 'GET /health/ready HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && cat <&3 | grep -q '200 OK'"]
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/8080 && echo -e 'GET /auth/health/ready HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && cat <&3 | grep -q '200 OK'"]
       interval: 10s
       timeout: 5s
       retries: 30
@@ -92,17 +97,18 @@ services:
     networks:
       - app-network
 
-  # Nginx (Reverse Proxy)
+  # Nginx (Reverse Proxy) - ONLY EXPOSED SERVICE
   nginx:
     image: nginx:alpine
     container_name: task-nginx
     ports:
-      - "${NGINX_PORT}:80"
+      - "${NGINX_PORT}:80"  # ONLY external port
     volumes:
       - ./nginx/myapp.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - frontend
       - backend
+      - keycloak
     networks:
       - app-network
 

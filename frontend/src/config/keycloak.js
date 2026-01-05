@@ -12,9 +12,8 @@ const getKeycloakUrl = () => {
     return process.env.REACT_APP_KEYCLOAK_URL;
   }
   
-  // Otherwise, use current domain with port 8081
-  const currentHost = window.location.hostname;
-  return `http://${currentHost}:8081`;
+  // Use current origin + /auth path (proxied through nginx)
+  return `${window.location.origin}/auth`;
 };
 
 // Keycloak configuration - dynamic based on current domain

@@ -1,0 +1,121 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: keycloak-pvc
+  namespace: task-management
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keycloak
+  namespace: task-management
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: keycloak
+  template:
+    metadata:
+      labels:
+        app: keycloak
+    spec:
+      initContainers:
+      - name: copy-realm-config
+        image: busybox:latest
+        command:
+        - sh
+        - -c
+        - |
+          mkdir -p /keycloak-data/import
+          cp /host-tmp/realm-export.json /keycloak-data/import/realm-export.json
+          chmod 644 /keycloak-data/import/realm-export.json
+          echo "Realm config copied successfully"
+        volumeMounts:
+        - name: host-tmp
+          mountPath: /host-tmp
+        - name: keycloak-storage
+          mountPath: /keycloak-data
+      containers:
+      - name: keycloak
+        image: quay.io/keycloak/keycloak:23.0.0
+        ports:
+        - containerPort: 8080
+          name: http
+        command:
+        - /opt/keycloak/bin/kc.sh
+        args:
+        - start-dev
+        - --import-realm
+        - --http-relative-path=/auth
+        env:
+        - name: KEYCLOAK_ADMIN
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: KEYCLOAK_ADMIN_USERNAME
+        - name: KEYCLOAK_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: KEYCLOAK_ADMIN_PASSWORD
+        - name: KC_DB
+          value: "dev-file"
+        - name: KC_HEALTH_ENABLED
+          value: "true"
+        - name: KC_HOSTNAME_STRICT
+          value: "false"
+        - name: KC_PROXY
+          value: "edge"
+        - name: KC_HTTP_ENABLED
+          value: "true"
+        - name: KC_HOSTNAME_URL
+          value: "https://shaiztech.work.gd/auth"
+        - name: KC_HOSTNAME_ADMIN_URL
+          value: "https://shaiztech.work.gd/auth"
+        - name: KC_HOSTNAME_PORT
+          value: "443"
+        volumeMounts:
+        - name: keycloak-storage
+          mountPath: /opt/keycloak/data
+        livenessProbe:
+          httpGet:
+            path: /auth/health/live
+            port: 8080
+          initialDelaySeconds: 90
+          periodSeconds: 10
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /auth/health/ready
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 5
+          timeoutSeconds: 5
+      volumes:
+      - name: keycloak-storage
+        persistentVolumeClaim:
+          claimName: keycloak-pvc
+      - name: host-tmp
+        hostPath:
+          path: /tmp
+          type: Directory
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: keycloak-service
+  namespace: task-management
+spec:
+  selector:
+    app: keycloak
+  ports:
+  - port: 8080
+    targetPort: 8080
+    name: http
+  type: ClusterIP

@@ -813,14 +813,20 @@
         "http://*:8080/*",
         "https://shaiztech.work.gd:8080/*",
         "http://shaiztech.work.gd:8080/*",
-        "http://192.168.0.110:8080/*"
+        "http://192.168.0.110:8080/*",
+        "http://localhost:30080/*",
+        "https://shaiztech.work.gd/*",
+        "http://shaiztech.work.gd/*"
       ],
       "webOrigins": [
         "http://192.168.0.110:8080",
         "http://*:8080",
         "http://localhost:8080",
         "http://shaiztech.work.gd:8080",
-        "https://shaiztech.work.gd:8080"
+        "https://shaiztech.work.gd:8080",
+        "http://localhost:30080",
+        "https://shaiztech.work.gd",
+        "http://shaiztech.work.gd"
       ],
       "notBefore": 0,
       "bearerOnly": false,
@@ -835,7 +841,7 @@
       "attributes": {
         "oidc.ciba.grant.enabled": "false",
         "backchannel.logout.session.required": "true",
-        "post.logout.redirect.uris": "http://localhost:8080/*##http://*:8080/*##http://192.168.0.110:8080/*##http://shaiztech.work.gd:8080/*##https://shaiztech.work.gd:8080/*",
+        "post.logout.redirect.uris": "http://localhost:8080/*##http://*:8080/*##http://192.168.0.110:8080/*##http://shaiztech.work.gd:8080/*##https://shaiztech.work.gd:8080/*##http://localhost:30080/*##https://shaiztech.work.gd/*##http://shaiztech.work.gd/*",
         "display.on.consent.screen": "false",
         "oauth2.device.authorization.grant.enabled": "false",
         "backchannel.logout.revoke.offline.tokens": "false"
