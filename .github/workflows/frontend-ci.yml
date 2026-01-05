@@ -1,5 +1,9 @@
 name: Frontend CI/CD
 
+permissions:
+  contents: write
+  pull-requests: write
+
 on:
   push:
     branches:
@@ -63,7 +67,7 @@ jobs:
 
           if [ -z "$TAGS" ]; then
             LATEST="0.0.0"
-            echo "⚠️ No versioned tags found. Using v0.0.0"
+            echo ⚠️ No versioned tags found. Using v0.0.0"
           else
             LATEST=$(echo "$TAGS" | sort -V | tail -n 1)
             echo "📦 Latest Docker Hub tag: v$LATEST"
