@@ -161,7 +161,7 @@ jobs:
           fi
 
       - name: Create Pull Request to main
-        if: github.event.inputs.target_branch == 'main' || (github.ref == 'refs/heads/dev' && github.event_name == 'workflow_dispatch')
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.target_branch == 'main'
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}

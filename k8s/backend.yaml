@@ -56,11 +56,6 @@ spec:
             configMapKeyRef:
               name: app-config
               key: KEYCLOAK_URL
-        - name: KEYCLOAK_EXTERNAL_URL
-          valueFrom:
-            configMapKeyRef:
-              name: app-config
-              key: KEYCLOAK_EXTERNAL_URL
         - name: KEYCLOAK_REALM
           valueFrom:
             configMapKeyRef:
