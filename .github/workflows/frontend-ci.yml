@@ -113,6 +113,7 @@ jobs:
             org.opencontainers.image.source=${{ github.repositoryUrl }}
             org.opencontainers.image.revision=${{ github.sha }}
             org.opencontainers.image.version=v${{ steps.semver.outputs.new_version }}
+        continue-on-error: false
 
       - name: Update k8s frontend.yaml with new image tag
         run: |
@@ -132,19 +133,15 @@ jobs:
             exit 1
           fi
           
-          # Validate YAML syntax using kubectl dry-run
-          if command -v kubectl &> /dev/null; then
-            echo "🔍 Validating YAML syntax with kubectl..."
-            kubectl apply --dry-run=client -f k8s/frontend.yaml
-            echo "✅ YAML validation passed"
-          else
-            echo "⚠️ kubectl not available, skipping YAML validation"
-            # Basic YAML syntax check as fallback
-            if ! python3 -c "import yaml; yaml.safe_load(open('k8s/frontend.yaml'))" 2>/dev/null; then
-              echo "❌ ERROR: Invalid YAML syntax"
-              exit 1
-            fi
+          echo "✅ Image tag verified in manifest"
+          
+          # Basic YAML syntax validation (no cluster needed)
+          if ! python3 -c "import yaml; yaml.safe_load(open('k8s/frontend.yaml'))" 2>/dev/null; then
+            echo "❌ ERROR: Invalid YAML syntax in k8s/frontend.yaml"
+            exit 1
           fi
+          
+          echo "✅ YAML syntax validation passed"
 
       - name: Commit and push changes directly to dev
         if: github.ref == 'refs/heads/dev'
