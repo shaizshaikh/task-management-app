@@ -2,6 +2,7 @@ name: Build Images
 
 permissions:
   contents: read
+  actions: write
 
 on:
   push:
@@ -283,17 +284,44 @@ jobs:
     needs: [detect-changes, build-backend, build-frontend]
     if: always() && (needs.build-backend.result == 'success' || needs.build-frontend.result == 'success')
     steps:
-      - name: Trigger deployment
-        uses: peter-evans/repository-dispatch@v3
+      - name: Checkout for gh cli
+        uses: actions/checkout@v4
+      
+      - name: Create deployment file
+        shell: bash
+        run: |
+          mkdir -p deployment-info
+          
+          cat > deployment-info/payload.json <<EOF
+          {
+            "backend_built": "${{ needs.build-backend.result == 'success' }}",
+            "frontend_built": "${{ needs.build-frontend.result == 'success' }}",
+            "backend_version": "${{ needs.build-backend.outputs.version }}",
+            "frontend_version": "${{ needs.build-frontend.outputs.version }}",
+            "backend_image": "${{ needs.build-backend.outputs.image }}",
+            "frontend_image": "${{ needs.build-frontend.outputs.image }}"
+          }
+          EOF
+          
+          cat deployment-info/payload.json
+      
+      - name: Upload deployment info
+        uses: actions/upload-artifact@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          event-type: images-built
-          client-payload: |
-            {
-              "backend_built": "${{ needs.build-backend.result == 'success' }}",
-              "frontend_built": "${{ needs.build-frontend.result == 'success' }}",
-              "backend_version": "${{ needs.build-backend.outputs.version }}",
-              "frontend_version": "${{ needs.build-frontend.outputs.version }}",
-              "backend_image": "${{ needs.build-backend.outputs.image }}",
-              "frontend_image": "${{ needs.build-frontend.outputs.image }}"
-            }
+          name: deployment-info
+          path: deployment-info/payload.json
+          retention-days: 1
+      
+      - name: Trigger deploy workflow
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh workflow run deploy.yml \
+            --repo ${{ github.repository }} \
+            --ref dev \
+            --field backend_built="${{ needs.build-backend.result == 'success' }}" \
+            --field frontend_built="${{ needs.build-frontend.result == 'success' }}" \
+            --field backend_version="${{ needs.build-backend.outputs.version }}" \
+            --field frontend_version="${{ needs.build-frontend.outputs.version }}" \
+            --field backend_image="${{ needs.build-backend.outputs.image }}" \
+            --field frontend_image="${{ needs.build-frontend.outputs.image }}"
