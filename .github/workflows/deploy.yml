@@ -1,0 +1,287 @@
+name: Deploy to Kubernetes
+
+permissions:
+  contents: write
+  pull-requests: write
+
+on:
+  repository_dispatch:
+    types: [images-built]
+  
+  workflow_dispatch:
+    inputs:
+      component:
+        description: Component to deploy
+        required: true
+        type: choice
+        options: [backend, frontend, both]
+      backend_version:
+        description: Backend version (e.g., v0.0.1)
+        required: false
+        type: string
+      frontend_version:
+        description: Frontend version (e.g., v0.0.1)
+        required: false
+        type: string
+      target_branch:
+        description: Target branch for deployment
+        required: true
+        default: dev
+        type: choice
+        options: [dev, main]
+
+env:
+  DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-actions[bot]'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: dev
+
+      # --------------------------------------------------
+      # Determine deployment details
+      # --------------------------------------------------
+      - name: Parse deployment info
+        id: deploy_info
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # Check if triggered by repository_dispatch (from build workflow)
+          if [[ "${{ github.event_name }}" == "repository_dispatch" ]]; then
+            echo "Triggered by build workflow"
+            
+            BACKEND_BUILT="${{ github.event.client_payload.backend_built }}"
+            FRONTEND_BUILT="${{ github.event.client_payload.frontend_built }}"
+            
+            echo "deploy_backend=$BACKEND_BUILT" >> "$GITHUB_OUTPUT"
+            echo "deploy_frontend=$FRONTEND_BUILT" >> "$GITHUB_OUTPUT"
+            
+            if [[ "$BACKEND_BUILT" == "true" ]]; then
+              BACKEND_VERSION="${{ github.event.client_payload.backend_version }}"
+              BACKEND_IMAGE="${{ github.event.client_payload.backend_image }}"
+              echo "backend_version=v$BACKEND_VERSION" >> "$GITHUB_OUTPUT"
+              echo "backend_image=$BACKEND_IMAGE" >> "$GITHUB_OUTPUT"
+              echo "Backend: v$BACKEND_VERSION"
+            fi
+            
+            if [[ "$FRONTEND_BUILT" == "true" ]]; then
+              FRONTEND_VERSION="${{ github.event.client_payload.frontend_version }}"
+              FRONTEND_IMAGE="${{ github.event.client_payload.frontend_image }}"
+              echo "frontend_version=v$FRONTEND_VERSION" >> "$GITHUB_OUTPUT"
+              echo "frontend_image=$FRONTEND_IMAGE" >> "$GITHUB_OUTPUT"
+              echo "Frontend: v$FRONTEND_VERSION"
+            fi
+            
+            # Determine component for commit message
+            if [[ "$BACKEND_BUILT" == "true" ]] && [[ "$FRONTEND_BUILT" == "true" ]]; then
+              echo "component=both" >> "$GITHUB_OUTPUT"
+            elif [[ "$BACKEND_BUILT" == "true" ]]; then
+              echo "component=backend" >> "$GITHUB_OUTPUT"
+            else
+              echo "component=frontend" >> "$GITHUB_OUTPUT"
+            fi
+            
+          else
+            # Manual workflow_dispatch trigger
+            echo "Manual deployment triggered"
+            
+            COMPONENT="${{ github.event.inputs.component }}"
+            echo "component=$COMPONENT" >> "$GITHUB_OUTPUT"
+            
+            if [[ "$COMPONENT" == "both" ]] || [[ "$COMPONENT" == "backend" ]]; then
+              VERSION="${{ github.event.inputs.backend_version }}"
+              if [[ -z "$VERSION" ]]; then
+                echo "Error: backend_version required when deploying backend"
+                exit 1
+              fi
+              echo "backend_version=$VERSION" >> "$GITHUB_OUTPUT"
+              echo "backend_image=${DOCKERHUB_USERNAME}/taskmanagement-backend:$VERSION" >> "$GITHUB_OUTPUT"
+              echo "deploy_backend=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "deploy_backend=false" >> "$GITHUB_OUTPUT"
+            fi
+            
+            if [[ "$COMPONENT" == "both" ]] || [[ "$COMPONENT" == "frontend" ]]; then
+              VERSION="${{ github.event.inputs.frontend_version }}"
+              if [[ -z "$VERSION" ]]; then
+                echo "Error: frontend_version required when deploying frontend"
+                exit 1
+              fi
+              echo "frontend_version=$VERSION" >> "$GITHUB_OUTPUT"
+              echo "frontend_image=${DOCKERHUB_USERNAME}/taskmanagement-frontend:$VERSION" >> "$GITHUB_OUTPUT"
+              echo "deploy_frontend=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "deploy_frontend=false" >> "$GITHUB_OUTPUT"
+            fi
+          fi
+
+      # --------------------------------------------------
+      # Update Backend manifest
+      # --------------------------------------------------
+      - name: Update backend manifest
+        if: steps.deploy_info.outputs.deploy_backend == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          
+          IMAGE="${{ steps.deploy_info.outputs.backend_image }}"
+          echo "Updating backend manifest with image: $IMAGE"
+          
+          sed -i -E "s|(^\s*image:\s*).+|\1${IMAGE}|" k8s/backend.yaml
+          
+          echo "Updated backend.yaml:"
+          grep "image:" k8s/backend.yaml
+
+      # --------------------------------------------------
+      # Update Frontend manifest
+      # --------------------------------------------------
+      - name: Update frontend manifest
+        if: steps.deploy_info.outputs.deploy_frontend == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          
+          IMAGE="${{ steps.deploy_info.outputs.frontend_image }}"
+          echo "Updating frontend manifest with image: $IMAGE"
+          
+          sed -i -E "s|(^\s*image:\s*).+|\1${IMAGE}|" k8s/frontend.yaml
+          
+          echo "Updated frontend.yaml:"
+          grep "image:" k8s/frontend.yaml
+
+      # --------------------------------------------------
+      # Validate manifests
+      # --------------------------------------------------
+      - name: Validate Kubernetes manifests
+        shell: bash
+        run: |
+          set -euo pipefail
+          
+          echo "Validating manifests..."
+          
+          if [[ "${{ steps.deploy_info.outputs.deploy_backend }}" == "true" ]]; then
+            python3 -c "import yaml; yaml.safe_load(open('k8s/backend.yaml'))"
+            echo "Backend manifest is valid"
+          fi
+          
+          if [[ "${{ steps.deploy_info.outputs.deploy_frontend }}" == "true" ]]; then
+            python3 -c "import yaml; yaml.safe_load(open('k8s/frontend.yaml'))"
+            echo "Frontend manifest is valid"
+          fi
+          
+          echo "All manifests validated successfully"
+
+      # --------------------------------------------------
+      # Commit and push changes (single commit)
+      # --------------------------------------------------
+      - name: Commit manifest updates
+        shell: bash
+        run: |
+          set -euo pipefail
+          
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Add changed manifests
+          if [[ "${{ steps.deploy_info.outputs.deploy_backend }}" == "true" ]]; then
+            git add k8s/backend.yaml
+          fi
+          
+          if [[ "${{ steps.deploy_info.outputs.deploy_frontend }}" == "true" ]]; then
+            git add k8s/frontend.yaml
+          fi
+          
+          # Check if there are changes to commit
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          
+          # Build commit message based on what was deployed
+          COMPONENT="${{ steps.deploy_info.outputs.component }}"
+          
+          if [[ "$COMPONENT" == "backend" ]]; then
+            COMMIT_MSG="chore(k8s): deploy backend ${{ steps.deploy_info.outputs.backend_version }} [skip ci]"
+          elif [[ "$COMPONENT" == "frontend" ]]; then
+            COMMIT_MSG="chore(k8s): deploy frontend ${{ steps.deploy_info.outputs.frontend_version }} [skip ci]"
+          else
+            COMMIT_MSG="chore(k8s): deploy backend ${{ steps.deploy_info.outputs.backend_version }} and frontend ${{ steps.deploy_info.outputs.frontend_version }} [skip ci]"
+          fi
+          
+          git commit -m "$COMMIT_MSG"
+          
+          # Push to appropriate branch
+          TARGET_BRANCH="${{ github.event.inputs.target_branch || 'dev' }}"
+          git push origin HEAD:${TARGET_BRANCH}
+          
+          echo "Successfully committed and pushed manifest updates to ${TARGET_BRANCH}"
+
+      # --------------------------------------------------
+      # Create PR to main (optional)
+      # --------------------------------------------------
+      - name: Create PR to main
+        if: github.event.inputs.target_branch == 'main'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: main
+          branch: deploy-${{ steps.deploy_info.outputs.component }}-${{ github.run_number }}
+          title: "chore(k8s): deploy ${{ steps.deploy_info.outputs.component }} to production"
+          body: |
+            ## Deployment to Production
+            
+            **Component:** ${{ steps.deploy_info.outputs.component }}
+            
+            ${{ steps.deploy_info.outputs.deploy_backend == 'true' && format('- **Backend:** {0}', steps.deploy_info.outputs.backend_version) || '' }}
+            ${{ steps.deploy_info.outputs.deploy_frontend == 'true' && format('- **Frontend:** {0}', steps.deploy_info.outputs.frontend_version) || '' }}
+            
+            ### Changes
+            - Updated Kubernetes manifests with new image versions
+            - All manifests validated successfully
+            
+            **Ready for production deployment**
+          commit-message: "chore(k8s): deploy ${{ steps.deploy_info.outputs.component }} to production"
+
+      # --------------------------------------------------
+      # Deployment summary
+      # --------------------------------------------------
+      - name: Job summary
+        run: |
+          {
+            echo "## Deployment Complete"
+            echo ""
+            echo "| Component | Version | Image |"
+            echo "|-----------|---------|-------|"
+            
+            if [[ "${{ steps.deploy_info.outputs.deploy_backend }}" == "true" ]]; then
+              echo "| Backend | ${{ steps.deploy_info.outputs.backend_version }} | \`${{ steps.deploy_info.outputs.backend_image }}\` |"
+            fi
+            
+            if [[ "${{ steps.deploy_info.outputs.deploy_frontend }}" == "true" ]]; then
+              echo "| Frontend | ${{ steps.deploy_info.outputs.frontend_version }} | \`${{ steps.deploy_info.outputs.frontend_image }}\` |"
+            fi
+            
+            echo ""
+            echo "### Updated Manifests"
+            echo ""
+            
+            if [[ "${{ steps.deploy_info.outputs.deploy_backend }}" == "true" ]]; then
+              echo "- \`k8s/backend.yaml\`"
+            fi
+            
+            if [[ "${{ steps.deploy_info.outputs.deploy_frontend }}" == "true" ]]; then
+              echo "- \`k8s/frontend.yaml\`"
+            fi
+            
+            echo ""
+            echo "> Manifests validated and committed to \`dev\` branch in a single atomic commit"
+          } >> "$GITHUB_STEP_SUMMARY"
