@@ -5,6 +5,9 @@ permissions:
   pull-requests: write
 
 on:
+  repository_dispatch:
+    types: [images-built]
+  
   workflow_dispatch:
     inputs:
       # Inputs from build workflow
@@ -81,32 +84,30 @@ jobs:
         run: |
           set -euo pipefail
 
-          # Check if this is an automatic trigger from build workflow
-          if [[ -n "${{ github.event.inputs.backend_built }}" ]] && [[ "${{ github.event.inputs.backend_built }}" != "false" ]] || \
-             [[ -n "${{ github.event.inputs.frontend_built }}" ]] && [[ "${{ github.event.inputs.frontend_built }}" != "false" ]]; then
+          # Check if triggered by repository_dispatch (from build workflow)
+          if [[ "${{ github.event_name }}" == "repository_dispatch" ]]; then
+            echo "Triggered by build workflow via repository_dispatch"
             
-            echo "Triggered by build workflow"
-            
-            BACKEND_BUILT="${{ github.event.inputs.backend_built }}"
-            FRONTEND_BUILT="${{ github.event.inputs.frontend_built }}"
+            BACKEND_BUILT="${{ github.event.client_payload.backend_built }}"
+            FRONTEND_BUILT="${{ github.event.client_payload.frontend_built }}"
             
             echo "deploy_backend=$BACKEND_BUILT" >> "$GITHUB_OUTPUT"
             echo "deploy_frontend=$FRONTEND_BUILT" >> "$GITHUB_OUTPUT"
             
             if [[ "$BACKEND_BUILT" == "true" ]]; then
-              BACKEND_VERSION="${{ github.event.inputs.backend_version }}"
-              BACKEND_IMAGE="${{ github.event.inputs.backend_image }}"
+              BACKEND_VERSION="${{ github.event.client_payload.backend_version }}"
+              BACKEND_IMAGE="${{ github.event.client_payload.backend_image }}"
               echo "backend_version=v$BACKEND_VERSION" >> "$GITHUB_OUTPUT"
               echo "backend_image=$BACKEND_IMAGE" >> "$GITHUB_OUTPUT"
-              echo "Backend: v$BACKEND_VERSION"
+              echo "✅ Backend: v$BACKEND_VERSION"
             fi
             
             if [[ "$FRONTEND_BUILT" == "true" ]]; then
-              FRONTEND_VERSION="${{ github.event.inputs.frontend_version }}"
-              FRONTEND_IMAGE="${{ github.event.inputs.frontend_image }}"
+              FRONTEND_VERSION="${{ github.event.client_payload.frontend_version }}"
+              FRONTEND_IMAGE="${{ github.event.client_payload.frontend_image }}"
               echo "frontend_version=v$FRONTEND_VERSION" >> "$GITHUB_OUTPUT"
               echo "frontend_image=$FRONTEND_IMAGE" >> "$GITHUB_OUTPUT"
-              echo "Frontend: v$FRONTEND_VERSION"
+              echo "✅ Frontend: v$FRONTEND_VERSION"
             fi
             
             # Determine component for commit message
