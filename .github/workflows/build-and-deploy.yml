@@ -60,10 +60,10 @@ jobs:
       github.event.inputs.component == 'both'
     outputs:
       version: ${{ steps.semver.outputs.new_version }}
-      image: ${{ steps.image_output.outputs.full_image }}
+      image_tag: ${{ steps.semver.outputs.new_version }}
+      docker_repo: ${{ steps.repo_info.outputs.docker_repo }}
     
     env:
-      IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/taskmanagement-backend
       DOCKER_NAMESPACE: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKER_REPO: taskmanagement-backend
       DOCKERFILE_PATH: ./backend/Dockerfile
@@ -74,6 +74,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      
+      - name: Set repository info
+        id: repo_info
+        run: |
+          echo "docker_repo=taskmanagement-backend" >> "$GITHUB_OUTPUT"
 
       - name: Get latest Docker Hub version
         id: dockerhub_version
@@ -151,19 +156,10 @@ jobs:
           file: ${{ env.DOCKERFILE_PATH }}
           push: true
           tags: |
-            ${{ env.IMAGE_NAME }}:v${{ steps.semver.outputs.new_version }}
-            ${{ env.IMAGE_NAME }}:latest
-          cache-from: type=registry,ref=${{ env.IMAGE_NAME }}:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_REPO }}:v${{ steps.semver.outputs.new_version }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_REPO }}:latest
+          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_REPO }}:latest
           cache-to: type=inline
-      
-      - name: Set image output
-        id: image_output
-        run: |
-          FULL_IMAGE="${{ env.IMAGE_NAME }}:v${{ steps.semver.outputs.new_version }}"
-          echo "full_image=$FULL_IMAGE" >> "$GITHUB_OUTPUT"
-          echo "=== Backend Image Output ==="
-          echo "Full image: $FULL_IMAGE"
-          echo "============================"
 
   # --------------------------------------------------
   # Build Frontend
@@ -177,10 +173,10 @@ jobs:
       github.event.inputs.component == 'both'
     outputs:
       version: ${{ steps.semver.outputs.new_version }}
-      image: ${{ steps.image_output.outputs.full_image }}
+      image_tag: ${{ steps.semver.outputs.new_version }}
+      docker_repo: ${{ steps.repo_info.outputs.docker_repo }}
     
     env:
-      IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/taskmanagement-frontend
       DOCKER_NAMESPACE: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKER_REPO: taskmanagement-frontend
       DOCKERFILE_PATH: ./frontend/Dockerfile
@@ -191,6 +187,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      
+      - name: Set repository info
+        id: repo_info
+        run: |
+          echo "docker_repo=taskmanagement-frontend" >> "$GITHUB_OUTPUT"
 
       - name: Get latest Docker Hub version
         id: dockerhub_version
@@ -268,19 +269,10 @@ jobs:
           file: ${{ env.DOCKERFILE_PATH }}
           push: true
           tags: |
-            ${{ env.IMAGE_NAME }}:v${{ steps.semver.outputs.new_version }}
-            ${{ env.IMAGE_NAME }}:latest
-          cache-from: type=registry,ref=${{ env.IMAGE_NAME }}:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_REPO }}:v${{ steps.semver.outputs.new_version }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_REPO }}:latest
+          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_REPO }}:latest
           cache-to: type=inline
-      
-      - name: Set image output
-        id: image_output
-        run: |
-          FULL_IMAGE="${{ env.IMAGE_NAME }}:v${{ steps.semver.outputs.new_version }}"
-          echo "full_image=$FULL_IMAGE" >> "$GITHUB_OUTPUT"
-          echo "=== Frontend Image Output ==="
-          echo "Full image: $FULL_IMAGE"
-          echo "============================="
 
   # --------------------------------------------------
   # Deploy to Kubernetes
@@ -303,28 +295,46 @@ jobs:
           echo "=== Debug Information ==="
           echo "Backend result: ${{ needs.build-backend.result }}"
           echo "Backend version: ${{ needs.build-backend.outputs.version }}"
-          echo "Backend image: ${{ needs.build-backend.outputs.image }}"
+          echo "Backend image_tag: ${{ needs.build-backend.outputs.image_tag }}"
+          echo "Backend docker_repo: ${{ needs.build-backend.outputs.docker_repo }}"
           echo ""
           echo "Frontend result: ${{ needs.build-frontend.result }}"
           echo "Frontend version: ${{ needs.build-frontend.outputs.version }}"
-          echo "Frontend image: ${{ needs.build-frontend.outputs.image }}"
+          echo "Frontend image_tag: ${{ needs.build-frontend.outputs.image_tag }}"
+          echo "Frontend docker_repo: ${{ needs.build-frontend.outputs.docker_repo }}"
           echo "======================="
 
       - name: Update backend manifest
         if: needs.build-backend.result == 'success'
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
         run: |
-          IMAGE="${{ needs.build-backend.outputs.image }}"
-          echo "Updating backend manifest with: $IMAGE"
-          sed -i -E "s|(^\s*image:\s*).+|\1${IMAGE}|" k8s/backend.yaml
+          REPO="${{ needs.build-backend.outputs.docker_repo }}"
+          TAG="v${{ needs.build-backend.outputs.image_tag }}"
+          FULL_IMAGE="${DOCKER_USERNAME}/${REPO}:${TAG}"
+          
+          echo "Updating backend manifest with: $FULL_IMAGE"
+          sed -i -E "s|(^\s*image:\s*).+|\1${FULL_IMAGE}|" k8s/backend.yaml
+          
+          echo "=== Backend manifest after update ==="
           grep "image:" k8s/backend.yaml
+          echo "===================================="
 
       - name: Update frontend manifest
         if: needs.build-frontend.result == 'success'
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
         run: |
-          IMAGE="${{ needs.build-frontend.outputs.image }}"
-          echo "Updating frontend manifest with: $IMAGE"
-          sed -i -E "s|(^\s*image:\s*).+|\1${IMAGE}|" k8s/frontend.yaml
+          REPO="${{ needs.build-frontend.outputs.docker_repo }}"
+          TAG="v${{ needs.build-frontend.outputs.image_tag }}"
+          FULL_IMAGE="${DOCKER_USERNAME}/${REPO}:${TAG}"
+          
+          echo "Updating frontend manifest with: $FULL_IMAGE"
+          sed -i -E "s|(^\s*image:\s*).+|\1${FULL_IMAGE}|" k8s/frontend.yaml
+          
+          echo "=== Frontend manifest after update ==="
           grep "image:" k8s/frontend.yaml
+          echo "====================================="
 
       - name: Validate manifests
         run: |
@@ -371,6 +381,8 @@ jobs:
           fi
 
       - name: Deployment summary
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
         run: |
           {
             echo "## 🚀 Deployment Complete"
@@ -379,11 +391,13 @@ jobs:
             echo "|-----------|---------|-------|"
             
             if [[ "${{ needs.build-backend.result }}" == "success" ]]; then
-              echo "| Backend | v${{ needs.build-backend.outputs.version }} | \`${{ needs.build-backend.outputs.image }}\` |"
+              IMAGE="${DOCKER_USERNAME}/${{ needs.build-backend.outputs.docker_repo }}:v${{ needs.build-backend.outputs.image_tag }}"
+              echo "| Backend | v${{ needs.build-backend.outputs.version }} | \`${IMAGE}\` |"
             fi
             
             if [[ "${{ needs.build-frontend.result }}" == "success" ]]; then
-              echo "| Frontend | v${{ needs.build-frontend.outputs.version }} | \`${{ needs.build-frontend.outputs.image }}\` |"
+              IMAGE="${DOCKER_USERNAME}/${{ needs.build-frontend.outputs.docker_repo }}:v${{ needs.build-frontend.outputs.image_tag }}"
+              echo "| Frontend | v${{ needs.build-frontend.outputs.version }} | \`${IMAGE}\` |"
             fi
             
             echo ""
