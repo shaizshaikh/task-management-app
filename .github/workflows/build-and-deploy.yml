@@ -159,7 +159,11 @@ jobs:
       - name: Set image output
         id: image_output
         run: |
-          echo "full_image=${{ env.IMAGE_NAME }}:v${{ steps.semver.outputs.new_version }}" >> "$GITHUB_OUTPUT"
+          FULL_IMAGE="${{ env.IMAGE_NAME }}:v${{ steps.semver.outputs.new_version }}"
+          echo "full_image=$FULL_IMAGE" >> "$GITHUB_OUTPUT"
+          echo "=== Backend Image Output ==="
+          echo "Full image: $FULL_IMAGE"
+          echo "============================"
 
   # --------------------------------------------------
   # Build Frontend
@@ -272,7 +276,11 @@ jobs:
       - name: Set image output
         id: image_output
         run: |
-          echo "full_image=${{ env.IMAGE_NAME }}:v${{ steps.semver.outputs.new_version }}" >> "$GITHUB_OUTPUT"
+          FULL_IMAGE="${{ env.IMAGE_NAME }}:v${{ steps.semver.outputs.new_version }}"
+          echo "full_image=$FULL_IMAGE" >> "$GITHUB_OUTPUT"
+          echo "=== Frontend Image Output ==="
+          echo "Full image: $FULL_IMAGE"
+          echo "============================="
 
   # --------------------------------------------------
   # Deploy to Kubernetes
@@ -289,6 +297,18 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
           ref: dev
+
+      - name: Debug - Show received values
+        run: |
+          echo "=== Debug Information ==="
+          echo "Backend result: ${{ needs.build-backend.result }}"
+          echo "Backend version: ${{ needs.build-backend.outputs.version }}"
+          echo "Backend image: ${{ needs.build-backend.outputs.image }}"
+          echo ""
+          echo "Frontend result: ${{ needs.build-frontend.result }}"
+          echo "Frontend version: ${{ needs.build-frontend.outputs.version }}"
+          echo "Frontend image: ${{ needs.build-frontend.outputs.image }}"
+          echo "======================="
 
       - name: Update backend manifest
         if: needs.build-backend.result == 'success'
