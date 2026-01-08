@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: shaikhshaiz/taskmanagement-frontend:v0.0.2
+          image: shaikhshaiz/taskmanagement-frontend:v0.0.3
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80
