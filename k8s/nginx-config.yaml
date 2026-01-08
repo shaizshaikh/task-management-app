@@ -67,15 +67,29 @@ data:
         location /socket.io/ {
             proxy_pass http://backend-service:5000/socket.io/;
             proxy_http_version 1.1;
+            
+            # WebSocket upgrade headers
             proxy_set_header Upgrade $http_upgrade;
             proxy_set_header Connection "Upgrade";
-            proxy_set_header Host $host:$server_port;
+            
+            # Standard proxy headers
+            proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Host $host:$server_port;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_set_header X-Forwarded-Host $host;
+            
+            # WebSocket specific settings
             proxy_cache_bypass $http_upgrade;
+            proxy_buffering off;
             proxy_read_timeout 3600s;
             proxy_send_timeout 3600s;
+            proxy_connect_timeout 10s;
+            
+            # Prevent 400 errors on WebSocket upgrade
+            proxy_set_header Sec-WebSocket-Extensions "";
+            proxy_set_header Sec-WebSocket-Key $http_sec_websocket_key;
+            proxy_set_header Sec-WebSocket-Version $http_sec_websocket_version;
         }
 
         # ----------------------------

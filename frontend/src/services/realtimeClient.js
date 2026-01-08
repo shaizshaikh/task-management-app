@@ -78,11 +78,18 @@ class RealtimeClient {
         console.log('🔌 Connected to WebSocket server');
         this.socket.emit('authenticate', { token });
         this.isConnecting = false;
+        this.connectionAttempts = 0; // Reset connection attempts on successful connection
       });
 
       this.socket.on('connect_error', (error) => {
         console.warn('🔌 WebSocket connection failed (non-critical):', error.message);
         this.isConnecting = false;
+        
+        // Only notify on persistent connection failures, not initial connection attempts
+        if (this.connectionAttempts > 3) {
+          this.notifyConnectionStatus('disconnected');
+        }
+        this.connectionAttempts = (this.connectionAttempts || 0) + 1;
       });
     }
 
@@ -128,16 +135,19 @@ class RealtimeClient {
       this.triggerEvent('connected', data);
     });
 
-    // Connection lost
-    this.socket.on('disconnect', () => {
+    // Connection lost - only notify on unexpected disconnections
+    this.socket.on('disconnect', (reason) => {
       this.isConnected = false;
       console.log('❌ Real-time connection lost');
       
-      // Use accessible notification instead of toast
-      const { announceConnectionStatus } = require('../utils/accessibleNotifications');
-      announceConnectionStatus('disconnected', this.user.global_role);
-
-      this.triggerEvent('disconnected');
+      // Only notify users for unexpected disconnections, not during normal reconnection attempts
+      if (reason !== 'io client disconnect' && reason !== 'transport close') {
+        // Use accessible notification instead of toast
+        const { announceConnectionStatus } = require('../utils/accessibleNotifications');
+        announceConnectionStatus('disconnected', this.user.global_role);
+        
+        this.triggerEvent('disconnected');
+      }
     });
 
     // Health updates
