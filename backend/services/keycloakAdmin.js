@@ -104,7 +104,7 @@ class KeycloakAdminService {
       }).toString();
 
       const response = await this.makeHttpRequest(
-        `${this.baseUrl}/realms/master/protocol/openid-connect/token`,
+        `${this.baseUrl}/auth/realms/master/protocol/openid-connect/token`,
         {
           method: 'POST',
           headers: {
@@ -150,7 +150,7 @@ class KeycloakAdminService {
         config.body = JSON.stringify(data);
       }
 
-      const response = await this.makeHttpRequest(`${this.baseUrl}/admin/realms/${this.realm}${endpoint}`, config);
+      const response = await this.makeHttpRequest(`${this.baseUrl}/auth/admin/realms/${this.realm}${endpoint}`, config);
       
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.data}`);
