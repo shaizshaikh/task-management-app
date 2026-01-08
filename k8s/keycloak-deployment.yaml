@@ -25,6 +25,8 @@ spec:
       labels:
         app: keycloak
     spec:
+      securityContext:
+        fsGroup: 1000
       initContainers:
       - name: copy-realm-config
         image: busybox:latest
@@ -33,14 +35,19 @@ spec:
         - -c
         - |
           mkdir -p /keycloak-data/import
-          cp /host-tmp/realm-export.json /keycloak-data/import/realm-export.json
+          cp /config/realm-export.json /keycloak-data/import/realm-export.json
           chmod 644 /keycloak-data/import/realm-export.json
-          echo "Realm config copied successfully"
+          # Fix permissions for Keycloak user (UID 1000)
+          chown -R 1000:1000 /keycloak-data
+          chmod -R 755 /keycloak-data
+          echo "Realm config copied and permissions fixed successfully"
         volumeMounts:
-        - name: host-tmp
-          mountPath: /host-tmp
+        - name: keycloak-realm-config
+          mountPath: /config
         - name: keycloak-storage
           mountPath: /keycloak-data
+        securityContext:
+          runAsUser: 0
       containers:
       - name: keycloak
         image: quay.io/keycloak/keycloak:23.0.0
@@ -53,6 +60,9 @@ spec:
         - start-dev
         - --import-realm
         - --http-relative-path=/auth
+        securityContext:
+          runAsUser: 1000
+          runAsGroup: 1000
         env:
         - name: KEYCLOAK_ADMIN
           valueFrom:
@@ -74,12 +84,6 @@ spec:
           value: "edge"
         - name: KC_HTTP_ENABLED
           value: "true"
-        - name: KC_HOSTNAME_URL
-          value: "https://shaiztech.work.gd/auth"
-        - name: KC_HOSTNAME_ADMIN_URL
-          value: "https://shaiztech.work.gd/auth"
-        - name: KC_HOSTNAME_PORT
-          value: "443"
         volumeMounts:
         - name: keycloak-storage
           mountPath: /opt/keycloak/data
@@ -101,7 +105,6 @@ spec:
       - name: keycloak-storage
         persistentVolumeClaim:
           claimName: keycloak-pvc
-      - name: host-tmp
-        hostPath:
-          path: /tmp
-          type: Directory
+      - name: keycloak-realm-config
+        configMap:
+          name: keycloak-realm-config

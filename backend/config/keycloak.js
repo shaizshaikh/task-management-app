@@ -24,7 +24,7 @@ const jwtConfig = {
   audience: false, // Disable audience validation
   algorithms: ['RS256'],
   // Use internal URL for JWKS (container-to-container communication)
-  jwksUri: `http://keycloak:8080/auth/realms/${keycloakConfig.realm}/protocol/openid-connect/certs`
+  jwksUri: `${process.env.KEYCLOAK_URL || 'http://keycloak:8080'}/auth/realms/${keycloakConfig.realm}/protocol/openid-connect/certs`
 };
 
 // Role mappings from Keycloak to application
@@ -47,10 +47,10 @@ const config = {
   
   // API endpoints - use internal URLs for backend-to-keycloak communication
   endpoints: {
-    userInfo: `http://keycloak:8080/auth/realms/${keycloakConfig.realm}/protocol/openid-connect/userinfo`,
-    token: `http://keycloak:8080/auth/realms/${keycloakConfig.realm}/protocol/openid-connect/token`,
-    logout: `http://keycloak:8080/auth/realms/${keycloakConfig.realm}/protocol/openid-connect/logout`,
-    adminUsers: `http://keycloak:8080/admin/realms/${keycloakConfig.realm}/users`
+    userInfo: `${process.env.KEYCLOAK_URL || 'http://keycloak:8080'}/auth/realms/${keycloakConfig.realm}/protocol/openid-connect/userinfo`,
+    token: `${process.env.KEYCLOAK_URL || 'http://keycloak:8080'}/auth/realms/${keycloakConfig.realm}/protocol/openid-connect/token`,
+    logout: `${process.env.KEYCLOAK_URL || 'http://keycloak:8080'}/auth/realms/${keycloakConfig.realm}/protocol/openid-connect/logout`,
+    adminUsers: `${process.env.KEYCLOAK_URL || 'http://keycloak:8080'}/admin/realms/${keycloakConfig.realm}/users`
   },
   
   // Token validation settings

@@ -32,12 +32,13 @@ spec:
         - sh
         - -c
         - |
-          cp /host-tmp/init-schema.sql /init-scripts/init-schema.sql
+          echo "Creating init script from ConfigMap..."
+          cp /config/init-schema.sql /init-scripts/init-schema.sql
           chmod 644 /init-scripts/init-schema.sql
           echo "SQL script copied successfully"
         volumeMounts:
-        - name: host-tmp
-          mountPath: /host-tmp
+        - name: database-init-config
+          mountPath: /config
         - name: init-scripts
           mountPath: /init-scripts
       containers:
@@ -97,7 +98,6 @@ spec:
           claimName: mysql-pvc
       - name: init-scripts
         emptyDir: {}
-      - name: host-tmp
-        hostPath:
-          path: /tmp
-          type: Directory
+      - name: database-init-config
+        configMap:
+          name: database-init-script
