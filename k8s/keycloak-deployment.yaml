@@ -84,6 +84,8 @@ spec:
           value: "edge"
         - name: KC_HTTP_ENABLED
           value: "true"
+        - name: KC_HOSTNAME_STRICT_HTTPS
+          value: "false"
         volumeMounts:
         - name: keycloak-storage
           mountPath: /opt/keycloak/data
