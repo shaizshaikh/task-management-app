@@ -50,8 +50,11 @@ class RealtimeClient {
       this.socket = io(socketUrl, {
         path: '/socket.io/',
         transports: ['polling', 'websocket'], // Try polling first, then websocket
-        timeout: 5000,
+        timeout: 10000, // Increased timeout
         forceNew: true,
+        reconnection: true,
+        reconnectionAttempts: 5,
+        reconnectionDelay: 1000,
         auth: {
           token: token
         }
@@ -85,11 +88,14 @@ class RealtimeClient {
         console.warn('🔌 WebSocket connection failed (non-critical):', error.message);
         this.isConnecting = false;
         
-        // Only notify on persistent connection failures, not initial connection attempts
-        if (this.connectionAttempts > 3) {
+        // Initialize connection attempts if not set
+        this.connectionAttempts = (this.connectionAttempts || 0) + 1;
+        
+        // Only notify on persistent connection failures after multiple attempts
+        // and only if we were previously connected (to avoid notifications during initial connection)
+        if (this.connectionAttempts > 5 && this.isConnected) {
           this.notifyConnectionStatus('disconnected');
         }
-        this.connectionAttempts = (this.connectionAttempts || 0) + 1;
       });
     }
 
@@ -114,6 +120,18 @@ class RealtimeClient {
       this.processedEvents.clear();
       
       console.log('🔌 Disconnected from WebSocket server');
+    }
+  }
+
+  /**
+   * Notify connection status change
+   */
+  notifyConnectionStatus(status) {
+    try {
+      const { announceConnectionStatus } = require('../utils/accessibleNotifications');
+      announceConnectionStatus(status, this.user?.global_role);
+    } catch (error) {
+      console.warn('Failed to announce connection status:', error);
     }
   }
 

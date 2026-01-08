@@ -88,6 +88,8 @@ spec:
           value: "true"
         - name: KC_HOSTNAME_STRICT_HTTPS
           value: "false"
+        - name: KC_PROXY_ADDRESS_FORWARDING
+          value: "true"
         volumeMounts:
         - name: keycloak-storage
           mountPath: /opt/keycloak/data
