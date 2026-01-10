@@ -18,6 +18,7 @@ class RealtimeClient {
     this.eventListenersSetup = false;
     this.processedEvents = new Set(); // For event deduplication
     this.eventCleanupInterval = null;
+    this.hasAnnouncedDisconnection = false; // Track disconnection announcements
   }
 
   /**
@@ -36,6 +37,8 @@ class RealtimeClient {
     }
 
     this.isConnecting = true;
+    this.connectionAttempts = 0; // Reset connection attempts
+    this.hasAnnouncedDisconnection = false; // Track if we've announced disconnection
 
     if (this.socket) {
       this.disconnect();
@@ -55,6 +58,7 @@ class RealtimeClient {
         reconnection: true,
         reconnectionAttempts: 5,
         reconnectionDelay: 1000,
+        reconnectionDelayMax: 5000,
         auth: {
           token: token
         }
@@ -82,6 +86,7 @@ class RealtimeClient {
         this.socket.emit('authenticate', { token });
         this.isConnecting = false;
         this.connectionAttempts = 0; // Reset connection attempts on successful connection
+        this.hasAnnouncedDisconnection = false; // Reset disconnection announcement flag
       });
 
       this.socket.on('connect_error', (error) => {
@@ -93,8 +98,32 @@ class RealtimeClient {
         
         // Only notify on persistent connection failures after multiple attempts
         // and only if we were previously connected (to avoid notifications during initial connection)
-        if (this.connectionAttempts > 5 && this.isConnected) {
+        // and we haven't already announced a disconnection
+        if (this.connectionAttempts > 5 && this.isConnected && !this.hasAnnouncedDisconnection) {
           this.notifyConnectionStatus('disconnected');
+          this.hasAnnouncedDisconnection = true;
+        }
+      });
+
+      // Add reconnection event handlers
+      this.socket.on('reconnect', () => {
+        console.log('🔌 Reconnected to WebSocket server');
+        this.hasAnnouncedDisconnection = false; // Reset flag on successful reconnection
+      });
+
+      this.socket.on('reconnect_attempt', () => {
+        console.log('🔌 Attempting to reconnect...');
+      });
+
+      this.socket.on('reconnect_error', (error) => {
+        console.warn('🔌 Reconnection failed:', error.message);
+      });
+
+      this.socket.on('reconnect_failed', () => {
+        console.error('🔌 Failed to reconnect after maximum attempts');
+        if (!this.hasAnnouncedDisconnection) {
+          this.notifyConnectionStatus('disconnected');
+          this.hasAnnouncedDisconnection = true;
         }
       });
     }
@@ -115,6 +144,7 @@ class RealtimeClient {
       this.isConnecting = false;
       this.notificationScope = null;
       this.eventListenersSetup = false;
+      this.hasAnnouncedDisconnection = false; // Reset disconnection flag
       
       // Clear processed events
       this.processedEvents.clear();
@@ -143,6 +173,7 @@ class RealtimeClient {
     this.socket.on('connectionEstablished', (data) => {
       this.isConnected = true;
       this.notificationScope = data.scope;
+      this.hasAnnouncedDisconnection = false; // Reset disconnection flag
       console.log('✅ Real-time notifications active:', data.scope);
       
       // Use accessible notification instead of toast
@@ -156,15 +187,27 @@ class RealtimeClient {
     // Connection lost - only notify on unexpected disconnections
     this.socket.on('disconnect', (reason) => {
       this.isConnected = false;
-      console.log('❌ Real-time connection lost');
+      console.log('❌ Real-time connection lost:', reason);
       
       // Only notify users for unexpected disconnections, not during normal reconnection attempts
-      if (reason !== 'io client disconnect' && reason !== 'transport close') {
-        // Use accessible notification instead of toast
-        const { announceConnectionStatus } = require('../utils/accessibleNotifications');
-        announceConnectionStatus('disconnected', this.user.global_role);
+      // and not if we're already in the process of connecting
+      if (reason !== 'io client disconnect' && 
+          reason !== 'transport close' && 
+          reason !== 'transport error' &&
+          !this.isConnecting &&
+          !this.hasAnnouncedDisconnection) {
         
-        this.triggerEvent('disconnected');
+        // Add a small delay to avoid announcing disconnections during quick reconnections
+        setTimeout(() => {
+          if (!this.isConnected && !this.isConnecting && !this.hasAnnouncedDisconnection) {
+            // Use accessible notification instead of toast
+            const { announceConnectionStatus } = require('../utils/accessibleNotifications');
+            announceConnectionStatus('disconnected', this.user.global_role);
+            this.hasAnnouncedDisconnection = true;
+            
+            this.triggerEvent('disconnected');
+          }
+        }, 2000); // Wait 2 seconds before announcing disconnection
       }
     });
 
