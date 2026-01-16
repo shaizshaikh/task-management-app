@@ -418,39 +418,87 @@ jobs:
 
       - name: Create PR to main
         if: success()
-        uses: peter-evans/create-pull-request@v6
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          base: main
-          branch: auto-deploy-${{ github.run_number }}
-          title: "chore: deploy to production"
-          body: |
-            ## 🚀 Automated Deployment PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Check if a PR from dev to main already exists
+          EXISTING_PR=$(gh pr list --base main --head dev --json number --jq '.[0].number' || echo "")
+          
+          if [[ -n "$EXISTING_PR" ]]; then
+            echo "PR #$EXISTING_PR already exists from dev to main"
+            echo "Updating existing PR..."
             
-            This PR contains the latest deployment changes from the `dev` branch.
+            # Update the PR body
+            gh pr edit "$EXISTING_PR" --body "$(cat <<EOF
+          ## 🚀 Automated Deployment PR (Updated)
+          
+          This PR contains the latest deployment changes from the \`dev\` branch.
+          
+          ### Latest Changes
+          
+          ${{ needs.build-backend.result == 'success' && format('✅ **Backend** deployed: `v{0}`', needs.build-backend.outputs.version) || '' }}
+          ${{ needs.build-frontend.result == 'success' && format('✅ **Frontend** deployed: `v{0}`', needs.build-frontend.outputs.version) || '' }}
+          
+          ### Docker Images
+          
+          ${{ needs.build-backend.result == 'success' && format('- Backend: `{0}/taskmanagement-backend:v{1}`', secrets.DOCKERHUB_USERNAME, needs.build-backend.outputs.version) || '' }}
+          ${{ needs.build-frontend.result == 'success' && format('- Frontend: `{0}/taskmanagement-frontend:v{1}`', secrets.DOCKERHUB_USERNAME, needs.build-frontend.outputs.version) || '' }}
+          
+          ### Review Checklist
+          
+          - [ ] Verify Docker images are built correctly
+          - [ ] Check K8s manifest updates
+          - [ ] Confirm version numbers are correct
+          - [ ] Ready to merge to production
+          
+          ---
+          
+          **Last Updated:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          **Workflow Run:** [#${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          EOF
+          )"
             
-            ### Changes
+            echo "✅ Updated existing PR #$EXISTING_PR"
+            echo "pr_number=$EXISTING_PR" >> "$GITHUB_OUTPUT"
+          else
+            echo "No existing PR found. Creating new PR..."
             
-            ${{ needs.build-backend.result == 'success' && format('✅ **Backend** deployed: `v{0}`', needs.build-backend.outputs.version) || '' }}
-            ${{ needs.build-frontend.result == 'success' && format('✅ **Frontend** deployed: `v{0}`', needs.build-frontend.outputs.version) || '' }}
+            # Create new PR from dev to main
+            PR_URL=$(gh pr create \
+              --base main \
+              --head dev \
+              --title "chore: deploy to production" \
+              --body "$(cat <<EOF
+          ## 🚀 Automated Deployment PR
+          
+          This PR contains the latest deployment changes from the \`dev\` branch.
+          
+          ### Changes
+          
+          ${{ needs.build-backend.result == 'success' && format('✅ **Backend** deployed: `v{0}`', needs.build-backend.outputs.version) || '' }}
+          ${{ needs.build-frontend.result == 'success' && format('✅ **Frontend** deployed: `v{0}`', needs.build-frontend.outputs.version) || '' }}
+          
+          ### Docker Images
+          
+          ${{ needs.build-backend.result == 'success' && format('- Backend: `{0}/taskmanagement-backend:v{1}`', secrets.DOCKERHUB_USERNAME, needs.build-backend.outputs.version) || '' }}
+          ${{ needs.build-frontend.result == 'success' && format('- Frontend: `{0}/taskmanagement-frontend:v{1}`', secrets.DOCKERHUB_USERNAME, needs.build-frontend.outputs.version) || '' }}
+          
+          ### Review Checklist
+          
+          - [ ] Verify Docker images are built correctly
+          - [ ] Check K8s manifest updates
+          - [ ] Confirm version numbers are correct
+          - [ ] Ready to merge to production
+          
+          ---
+          
+          **Created:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          **Workflow Run:** [#${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          EOF
+          )")
             
-            ### Docker Images
-            
-            ${{ needs.build-backend.result == 'success' && format('- Backend: `{0}/taskmanagement-backend:v{1}`', secrets.DOCKERHUB_USERNAME, needs.build-backend.outputs.version) || '' }}
-            ${{ needs.build-frontend.result == 'success' && format('- Frontend: `{0}/taskmanagement-frontend:v{1}`', secrets.DOCKERHUB_USERNAME, needs.build-frontend.outputs.version) || '' }}
-            
-            ### Review Checklist
-            
-            - [ ] Verify Docker images are built correctly
-            - [ ] Check K8s manifest updates
-            - [ ] Confirm version numbers are correct
-            - [ ] Ready to merge to production
-            
-            ---
-            
-            **Workflow Run:** [#${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
-          commit-message: "chore(k8s): sync deployment manifests from dev"
-          delete-branch: true
+            echo "✅ Created PR: $PR_URL"
+          fi
 
       - name: Deployment summary
         run: |
@@ -472,5 +520,6 @@ jobs:
             echo "✅ All changes committed to \`dev\` branch"
             echo ""
             echo "### 🔀 Pull Request"
-            echo "A PR to \`main\` has been created automatically for production deployment."
+            echo "A PR from \`dev\` to \`main\` has been created/updated for production deployment."
+            echo "View PRs: [${{ github.server_url }}/${{ github.repository }}/pulls](https://github.com/${{ github.repository }}/pulls)"
           } >> "$GITHUB_STEP_SUMMARY"
