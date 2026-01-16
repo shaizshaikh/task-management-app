@@ -11,7 +11,7 @@ on:
     paths:
       - 'backend/**'
       - 'frontend/**'
-      - '.github/workflows/build-and-deploy.yml'
+      # Removed workflow file from paths - it will update but won't trigger builds
 
   workflow_dispatch:
     inputs:
@@ -55,15 +55,14 @@ jobs:
     runs-on: ubuntu-latest
     needs: detect-changes
     if: |
-      needs.detect-changes.outputs.backend == 'true' || 
-      github.event.inputs.component == 'backend' || 
-      github.event.inputs.component == 'both'
+      (github.event_name == 'push' && needs.detect-changes.outputs.backend == 'true') ||
+      (github.event_name == 'workflow_dispatch' && (github.event.inputs.component == 'backend' || github.event.inputs.component == 'both'))
     outputs:
       version: ${{ steps.semver.outputs.new_version }}
-      image_tag: ${{ steps.semver.outputs.new_version }}
-      docker_repo: ${{ steps.repo_info.outputs.docker_repo }}
+      image: ${{ steps.image_output.outputs.full_image }}
     
     env:
+      IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/taskmanagement-backend
       DOCKER_NAMESPACE: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKER_REPO: taskmanagement-backend
       DOCKERFILE_PATH: ./backend/Dockerfile
@@ -74,11 +73,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      
-      - name: Set repository info
-        id: repo_info
-        run: |
-          echo "docker_repo=taskmanagement-backend" >> "$GITHUB_OUTPUT"
 
       - name: Get latest Docker Hub version
         id: dockerhub_version
@@ -156,10 +150,19 @@ jobs:
           file: ${{ env.DOCKERFILE_PATH }}
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_REPO }}:v${{ steps.semver.outputs.new_version }}
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_REPO }}:latest
-          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_REPO }}:latest
+            ${{ env.IMAGE_NAME }}:v${{ steps.semver.outputs.new_version }}
+            ${{ env.IMAGE_NAME }}:latest
+          cache-from: type=registry,ref=${{ env.IMAGE_NAME }}:latest
           cache-to: type=inline
+      
+      - name: Set image output
+        id: image_output
+        run: |
+          FULL_IMAGE="${{ env.IMAGE_NAME }}:v${{ steps.semver.outputs.new_version }}"
+          echo "full_image=$FULL_IMAGE" >> "$GITHUB_OUTPUT"
+          echo "=== Backend Image Output ==="
+          echo "Full image: $FULL_IMAGE"
+          echo "============================"
 
   # --------------------------------------------------
   # Build Frontend
@@ -168,15 +171,14 @@ jobs:
     runs-on: ubuntu-latest
     needs: detect-changes
     if: |
-      needs.detect-changes.outputs.frontend == 'true' || 
-      github.event.inputs.component == 'frontend' || 
-      github.event.inputs.component == 'both'
+      (github.event_name == 'push' && needs.detect-changes.outputs.frontend == 'true') ||
+      (github.event_name == 'workflow_dispatch' && (github.event.inputs.component == 'frontend' || github.event.inputs.component == 'both'))
     outputs:
       version: ${{ steps.semver.outputs.new_version }}
-      image_tag: ${{ steps.semver.outputs.new_version }}
-      docker_repo: ${{ steps.repo_info.outputs.docker_repo }}
+      image: ${{ steps.image_output.outputs.full_image }}
     
     env:
+      IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/taskmanagement-frontend
       DOCKER_NAMESPACE: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKER_REPO: taskmanagement-frontend
       DOCKERFILE_PATH: ./frontend/Dockerfile
@@ -187,11 +189,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      
-      - name: Set repository info
-        id: repo_info
-        run: |
-          echo "docker_repo=taskmanagement-frontend" >> "$GITHUB_OUTPUT"
 
       - name: Get latest Docker Hub version
         id: dockerhub_version
@@ -269,10 +266,19 @@ jobs:
           file: ${{ env.DOCKERFILE_PATH }}
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_REPO }}:v${{ steps.semver.outputs.new_version }}
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_REPO }}:latest
-          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_REPO }}:latest
+            ${{ env.IMAGE_NAME }}:v${{ steps.semver.outputs.new_version }}
+            ${{ env.IMAGE_NAME }}:latest
+          cache-from: type=registry,ref=${{ env.IMAGE_NAME }}:latest
           cache-to: type=inline
+      
+      - name: Set image output
+        id: image_output
+        run: |
+          FULL_IMAGE="${{ env.IMAGE_NAME }}:v${{ steps.semver.outputs.new_version }}"
+          echo "full_image=$FULL_IMAGE" >> "$GITHUB_OUTPUT"
+          echo "=== Frontend Image Output ==="
+          echo "Full image: $FULL_IMAGE"
+          echo "============================="
 
   # --------------------------------------------------
   # Deploy to Kubernetes
@@ -295,46 +301,57 @@ jobs:
           echo "=== Debug Information ==="
           echo "Backend result: ${{ needs.build-backend.result }}"
           echo "Backend version: ${{ needs.build-backend.outputs.version }}"
-          echo "Backend image_tag: ${{ needs.build-backend.outputs.image_tag }}"
-          echo "Backend docker_repo: ${{ needs.build-backend.outputs.docker_repo }}"
+          echo "Backend image: ${{ needs.build-backend.outputs.image }}"
           echo ""
           echo "Frontend result: ${{ needs.build-frontend.result }}"
           echo "Frontend version: ${{ needs.build-frontend.outputs.version }}"
-          echo "Frontend image_tag: ${{ needs.build-frontend.outputs.image_tag }}"
-          echo "Frontend docker_repo: ${{ needs.build-frontend.outputs.docker_repo }}"
+          echo "Frontend image: ${{ needs.build-frontend.outputs.image }}"
           echo "======================="
+
+      - name: Construct image names (fallback)
+        id: images
+        run: |
+          # Backend
+          if [[ "${{ needs.build-backend.result }}" == "success" ]]; then
+            BACKEND_IMAGE="${{ needs.build-backend.outputs.image }}"
+            if [[ -z "$BACKEND_IMAGE" ]]; then
+              # Fallback: construct from Docker Hub username and version
+              BACKEND_IMAGE="${{ secrets.DOCKERHUB_USERNAME }}/taskmanagement-backend:v${{ needs.build-backend.outputs.version }}"
+              echo "⚠️  Backend image was empty, constructed: $BACKEND_IMAGE"
+            fi
+            echo "backend_image=$BACKEND_IMAGE" >> "$GITHUB_OUTPUT"
+            echo "Backend image: $BACKEND_IMAGE"
+          fi
+          
+          # Frontend
+          if [[ "${{ needs.build-frontend.result }}" == "success" ]]; then
+            FRONTEND_IMAGE="${{ needs.build-frontend.outputs.image }}"
+            if [[ -z "$FRONTEND_IMAGE" ]]; then
+              # Fallback: construct from Docker Hub username and version
+              FRONTEND_IMAGE="${{ secrets.DOCKERHUB_USERNAME }}/taskmanagement-frontend:v${{ needs.build-frontend.outputs.version }}"
+              echo "⚠️  Frontend image was empty, constructed: $FRONTEND_IMAGE"
+            fi
+            echo "frontend_image=$FRONTEND_IMAGE" >> "$GITHUB_OUTPUT"
+            echo "Frontend image: $FRONTEND_IMAGE"
+          fi
 
       - name: Update backend manifest
         if: needs.build-backend.result == 'success'
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
         run: |
-          REPO="${{ needs.build-backend.outputs.docker_repo }}"
-          TAG="v${{ needs.build-backend.outputs.image_tag }}"
-          FULL_IMAGE="${DOCKER_USERNAME}/${REPO}:${TAG}"
-          
-          echo "Updating backend manifest with: $FULL_IMAGE"
-          sed -i -E "s|(^\s*image:\s*).+|\1${FULL_IMAGE}|" k8s/backend.yaml
-          
-          echo "=== Backend manifest after update ==="
+          IMAGE="${{ steps.images.outputs.backend_image }}"
+          echo "Updating backend manifest with: $IMAGE"
+          sed -i -E "s|(^\s*image:\s*).+|\1${IMAGE}|" k8s/backend.yaml
+          echo "Updated backend.yaml:"
           grep "image:" k8s/backend.yaml
-          echo "===================================="
 
       - name: Update frontend manifest
         if: needs.build-frontend.result == 'success'
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
         run: |
-          REPO="${{ needs.build-frontend.outputs.docker_repo }}"
-          TAG="v${{ needs.build-frontend.outputs.image_tag }}"
-          FULL_IMAGE="${DOCKER_USERNAME}/${REPO}:${TAG}"
-          
-          echo "Updating frontend manifest with: $FULL_IMAGE"
-          sed -i -E "s|(^\s*image:\s*).+|\1${FULL_IMAGE}|" k8s/frontend.yaml
-          
-          echo "=== Frontend manifest after update ==="
+          IMAGE="${{ steps.images.outputs.frontend_image }}"
+          echo "Updating frontend manifest with: $IMAGE"
+          sed -i -E "s|(^\s*image:\s*).+|\1${IMAGE}|" k8s/frontend.yaml
+          echo "Updated frontend.yaml:"
           grep "image:" k8s/frontend.yaml
-          echo "====================================="
 
       - name: Validate manifests
         run: |
@@ -380,9 +397,43 @@ jobs:
             echo "✅ Changes committed and pushed"
           fi
 
+      - name: Create PR to main
+        if: success()
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: main
+          branch: auto-deploy-${{ github.run_number }}
+          title: "chore: deploy to production"
+          body: |
+            ## 🚀 Automated Deployment PR
+            
+            This PR contains the latest deployment changes from the `dev` branch.
+            
+            ### Changes
+            
+            ${{ needs.build-backend.result == 'success' && format('✅ **Backend** deployed: `v{0}`', needs.build-backend.outputs.version) || '' }}
+            ${{ needs.build-frontend.result == 'success' && format('✅ **Frontend** deployed: `v{0}`', needs.build-frontend.outputs.version) || '' }}
+            
+            ### Docker Images
+            
+            ${{ needs.build-backend.result == 'success' && format('- Backend: `{0}/taskmanagement-backend:v{1}`', secrets.DOCKERHUB_USERNAME, needs.build-backend.outputs.version) || '' }}
+            ${{ needs.build-frontend.result == 'success' && format('- Frontend: `{0}/taskmanagement-frontend:v{1}`', secrets.DOCKERHUB_USERNAME, needs.build-frontend.outputs.version) || '' }}
+            
+            ### Review Checklist
+            
+            - [ ] Verify Docker images are built correctly
+            - [ ] Check K8s manifest updates
+            - [ ] Confirm version numbers are correct
+            - [ ] Ready to merge to production
+            
+            ---
+            
+            **Workflow Run:** [#${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          commit-message: "chore(k8s): sync deployment manifests from dev"
+          delete-branch: true
+
       - name: Deployment summary
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
         run: |
           {
             echo "## 🚀 Deployment Complete"
@@ -391,15 +442,16 @@ jobs:
             echo "|-----------|---------|-------|"
             
             if [[ "${{ needs.build-backend.result }}" == "success" ]]; then
-              IMAGE="${DOCKER_USERNAME}/${{ needs.build-backend.outputs.docker_repo }}:v${{ needs.build-backend.outputs.image_tag }}"
-              echo "| Backend | v${{ needs.build-backend.outputs.version }} | \`${IMAGE}\` |"
+              echo "| Backend | v${{ needs.build-backend.outputs.version }} | \`${{ steps.images.outputs.backend_image }}\` |"
             fi
             
             if [[ "${{ needs.build-frontend.result }}" == "success" ]]; then
-              IMAGE="${DOCKER_USERNAME}/${{ needs.build-frontend.outputs.docker_repo }}:v${{ needs.build-frontend.outputs.image_tag }}"
-              echo "| Frontend | v${{ needs.build-frontend.outputs.version }} | \`${IMAGE}\` |"
+              echo "| Frontend | v${{ needs.build-frontend.outputs.version }} | \`${{ steps.images.outputs.frontend_image }}\` |"
             fi
             
             echo ""
             echo "✅ All changes committed to \`dev\` branch"
+            echo ""
+            echo "### 🔀 Pull Request"
+            echo "A PR to \`main\` has been created automatically for production deployment."
           } >> "$GITHUB_STEP_SUMMARY"
