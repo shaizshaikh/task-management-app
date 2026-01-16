@@ -1,9 +1,3 @@
-/**
- * Login Page Component - Modern Dark Theme
- * Handles user authentication and login UI
- * WCAG 2.2 Compliant with Consistent Design System
- */
-
 import React, { useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -38,7 +32,7 @@ const LoginPage = () => {
         {/* Header Section */}
         <div className="login-header">
           <div className="app-logo">📋</div>
-          <h2 className="app-title">Task Management</h2>
+          <h2 className="app-title">Task ManagementV1</h2>
           <p className="app-description">
             Secure RBAC-enabled task management system
           </p>
