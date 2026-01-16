@@ -21,11 +21,11 @@ data:
         location /api {
             proxy_pass http://backend-service:5000;
             proxy_http_version 1.1;
-            proxy_set_header Host $host:$server_port;
+            proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Proto $scheme;
-            proxy_set_header X-Forwarded-Host $host:$server_port;
+            proxy_set_header X-Forwarded-Host $host;
             proxy_connect_timeout 10s;
             proxy_send_timeout 30s;
             proxy_read_timeout 30s;
@@ -62,20 +62,28 @@ data:
         }
 
         # ----------------------------
-        # WebSocket (Socket.IO) Proxy
+        # WebSocket (Socket.IO) Proxy - Optimized
         # ----------------------------
         location /socket.io/ {
             proxy_pass http://backend-service:5000/socket.io/;
             proxy_http_version 1.1;
             proxy_set_header Upgrade $http_upgrade;
             proxy_set_header Connection "Upgrade";
-            proxy_set_header Host $host:$server_port;
+            proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Host $host:$server_port;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_set_header X-Forwarded-Host $host;
             proxy_cache_bypass $http_upgrade;
+            
+            # Optimized timeouts for WebSocket stability
             proxy_read_timeout 3600s;
             proxy_send_timeout 3600s;
+            proxy_connect_timeout 5s;
+            
+            # WebSocket specific optimizations
+            proxy_buffering off;
+            proxy_request_buffering off;
         }
 
         # ----------------------------
@@ -84,11 +92,11 @@ data:
         location / {
             proxy_pass http://frontend-service:80/;
             proxy_http_version 1.1;
-            proxy_set_header Host $host:$server_port;
+            proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Proto $scheme;
-            proxy_set_header X-Forwarded-Host $host:$server_port;
+            proxy_set_header X-Forwarded-Host $host;
             
             # Timeout settings
             proxy_connect_timeout 10s;

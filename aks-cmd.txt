@@ -1,11 +1,11 @@
 ##command for creating the cluster in aks
-az aks create --resource-group poona_student --name poona-aks --location centralindia --node-count 2 --enable-managed-identity --generate-ssh-keys
+az aks create --resource-group flameling --name flame-aks --location centralindia --node-count 1 --enable-managed-identity --generate-ssh-keys
 
 ## command for merging the context with aks  locally
-az aks get-credentials --resource-group poona_student --name poona-aks
+az aks get-credentials --resource-group flameling --name flame-aks
 
 ##checking the api endpoint for aks
 kubectl cluster-info
 
 ## command for deleting the cluster
-az aks delete --resource-group poona_student --name poona-aks --yes
+az aks delete --resource-group flameling --name flame-aks --yes

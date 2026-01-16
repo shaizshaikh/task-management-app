@@ -1,8 +1,0 @@
-##command for installing the ingress controler
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.2/deploy/static/provider/cloud/deploy.yaml
-
-##command for installing the ssl cert
-kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.13.2/cert-manager.yaml
-
-##curl command for setting up the domain binding with load balancer.
-curl "https://api.dnsexit.com/dns/ud/?apikey=vK6kWLHK98JJ84t4IBgWG3rYkw6B8S&host=shaiztech.work.gd&myip=135.235.227.205"
