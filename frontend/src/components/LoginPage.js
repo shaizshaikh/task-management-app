@@ -32,7 +32,7 @@ const LoginPage = () => {
         {/* Header Section */}
         <div className="login-header">
           <div className="app-logo">📋</div>
-          <h2 className="app-title">Task ManagementV3</h2>
+          <h2 className="app-title">Task Management</h2>
           <p className="app-description">
             Secure RBAC-enabled task management system
           </p>
