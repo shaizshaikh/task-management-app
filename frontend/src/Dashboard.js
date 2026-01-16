@@ -1,9 +1,3 @@
-/**
- * Dashboard Component - Modern Dark Theme
- * Project overview with statistics and charts
- * WCAG 2.2 Compliant with Consistent Design System
- */
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
