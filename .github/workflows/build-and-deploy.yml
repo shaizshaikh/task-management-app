@@ -38,10 +38,13 @@ jobs:
       frontend: ${{ steps.filter.outputs.frontend }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Need history for comparison
       
       - uses: dorny/paths-filter@v3
         id: filter
         with:
+          base: ${{ github.event.before }}  # Compare against previous commit
           filters: |
             backend:
               - 'backend/**'

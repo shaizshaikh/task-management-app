@@ -1,0 +1,931 @@
+detect-changes	Set up job	﻿2026-01-16T15:30:31.8412957Z Current runner version: '2.331.0'
+detect-changes	Set up job	2026-01-16T15:30:31.8448556Z ##[group]Runner Image Provisioner
+detect-changes	Set up job	2026-01-16T15:30:31.8449830Z Hosted Compute Agent
+detect-changes	Set up job	2026-01-16T15:30:31.8450708Z Version: 20251211.462
+detect-changes	Set up job	2026-01-16T15:30:31.8451693Z Commit: 6cbad8c2bb55d58165063d031ccabf57e2d2db61
+detect-changes	Set up job	2026-01-16T15:30:31.8452883Z Build Date: 2025-12-11T16:28:49Z
+detect-changes	Set up job	2026-01-16T15:30:31.8453886Z Worker ID: {b5182910-2083-453f-ae09-a89180994054}
+detect-changes	Set up job	2026-01-16T15:30:31.8455192Z ##[endgroup]
+detect-changes	Set up job	2026-01-16T15:30:31.8456073Z ##[group]Operating System
+detect-changes	Set up job	2026-01-16T15:30:31.8456923Z Ubuntu
+detect-changes	Set up job	2026-01-16T15:30:31.8458082Z 24.04.3
+detect-changes	Set up job	2026-01-16T15:30:31.8458822Z LTS
+detect-changes	Set up job	2026-01-16T15:30:31.8459549Z ##[endgroup]
+detect-changes	Set up job	2026-01-16T15:30:31.8460389Z ##[group]Runner Image
+detect-changes	Set up job	2026-01-16T15:30:31.8461462Z Image: ubuntu-24.04
+detect-changes	Set up job	2026-01-16T15:30:31.8462289Z Version: 20260111.209.1
+detect-changes	Set up job	2026-01-16T15:30:31.8464042Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260111.209/images/ubuntu/Ubuntu2404-Readme.md
+detect-changes	Set up job	2026-01-16T15:30:31.8466730Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260111.209
+detect-changes	Set up job	2026-01-16T15:30:31.8469097Z ##[endgroup]
+detect-changes	Set up job	2026-01-16T15:30:31.8471025Z ##[group]GITHUB_TOKEN Permissions
+detect-changes	Set up job	2026-01-16T15:30:31.8473521Z Contents: write
+detect-changes	Set up job	2026-01-16T15:30:31.8474488Z Metadata: read
+detect-changes	Set up job	2026-01-16T15:30:31.8475285Z PullRequests: write
+detect-changes	Set up job	2026-01-16T15:30:31.8476109Z ##[endgroup]
+detect-changes	Set up job	2026-01-16T15:30:31.8479559Z Secret source: Actions
+detect-changes	Set up job	2026-01-16T15:30:31.8480578Z Prepare workflow directory
+detect-changes	Set up job	2026-01-16T15:30:31.9167263Z Prepare all required actions
+detect-changes	Set up job	2026-01-16T15:30:31.9224466Z Getting action download info
+detect-changes	Set up job	2026-01-16T15:30:32.4796868Z Download action repository 'actions/checkout@v4' (SHA:34e114876b0b11c390a56381ad16ebd13914f8d5)
+detect-changes	Set up job	2026-01-16T15:30:32.6016038Z Download action repository 'dorny/paths-filter@v3' (SHA:de90cc6fb38fc0963ad72b210f1f284cd68cea36)
+detect-changes	Set up job	2026-01-16T15:30:33.2166285Z Complete job name: detect-changes
+detect-changes	Run actions/checkout@v4	﻿2026-01-16T15:30:33.2857312Z ##[group]Run actions/checkout@v4
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.2858478Z with:
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.2859136Z   repository: shaizshaikh/task-management-app
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.2860170Z   token: ***
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.2860618Z   ssh-strict: true
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.2861052Z   ssh-user: git
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.2861505Z   persist-credentials: true
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.2861994Z   clean: true
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.2862438Z   sparse-checkout-cone-mode: true
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.2862948Z   fetch-depth: 1
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.2863388Z   fetch-tags: false
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.2863828Z   show-progress: true
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.2864328Z   lfs: false
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.2864736Z   submodules: false
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.2865173Z   set-safe-directory: true
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.2865934Z ##[endgroup]
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.4034626Z Syncing repository: shaizshaikh/task-management-app
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.4038097Z ##[group]Getting Git version info
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.4039755Z Working directory is '/home/runner/work/task-management-app/task-management-app'
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.4042796Z [command]/usr/bin/git version
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.4098231Z git version 2.52.0
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.4129859Z ##[endgroup]
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.4145873Z Temporarily overriding HOME='/home/runner/work/_temp/a588801a-3e78-47ea-a1f9-e28d6986907d' before making global git config changes
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.4150452Z Adding repository directory to the temporary git global config as a safe directory
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.4165257Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/task-management-app/task-management-app
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.4208404Z Deleting the contents of '/home/runner/work/task-management-app/task-management-app'
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.4213214Z ##[group]Initializing the repository
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.4219300Z [command]/usr/bin/git init /home/runner/work/task-management-app/task-management-app
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.4316143Z hint: Using 'master' as the name for the initial branch. This default branch name
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.4319157Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.4322416Z hint: to use in all of your new repositories, which will suppress this warning,
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.4324181Z hint: call:
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.4324971Z hint:
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.4326009Z hint: 	git config --global init.defaultBranch <name>
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.4327238Z hint:
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.4328636Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.4331262Z hint: 'development'. The just-created branch can be renamed via this command:
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.4332713Z hint:
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.4333459Z hint: 	git branch -m <name>
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.4334358Z hint:
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.4335641Z hint: Disable this message with "git config set advice.defaultBranchName false"
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.4338162Z Initialized empty Git repository in /home/runner/work/task-management-app/task-management-app/.git/
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.4342555Z [command]/usr/bin/git remote add origin https://github.com/shaizshaikh/task-management-app
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.4379219Z ##[endgroup]
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.4383640Z ##[group]Disabling automatic garbage collection
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.4384946Z [command]/usr/bin/git config --local gc.auto 0
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.4418114Z ##[endgroup]
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.4421025Z ##[group]Setting up auth
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.4425344Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.4460974Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.4804143Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.4839451Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.5075970Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.5110624Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.5366362Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.5405087Z ##[endgroup]
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.5408338Z ##[group]Fetching the repository
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:33.5416623Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +24cfd441ee2aa89630898cc851364385db586786:refs/remotes/origin/dev
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:34.0653429Z From https://github.com/shaizshaikh/task-management-app
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:34.0656137Z  * [new ref]         24cfd441ee2aa89630898cc851364385db586786 -> origin/dev
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:34.0660291Z ##[endgroup]
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:34.0662033Z ##[group]Determining the checkout info
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:34.0836257Z ##[endgroup]
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:34.0837718Z [command]/usr/bin/git sparse-checkout disable
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:34.0841416Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:34.0845624Z ##[group]Checking out the ref
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:34.0847940Z [command]/usr/bin/git checkout --progress --force -B dev refs/remotes/origin/dev
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:34.0946381Z Switched to a new branch 'dev'
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:34.0954680Z branch 'dev' set up to track 'origin/dev'.
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:34.0963139Z ##[endgroup]
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:34.1002500Z [command]/usr/bin/git log -1 --format=%H
+detect-changes	Run actions/checkout@v4	2026-01-16T15:30:34.1025345Z 24cfd441ee2aa89630898cc851364385db586786
+detect-changes	Run dorny/paths-filter@v3	﻿2026-01-16T15:30:34.1310295Z ##[group]Run dorny/paths-filter@v3
+detect-changes	Run dorny/paths-filter@v3	2026-01-16T15:30:34.1311457Z with:
+detect-changes	Run dorny/paths-filter@v3	2026-01-16T15:30:34.1312586Z   filters: backend:
+detect-changes	Run dorny/paths-filter@v3	  - 'backend/**'
+detect-changes	Run dorny/paths-filter@v3	frontend:
+detect-changes	Run dorny/paths-filter@v3	  - 'frontend/**'
+detect-changes	Run dorny/paths-filter@v3	
+detect-changes	Run dorny/paths-filter@v3	2026-01-16T15:30:34.1314357Z   token: ***
+detect-changes	Run dorny/paths-filter@v3	2026-01-16T15:30:34.1315164Z   list-files: none
+detect-changes	Run dorny/paths-filter@v3	2026-01-16T15:30:34.1316059Z   initial-fetch-depth: 100
+detect-changes	Run dorny/paths-filter@v3	2026-01-16T15:30:34.1317015Z ##[endgroup]
+detect-changes	Run dorny/paths-filter@v3	2026-01-16T15:30:34.2288531Z ##[group]Get current git ref
+detect-changes	Run dorny/paths-filter@v3	2026-01-16T15:30:34.2319909Z [command]/usr/bin/git branch --show-current
+detect-changes	Run dorny/paths-filter@v3	2026-01-16T15:30:34.2364330Z dev
+detect-changes	Run dorny/paths-filter@v3	2026-01-16T15:30:34.2390055Z ##[endgroup]
+detect-changes	Run dorny/paths-filter@v3	2026-01-16T15:30:34.2393713Z Changes will be detected between main and dev
+detect-changes	Run dorny/paths-filter@v3	2026-01-16T15:30:34.2396954Z ##[group]Searching for merge-base main...dev
+detect-changes	Run dorny/paths-filter@v3	2026-01-16T15:30:34.2410524Z [command]/usr/bin/git show-ref main
+detect-changes	Run dorny/paths-filter@v3	2026-01-16T15:30:34.2458794Z [command]/usr/bin/git show-ref dev
+detect-changes	Run dorny/paths-filter@v3	2026-01-16T15:30:34.2484557Z 24cfd441ee2aa89630898cc851364385db586786 refs/heads/dev
+detect-changes	Run dorny/paths-filter@v3	2026-01-16T15:30:34.2488932Z 24cfd441ee2aa89630898cc851364385db586786 refs/remotes/origin/dev
+detect-changes	Run dorny/paths-filter@v3	2026-01-16T15:30:34.2509671Z [command]/usr/bin/git fetch --no-tags --depth=100 origin main dev
+detect-changes	Run dorny/paths-filter@v3	2026-01-16T15:30:34.9922460Z From https://github.com/shaizshaikh/task-management-app
+detect-changes	Run dorny/paths-filter@v3	2026-01-16T15:30:34.9926351Z  * branch            main       -> FETCH_HEAD
+detect-changes	Run dorny/paths-filter@v3	2026-01-16T15:30:34.9926974Z  * branch            dev        -> FETCH_HEAD
+detect-changes	Run dorny/paths-filter@v3	2026-01-16T15:30:34.9927734Z  * [new branch]      main       -> origin/main
+detect-changes	Run dorny/paths-filter@v3	2026-01-16T15:30:34.9972221Z [command]/usr/bin/git show-ref main
+detect-changes	Run dorny/paths-filter@v3	2026-01-16T15:30:35.0001055Z 79d2c29662e37c5e47eccd57bb9b02c352d43662 refs/remotes/origin/main
+detect-changes	Run dorny/paths-filter@v3	2026-01-16T15:30:35.0033706Z [command]/usr/bin/git rev-list --count --all
+detect-changes	Run dorny/paths-filter@v3	2026-01-16T15:30:35.0063373Z 55
+detect-changes	Run dorny/paths-filter@v3	2026-01-16T15:30:35.0083201Z [command]/usr/bin/git merge-base refs/remotes/origin/main refs/remotes/origin/dev
+detect-changes	Run dorny/paths-filter@v3	2026-01-16T15:30:35.0220922Z 79d2c29662e37c5e47eccd57bb9b02c352d43662
+detect-changes	Run dorny/paths-filter@v3	2026-01-16T15:30:35.0228489Z ##[endgroup]
+detect-changes	Run dorny/paths-filter@v3	2026-01-16T15:30:35.0230169Z ##[group]Change detection refs/remotes/origin/main...refs/remotes/origin/dev
+detect-changes	Run dorny/paths-filter@v3	2026-01-16T15:30:35.0245605Z [command]/usr/bin/git diff --no-renames --name-status -z refs/remotes/origin/main...refs/remotes/origin/dev
+detect-changes	Run dorny/paths-filter@v3	2026-01-16T15:30:35.0299502Z M .env.example.example A .github/workflows/build-and-deploy.yml A aks-cmd.txt A backend/New folder/hello3.py M backend/config/keycloak.js M backend/middleware/auth.js M backend/services/keycloakAdmin.js M docker-compose.yml M frontend/src/Dashboard.js M frontend/src/components/LoginPage.js M frontend/src/config/keycloak.js M frontend/src/services/realtimeClient.js A k8s/argocd-app.yaml A k8s/backend-service.yaml A k8s/backend.yaml A k8s/configmap.yaml A k8s/frontend-service.yaml A k8s/frontend.yaml A k8s/ingress.yaml A k8s/keycloak-deployment.yaml A k8s/keycloak-service.yaml A k8s/mysql-deployment.yaml A k8s/mysql-service.yaml A k8s/namespace.yaml A k8s/nginx-config.yaml A k8s/nginx-deployment.yaml A k8s/nginx-service.yaml A k8s/secrets.yaml A k8s/test.txt M nginx/myapp.conf A nginx/production.conf M realm-export.json 
+detect-changes	Run dorny/paths-filter@v3	2026-01-16T15:30:35.0306231Z ##[endgroup]
+detect-changes	Run dorny/paths-filter@v3	2026-01-16T15:30:35.0311335Z Detected 32 changed files
+detect-changes	Run dorny/paths-filter@v3	2026-01-16T15:30:35.0311788Z Results:
+detect-changes	Run dorny/paths-filter@v3	2026-01-16T15:30:35.0318042Z ##[group]Filter backend = true
+detect-changes	Run dorny/paths-filter@v3	2026-01-16T15:30:35.0318494Z Matching files:
+detect-changes	Run dorny/paths-filter@v3	2026-01-16T15:30:35.0318843Z backend/New folder/hello3.py [added]
+detect-changes	Run dorny/paths-filter@v3	2026-01-16T15:30:35.0319326Z backend/config/keycloak.js [modified]
+detect-changes	Run dorny/paths-filter@v3	2026-01-16T15:30:35.0319803Z backend/middleware/auth.js [modified]
+detect-changes	Run dorny/paths-filter@v3	2026-01-16T15:30:35.0320310Z backend/services/keycloakAdmin.js [modified]
+detect-changes	Run dorny/paths-filter@v3	2026-01-16T15:30:35.0321514Z ##[endgroup]
+detect-changes	Run dorny/paths-filter@v3	2026-01-16T15:30:35.0322725Z ##[group]Filter frontend = true
+detect-changes	Run dorny/paths-filter@v3	2026-01-16T15:30:35.0324093Z Matching files:
+detect-changes	Run dorny/paths-filter@v3	2026-01-16T15:30:35.0324477Z frontend/src/Dashboard.js [modified]
+detect-changes	Run dorny/paths-filter@v3	2026-01-16T15:30:35.0325000Z frontend/src/components/LoginPage.js [modified]
+detect-changes	Run dorny/paths-filter@v3	2026-01-16T15:30:35.0325537Z frontend/src/config/keycloak.js [modified]
+detect-changes	Run dorny/paths-filter@v3	2026-01-16T15:30:35.0326145Z frontend/src/services/realtimeClient.js [modified]
+detect-changes	Run dorny/paths-filter@v3	2026-01-16T15:30:35.0326981Z ##[endgroup]
+detect-changes	Run dorny/paths-filter@v3	2026-01-16T15:30:35.0327346Z Changes output set to ["backend","frontend"]
+detect-changes	Debug - Show detected changes	﻿2026-01-16T15:30:35.0475664Z ##[group]Run echo "=== Path Filter Results ==="
+detect-changes	Debug - Show detected changes	2026-01-16T15:30:35.0476107Z [36;1mecho "=== Path Filter Results ==="[0m
+detect-changes	Debug - Show detected changes	2026-01-16T15:30:35.0476422Z [36;1mecho "Backend changed: true"[0m
+detect-changes	Debug - Show detected changes	2026-01-16T15:30:35.0476705Z [36;1mecho "Frontend changed: true"[0m
+detect-changes	Debug - Show detected changes	2026-01-16T15:30:35.0476978Z [36;1mecho "=========================="[0m
+detect-changes	Debug - Show detected changes	2026-01-16T15:30:35.0513910Z shell: /usr/bin/bash -e {0}
+detect-changes	Debug - Show detected changes	2026-01-16T15:30:35.0514411Z ##[endgroup]
+detect-changes	Debug - Show detected changes	2026-01-16T15:30:35.0590969Z === Path Filter Results ===
+detect-changes	Debug - Show detected changes	2026-01-16T15:30:35.0593704Z Backend changed: true
+detect-changes	Debug - Show detected changes	2026-01-16T15:30:35.0594120Z Frontend changed: true
+detect-changes	Debug - Show detected changes	2026-01-16T15:30:35.0594486Z ==========================
+detect-changes	Post Run actions/checkout@v4	﻿2026-01-16T15:30:35.0692084Z Post job cleanup.
+detect-changes	Post Run actions/checkout@v4	2026-01-16T15:30:35.1749569Z [command]/usr/bin/git version
+detect-changes	Post Run actions/checkout@v4	2026-01-16T15:30:35.1792503Z git version 2.52.0
+detect-changes	Post Run actions/checkout@v4	2026-01-16T15:30:35.1841767Z Temporarily overriding HOME='/home/runner/work/_temp/c534f8fe-490b-4e91-9d19-ea1455b990d6' before making global git config changes
+detect-changes	Post Run actions/checkout@v4	2026-01-16T15:30:35.1845767Z Adding repository directory to the temporary git global config as a safe directory
+detect-changes	Post Run actions/checkout@v4	2026-01-16T15:30:35.1850580Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/task-management-app/task-management-app
+detect-changes	Post Run actions/checkout@v4	2026-01-16T15:30:35.1900142Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+detect-changes	Post Run actions/checkout@v4	2026-01-16T15:30:35.1939445Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+detect-changes	Post Run actions/checkout@v4	2026-01-16T15:30:35.2190656Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+detect-changes	Post Run actions/checkout@v4	2026-01-16T15:30:35.2215326Z http.https://github.com/.extraheader
+detect-changes	Post Run actions/checkout@v4	2026-01-16T15:30:35.2230986Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+detect-changes	Post Run actions/checkout@v4	2026-01-16T15:30:35.2265282Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+detect-changes	Post Run actions/checkout@v4	2026-01-16T15:30:35.2498141Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+detect-changes	Post Run actions/checkout@v4	2026-01-16T15:30:35.2531952Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+detect-changes	Complete job	﻿2026-01-16T15:30:35.2875382Z Evaluate and set job outputs
+detect-changes	Complete job	2026-01-16T15:30:35.2881833Z Set output 'backend'
+detect-changes	Complete job	2026-01-16T15:30:35.2883473Z Set output 'frontend'
+detect-changes	Complete job	2026-01-16T15:30:35.2884594Z Cleaning up orphan processes
+build-frontend	Set up job	﻿2026-01-16T15:30:42.9714600Z Current runner version: '2.331.0'
+build-frontend	Set up job	2026-01-16T15:30:42.9790917Z ##[group]Runner Image Provisioner
+build-frontend	Set up job	2026-01-16T15:30:42.9792246Z Hosted Compute Agent
+build-frontend	Set up job	2026-01-16T15:30:42.9793165Z Version: 20251211.462
+build-frontend	Set up job	2026-01-16T15:30:42.9794418Z Commit: 6cbad8c2bb55d58165063d031ccabf57e2d2db61
+build-frontend	Set up job	2026-01-16T15:30:42.9795694Z Build Date: 2025-12-11T16:28:49Z
+build-frontend	Set up job	2026-01-16T15:30:42.9796830Z Worker ID: {7b4ed54f-09f9-45db-87f7-184f33a8adf7}
+build-frontend	Set up job	2026-01-16T15:30:42.9798177Z ##[endgroup]
+build-frontend	Set up job	2026-01-16T15:30:42.9799075Z ##[group]Operating System
+build-frontend	Set up job	2026-01-16T15:30:42.9800263Z Ubuntu
+build-frontend	Set up job	2026-01-16T15:30:42.9801194Z 24.04.3
+build-frontend	Set up job	2026-01-16T15:30:42.9802005Z LTS
+build-frontend	Set up job	2026-01-16T15:30:42.9802774Z ##[endgroup]
+build-frontend	Set up job	2026-01-16T15:30:42.9803814Z ##[group]Runner Image
+build-frontend	Set up job	2026-01-16T15:30:42.9804798Z Image: ubuntu-24.04
+build-frontend	Set up job	2026-01-16T15:30:42.9805642Z Version: 20260111.209.1
+build-frontend	Set up job	2026-01-16T15:30:42.9807497Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260111.209/images/ubuntu/Ubuntu2404-Readme.md
+build-frontend	Set up job	2026-01-16T15:30:42.9830347Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260111.209
+build-frontend	Set up job	2026-01-16T15:30:42.9832722Z ##[endgroup]
+build-frontend	Set up job	2026-01-16T15:30:42.9834702Z ##[group]GITHUB_TOKEN Permissions
+build-frontend	Set up job	2026-01-16T15:30:42.9837572Z Contents: write
+build-frontend	Set up job	2026-01-16T15:30:42.9838512Z Metadata: read
+build-frontend	Set up job	2026-01-16T15:30:42.9839430Z PullRequests: write
+build-frontend	Set up job	2026-01-16T15:30:42.9840811Z ##[endgroup]
+build-frontend	Set up job	2026-01-16T15:30:42.9843850Z Secret source: Actions
+build-frontend	Set up job	2026-01-16T15:30:42.9845321Z Prepare workflow directory
+build-frontend	Set up job	2026-01-16T15:30:43.1401534Z Prepare all required actions
+build-frontend	Set up job	2026-01-16T15:30:43.1496645Z Getting action download info
+build-frontend	Set up job	2026-01-16T15:30:43.5333395Z Download action repository 'actions/checkout@v4' (SHA:34e114876b0b11c390a56381ad16ebd13914f8d5)
+build-frontend	Set up job	2026-01-16T15:30:43.6557989Z Download action repository 'docker/setup-buildx-action@v3' (SHA:8d2750c68a42422c14e847fe6c8ac0403b4cbd6f)
+build-frontend	Set up job	2026-01-16T15:30:44.1257834Z Download action repository 'docker/login-action@v3' (SHA:5e57cd118135c172c3672efd75eb46360885c0ef)
+build-frontend	Set up job	2026-01-16T15:30:44.5842066Z Download action repository 'docker/build-push-action@v5' (SHA:ca052bb54ab0790a636c9b5f226502c73d547a25)
+build-frontend	Set up job	2026-01-16T15:30:45.1776887Z Complete job name: build-frontend
+build-frontend	Checkout repository	﻿2026-01-16T15:30:45.2517950Z ##[group]Run actions/checkout@v4
+build-frontend	Checkout repository	2026-01-16T15:30:45.2519388Z with:
+build-frontend	Checkout repository	2026-01-16T15:30:45.2520521Z   fetch-depth: 0
+build-frontend	Checkout repository	2026-01-16T15:30:45.2521497Z   repository: shaizshaikh/task-management-app
+build-frontend	Checkout repository	2026-01-16T15:30:45.2522937Z   token: ***
+build-frontend	Checkout repository	2026-01-16T15:30:45.2523918Z   ssh-strict: true
+build-frontend	Checkout repository	2026-01-16T15:30:45.2524767Z   ssh-user: git
+build-frontend	Checkout repository	2026-01-16T15:30:45.2525702Z   persist-credentials: true
+build-frontend	Checkout repository	2026-01-16T15:30:45.2526756Z   clean: true
+build-frontend	Checkout repository	2026-01-16T15:30:45.2527617Z   sparse-checkout-cone-mode: true
+build-frontend	Checkout repository	2026-01-16T15:30:45.2528671Z   fetch-tags: false
+build-frontend	Checkout repository	2026-01-16T15:30:45.2529794Z   show-progress: true
+build-frontend	Checkout repository	2026-01-16T15:30:45.2530684Z   lfs: false
+build-frontend	Checkout repository	2026-01-16T15:30:45.2531521Z   submodules: false
+build-frontend	Checkout repository	2026-01-16T15:30:45.2532506Z   set-safe-directory: true
+build-frontend	Checkout repository	2026-01-16T15:30:45.2533722Z env:
+build-frontend	Checkout repository	2026-01-16T15:30:45.2534727Z   IMAGE_NAME: ***/taskmanagement-frontend
+build-frontend	Checkout repository	2026-01-16T15:30:45.2536093Z   DOCKER_NAMESPACE: ***
+build-frontend	Checkout repository	2026-01-16T15:30:45.2537106Z   DOCKER_REPO: taskmanagement-frontend
+build-frontend	Checkout repository	2026-01-16T15:30:45.2538246Z   DOCKERFILE_PATH: ./frontend/Dockerfile
+build-frontend	Checkout repository	2026-01-16T15:30:45.2539863Z   BUILD_CONTEXT: ./frontend
+build-frontend	Checkout repository	2026-01-16T15:30:45.2540865Z ##[endgroup]
+build-frontend	Checkout repository	2026-01-16T15:30:45.3707781Z Syncing repository: shaizshaikh/task-management-app
+build-frontend	Checkout repository	2026-01-16T15:30:45.3711596Z ##[group]Getting Git version info
+build-frontend	Checkout repository	2026-01-16T15:30:45.3713834Z Working directory is '/home/runner/work/task-management-app/task-management-app'
+build-frontend	Checkout repository	2026-01-16T15:30:45.3718079Z [command]/usr/bin/git version
+build-frontend	Checkout repository	2026-01-16T15:30:45.3766556Z git version 2.52.0
+build-frontend	Checkout repository	2026-01-16T15:30:45.3798053Z ##[endgroup]
+build-frontend	Checkout repository	2026-01-16T15:30:45.3812454Z Temporarily overriding HOME='/home/runner/work/_temp/6f78eb60-8d66-40a7-bed8-9a7e3e3cb6ac' before making global git config changes
+build-frontend	Checkout repository	2026-01-16T15:30:45.3828381Z Adding repository directory to the temporary git global config as a safe directory
+build-frontend	Checkout repository	2026-01-16T15:30:45.3838374Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/task-management-app/task-management-app
+build-frontend	Checkout repository	2026-01-16T15:30:45.3878689Z Deleting the contents of '/home/runner/work/task-management-app/task-management-app'
+build-frontend	Checkout repository	2026-01-16T15:30:45.3885565Z ##[group]Initializing the repository
+build-frontend	Checkout repository	2026-01-16T15:30:45.3890366Z [command]/usr/bin/git init /home/runner/work/task-management-app/task-management-app
+build-frontend	Checkout repository	2026-01-16T15:30:45.3998680Z hint: Using 'master' as the name for the initial branch. This default branch name
+build-frontend	Checkout repository	2026-01-16T15:30:45.4004516Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+build-frontend	Checkout repository	2026-01-16T15:30:45.4007732Z hint: to use in all of your new repositories, which will suppress this warning,
+build-frontend	Checkout repository	2026-01-16T15:30:45.4010544Z hint: call:
+build-frontend	Checkout repository	2026-01-16T15:30:45.4012163Z hint:
+build-frontend	Checkout repository	2026-01-16T15:30:45.4013882Z hint: 	git config --global init.defaultBranch <name>
+build-frontend	Checkout repository	2026-01-16T15:30:45.4016024Z hint:
+build-frontend	Checkout repository	2026-01-16T15:30:45.4018151Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+build-frontend	Checkout repository	2026-01-16T15:30:45.4022908Z hint: 'development'. The just-created branch can be renamed via this command:
+build-frontend	Checkout repository	2026-01-16T15:30:45.4026600Z hint:
+build-frontend	Checkout repository	2026-01-16T15:30:45.4028310Z hint: 	git branch -m <name>
+build-frontend	Checkout repository	2026-01-16T15:30:45.4030117Z hint:
+build-frontend	Checkout repository	2026-01-16T15:30:45.4032130Z hint: Disable this message with "git config set advice.defaultBranchName false"
+build-frontend	Checkout repository	2026-01-16T15:30:45.4035993Z Initialized empty Git repository in /home/runner/work/task-management-app/task-management-app/.git/
+build-frontend	Checkout repository	2026-01-16T15:30:45.4042728Z [command]/usr/bin/git remote add origin https://github.com/shaizshaikh/task-management-app
+build-frontend	Checkout repository	2026-01-16T15:30:45.4072189Z ##[endgroup]
+build-frontend	Checkout repository	2026-01-16T15:30:45.4074877Z ##[group]Disabling automatic garbage collection
+build-frontend	Checkout repository	2026-01-16T15:30:45.4077909Z [command]/usr/bin/git config --local gc.auto 0
+build-frontend	Checkout repository	2026-01-16T15:30:45.4115479Z ##[endgroup]
+build-frontend	Checkout repository	2026-01-16T15:30:45.4120864Z ##[group]Setting up auth
+build-frontend	Checkout repository	2026-01-16T15:30:45.4123551Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+build-frontend	Checkout repository	2026-01-16T15:30:45.4158454Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+build-frontend	Checkout repository	2026-01-16T15:30:45.4553271Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+build-frontend	Checkout repository	2026-01-16T15:30:45.4590336Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+build-frontend	Checkout repository	2026-01-16T15:30:45.4820668Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+build-frontend	Checkout repository	2026-01-16T15:30:45.4855700Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+build-frontend	Checkout repository	2026-01-16T15:30:45.5101002Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+build-frontend	Checkout repository	2026-01-16T15:30:45.5143660Z ##[endgroup]
+build-frontend	Checkout repository	2026-01-16T15:30:45.5146205Z ##[group]Fetching the repository
+build-frontend	Checkout repository	2026-01-16T15:30:45.5164017Z [command]/usr/bin/git -c protocol.version=2 fetch --prune --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/*
+build-frontend	Checkout repository	2026-01-16T15:30:46.4348045Z From https://github.com/shaizshaikh/task-management-app
+build-frontend	Checkout repository	2026-01-16T15:30:46.4350796Z  * [new branch]      dev        -> origin/dev
+build-frontend	Checkout repository	2026-01-16T15:30:46.4355478Z  * [new branch]      feature/user-management-enhancement -> origin/feature/user-management-enhancement
+build-frontend	Checkout repository	2026-01-16T15:30:46.4358791Z  * [new branch]      main       -> origin/main
+build-frontend	Checkout repository	2026-01-16T15:30:46.4399187Z [command]/usr/bin/git branch --list --remote origin/dev
+build-frontend	Checkout repository	2026-01-16T15:30:46.4426788Z   origin/dev
+build-frontend	Checkout repository	2026-01-16T15:30:46.4438831Z [command]/usr/bin/git rev-parse refs/remotes/origin/dev
+build-frontend	Checkout repository	2026-01-16T15:30:46.4462621Z 24cfd441ee2aa89630898cc851364385db586786
+build-frontend	Checkout repository	2026-01-16T15:30:46.4472288Z ##[endgroup]
+build-frontend	Checkout repository	2026-01-16T15:30:46.4474350Z ##[group]Determining the checkout info
+build-frontend	Checkout repository	2026-01-16T15:30:46.4476609Z ##[endgroup]
+build-frontend	Checkout repository	2026-01-16T15:30:46.4478434Z [command]/usr/bin/git sparse-checkout disable
+build-frontend	Checkout repository	2026-01-16T15:30:46.4523374Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+build-frontend	Checkout repository	2026-01-16T15:30:46.4557003Z ##[group]Checking out the ref
+build-frontend	Checkout repository	2026-01-16T15:30:46.4559365Z [command]/usr/bin/git checkout --progress --force -B dev refs/remotes/origin/dev
+build-frontend	Checkout repository	2026-01-16T15:30:46.4721579Z Switched to a new branch 'dev'
+build-frontend	Checkout repository	2026-01-16T15:30:46.4726647Z branch 'dev' set up to track 'origin/dev'.
+build-frontend	Checkout repository	2026-01-16T15:30:46.4738441Z ##[endgroup]
+build-frontend	Checkout repository	2026-01-16T15:30:46.4772357Z [command]/usr/bin/git log -1 --format=%H
+build-frontend	Checkout repository	2026-01-16T15:30:46.4796314Z 24cfd441ee2aa89630898cc851364385db586786
+build-frontend	Get latest Docker Hub version	﻿2026-01-16T15:30:46.4999640Z ##[group]Run set -euo pipefail
+build-frontend	Get latest Docker Hub version	2026-01-16T15:30:46.5000628Z [36;1mset -euo pipefail[0m
+build-frontend	Get latest Docker Hub version	2026-01-16T15:30:46.5001393Z [36;1m[0m
+build-frontend	Get latest Docker Hub version	2026-01-16T15:30:46.5002706Z [36;1mURL="https://hub.docker.com/v2/repositories/${DOCKER_NAMESPACE}/${DOCKER_REPO}/tags?page_size=100"[0m
+build-frontend	Get latest Docker Hub version	2026-01-16T15:30:46.5004212Z [36;1m[0m
+build-frontend	Get latest Docker Hub version	2026-01-16T15:30:46.5004941Z [36;1mecho "Fetching tags from Docker Hub..."[0m
+build-frontend	Get latest Docker Hub version	2026-01-16T15:30:46.5006123Z [36;1mRESPONSE="$(curl -fsSL "$URL" 2>/dev/null || echo '{}')"[0m
+build-frontend	Get latest Docker Hub version	2026-01-16T15:30:46.5007173Z [36;1m[0m
+build-frontend	Get latest Docker Hub version	2026-01-16T15:30:46.5007979Z [36;1mif [[ -z "$RESPONSE" ]] || [[ "$RESPONSE" == "{}" ]]; then[0m
+build-frontend	Get latest Docker Hub version	2026-01-16T15:30:46.5009253Z [36;1m  echo "No response from Docker Hub, using default version"[0m
+build-frontend	Get latest Docker Hub version	2026-01-16T15:30:46.5010680Z [36;1m  LATEST="0.0.0"[0m
+build-frontend	Get latest Docker Hub version	2026-01-16T15:30:46.5011414Z [36;1melse[0m
+build-frontend	Get latest Docker Hub version	2026-01-16T15:30:46.5012103Z [36;1m  TAGS="$(echo "$RESPONSE" \[0m
+build-frontend	Get latest Docker Hub version	2026-01-16T15:30:46.5013092Z [36;1m    | jq -r '.results // [] | .[].name' 2>/dev/null \[0m
+build-frontend	Get latest Docker Hub version	2026-01-16T15:30:46.5014229Z [36;1m    | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' || echo "")"[0m
+build-frontend	Get latest Docker Hub version	2026-01-16T15:30:46.5015234Z [36;1m[0m
+build-frontend	Get latest Docker Hub version	2026-01-16T15:30:46.5015875Z [36;1m  if [[ -z "$TAGS" ]]; then[0m
+build-frontend	Get latest Docker Hub version	2026-01-16T15:30:46.5016931Z [36;1m    echo "No semantic version tags found, starting at 0.0.0"[0m
+build-frontend	Get latest Docker Hub version	2026-01-16T15:30:46.5018019Z [36;1m    LATEST="0.0.0"[0m
+build-frontend	Get latest Docker Hub version	2026-01-16T15:30:46.5018766Z [36;1m  else[0m
+build-frontend	Get latest Docker Hub version	2026-01-16T15:30:46.5019778Z [36;1m    LATEST="$(echo "$TAGS" | sed 's/^v//' | sort -V | tail -n 1)"[0m
+build-frontend	Get latest Docker Hub version	2026-01-16T15:30:46.5020978Z [36;1m    echo "Found latest version: v$LATEST"[0m
+build-frontend	Get latest Docker Hub version	2026-01-16T15:30:46.5021899Z [36;1m  fi[0m
+build-frontend	Get latest Docker Hub version	2026-01-16T15:30:46.5051027Z [36;1mfi[0m
+build-frontend	Get latest Docker Hub version	2026-01-16T15:30:46.5052212Z [36;1m[0m
+build-frontend	Get latest Docker Hub version	2026-01-16T15:30:46.5053569Z [36;1mecho "current_version=$LATEST" >> "$GITHUB_OUTPUT"[0m
+build-frontend	Get latest Docker Hub version	2026-01-16T15:30:46.5095893Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+build-frontend	Get latest Docker Hub version	2026-01-16T15:30:46.5096970Z env:
+build-frontend	Get latest Docker Hub version	2026-01-16T15:30:46.5097908Z   IMAGE_NAME: ***/taskmanagement-frontend
+build-frontend	Get latest Docker Hub version	2026-01-16T15:30:46.5098857Z   DOCKER_NAMESPACE: ***
+build-frontend	Get latest Docker Hub version	2026-01-16T15:30:46.5100004Z   DOCKER_REPO: taskmanagement-frontend
+build-frontend	Get latest Docker Hub version	2026-01-16T15:30:46.5100977Z   DOCKERFILE_PATH: ./frontend/Dockerfile
+build-frontend	Get latest Docker Hub version	2026-01-16T15:30:46.5101864Z   BUILD_CONTEXT: ./frontend
+build-frontend	Get latest Docker Hub version	2026-01-16T15:30:46.5102605Z ##[endgroup]
+build-frontend	Get latest Docker Hub version	2026-01-16T15:30:46.5190252Z Fetching tags from Docker Hub...
+build-frontend	Get latest Docker Hub version	2026-01-16T15:30:46.6522174Z No response from Docker Hub, using default version
+build-frontend	Calculate next version	﻿2026-01-16T15:30:46.6605729Z ##[group]Run set -euo pipefail
+build-frontend	Calculate next version	2026-01-16T15:30:46.6606649Z [36;1mset -euo pipefail[0m
+build-frontend	Calculate next version	2026-01-16T15:30:46.6607409Z [36;1m[0m
+build-frontend	Calculate next version	2026-01-16T15:30:46.6608027Z [36;1mCURRENT="0.0.0"[0m
+build-frontend	Calculate next version	2026-01-16T15:30:46.6608744Z [36;1m[0m
+build-frontend	Calculate next version	2026-01-16T15:30:46.6609734Z [36;1mif [[ ! "$CURRENT" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then[0m
+build-frontend	Calculate next version	2026-01-16T15:30:46.6610993Z [36;1m  echo "Invalid version '$CURRENT', defaulting to 0.0.0"[0m
+build-frontend	Calculate next version	2026-01-16T15:30:46.6612061Z [36;1m  CURRENT="0.0.0"[0m
+build-frontend	Calculate next version	2026-01-16T15:30:46.6612787Z [36;1mfi[0m
+build-frontend	Calculate next version	2026-01-16T15:30:46.6613393Z [36;1m[0m
+build-frontend	Calculate next version	2026-01-16T15:30:46.6614183Z [36;1mIFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT"[0m
+build-frontend	Calculate next version	2026-01-16T15:30:46.6615142Z [36;1m[0m
+build-frontend	Calculate next version	2026-01-16T15:30:46.6615757Z [36;1mMAJOR=$((10#$MAJOR))[0m
+build-frontend	Calculate next version	2026-01-16T15:30:46.6616524Z [36;1mMINOR=$((10#$MINOR))[0m
+build-frontend	Calculate next version	2026-01-16T15:30:46.6617298Z [36;1mPATCH=$((10#$PATCH))[0m
+build-frontend	Calculate next version	2026-01-16T15:30:46.6618043Z [36;1m[0m
+build-frontend	Calculate next version	2026-01-16T15:30:46.6618655Z [36;1mBUMP="patch"[0m
+build-frontend	Calculate next version	2026-01-16T15:30:46.6619805Z [36;1m[0m
+build-frontend	Calculate next version	2026-01-16T15:30:46.6620512Z [36;1mcase "$BUMP" in[0m
+build-frontend	Calculate next version	2026-01-16T15:30:46.6621443Z [36;1m  major) MAJOR=$((MAJOR + 1)); MINOR=0; PATCH=0 ;;[0m
+build-frontend	Calculate next version	2026-01-16T15:30:46.6622513Z [36;1m  minor) MINOR=$((MINOR + 1)); PATCH=0 ;;[0m
+build-frontend	Calculate next version	2026-01-16T15:30:46.6623465Z [36;1m  patch) PATCH=$((PATCH + 1)) ;;[0m
+build-frontend	Calculate next version	2026-01-16T15:30:46.6624310Z [36;1mesac[0m
+build-frontend	Calculate next version	2026-01-16T15:30:46.6624923Z [36;1m[0m
+build-frontend	Calculate next version	2026-01-16T15:30:46.6625630Z [36;1mNEW_VERSION="${MAJOR}.${MINOR}.${PATCH}"[0m
+build-frontend	Calculate next version	2026-01-16T15:30:46.6626739Z [36;1mecho "new_version=$NEW_VERSION" >> "$GITHUB_OUTPUT"[0m
+build-frontend	Calculate next version	2026-01-16T15:30:46.6627975Z [36;1mecho "Frontend version: v$NEW_VERSION (was: v$CURRENT)"[0m
+build-frontend	Calculate next version	2026-01-16T15:30:46.6661977Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+build-frontend	Calculate next version	2026-01-16T15:30:46.6662984Z env:
+build-frontend	Calculate next version	2026-01-16T15:30:46.6663834Z   IMAGE_NAME: ***/taskmanagement-frontend
+build-frontend	Calculate next version	2026-01-16T15:30:46.6664775Z   DOCKER_NAMESPACE: ***
+build-frontend	Calculate next version	2026-01-16T15:30:46.6665572Z   DOCKER_REPO: taskmanagement-frontend
+build-frontend	Calculate next version	2026-01-16T15:30:46.6666503Z   DOCKERFILE_PATH: ./frontend/Dockerfile
+build-frontend	Calculate next version	2026-01-16T15:30:46.6667387Z   BUILD_CONTEXT: ./frontend
+build-frontend	Calculate next version	2026-01-16T15:30:46.6668126Z ##[endgroup]
+build-frontend	Calculate next version	2026-01-16T15:30:46.6733942Z Frontend version: v0.0.1 (was: v0.0.0)
+build-frontend	Run docker/setup-buildx-action@v3	﻿2026-01-16T15:30:46.6875199Z ##[group]Run docker/setup-buildx-action@v3
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.6876137Z with:
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.6876802Z   driver: docker-container
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.6877552Z   use: true
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.6878198Z   keep-state: false
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.6878897Z   cache-binary: true
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.6879931Z   cleanup: true
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.6880635Z   install: false
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.6881289Z env:
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.6882120Z   IMAGE_NAME: ***/taskmanagement-frontend
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.6883073Z   DOCKER_NAMESPACE: ***
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.6883875Z   DOCKER_REPO: taskmanagement-frontend
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.6884819Z   DOCKERFILE_PATH: ./frontend/Dockerfile
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.6885709Z   BUILD_CONTEXT: ./frontend
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.6886462Z ##[endgroup]
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.9712476Z ##[group]Docker info
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.9730879Z [command]/usr/bin/docker version
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.0848713Z Client: Docker Engine - Community
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.0871084Z  Version:           28.0.4
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.0872652Z  API version:       1.48
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.0873842Z  Go version:        go1.23.7
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.0876009Z  Git commit:        b8034c0
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.0876702Z  Built:             Tue Mar 25 15:07:16 2025
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.0877374Z  OS/Arch:           linux/amd64
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.0878018Z  Context:           default
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.0878403Z 
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.0878688Z Server: Docker Engine - Community
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.0879265Z  Engine:
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.0879997Z   Version:          28.0.4
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.0880667Z   API version:      1.48 (minimum version 1.24)
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.0881366Z   Go version:       go1.23.7
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.0881967Z   Git commit:       6430e49
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.0882606Z   Built:            Tue Mar 25 15:07:16 2025
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.0883303Z   OS/Arch:          linux/amd64
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.0883899Z   Experimental:     false
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.0884492Z  containerd:
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.0884999Z   Version:          v2.2.1
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.0885690Z   GitCommit:        dea7da592f5d1d2b7755e3a161be07f43fad8f75
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.0886462Z  runc:
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.0886945Z   Version:          1.3.4
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.0887535Z   GitCommit:        v1.3.4-0-gd6d73eb8
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.0888152Z  docker-init:
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.0888637Z   Version:          0.19.0
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.0889210Z   GitCommit:        de40ad0
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.0926901Z [command]/usr/bin/docker info
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3816089Z Client: Docker Engine - Community
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3820565Z  Version:    28.0.4
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3828195Z  Context:    default
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3829180Z  Debug Mode: false
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3830410Z  Plugins:
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3832095Z   buildx: Docker Buildx (Docker Inc.)
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3832676Z     Version:  v0.30.1
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3833581Z     Path:     /usr/libexec/docker/cli-plugins/docker-buildx
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3834276Z   compose: Docker Compose (Docker Inc.)
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3834831Z     Version:  v2.38.2
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3835452Z     Path:     /usr/libexec/docker/cli-plugins/docker-compose
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3835924Z 
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3836119Z Server:
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3836538Z  Containers: 0
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3836981Z   Running: 0
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3837438Z   Paused: 0
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3837860Z   Stopped: 0
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3838288Z  Images: 1
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3838729Z  Server Version: 28.0.4
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3839231Z  Storage Driver: overlay2
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3840953Z   Backing Filesystem: extfs
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3842370Z   Supports d_type: true
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3842982Z   Using metacopy: false
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3843560Z   Native Overlay Diff: false
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3844125Z   userxattr: false
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3844630Z  Logging Driver: json-file
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3845213Z  Cgroup Driver: systemd
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3845757Z  Cgroup Version: 2
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3846257Z  Plugins:
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3846743Z   Volume: local
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3847317Z   Network: bridge host ipvlan macvlan null overlay
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3848633Z   Log: awslogs fluentd gcplogs gelf journald json-file local splunk syslog
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3849385Z  Swarm: inactive
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3850239Z  Runtimes: io.containerd.runc.v2 runc
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3850853Z  Default Runtime: runc
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3851378Z  Init Binary: docker-init
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3852043Z  containerd version: dea7da592f5d1d2b7755e3a161be07f43fad8f75
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3852757Z  runc version: v1.3.4-0-gd6d73eb8
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3853302Z  init version: de40ad0
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3853784Z  Security Options:
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3854235Z   apparmor
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3854686Z   seccomp
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3855110Z    Profile: builtin
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3855565Z   cgroupns
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3856043Z  Kernel Version: 6.11.0-1018-azure
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3856637Z  Operating System: Ubuntu 24.04.3 LTS
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3857229Z  OSType: linux
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3857741Z  Architecture: x86_64
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3858238Z  CPUs: 2
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3858666Z  Total Memory: 7.758GiB
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3859175Z  Name: runnervmmtnos
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3862400Z  ID: 5a446069-012f-4a61-9e1e-c3a17d5c9c05
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3863101Z  Docker Root Dir: /var/lib/docker
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3863712Z  Debug Mode: false
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3864240Z  Username: githubactions
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3864824Z  Experimental: false
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3865380Z  Insecure Registries:
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3870640Z   ::1/128
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3871140Z   127.0.0.0/8
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3871663Z  Live Restore Enabled: false
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3872052Z 
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.3872978Z ##[endgroup]
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.4537183Z ##[group]Buildx version
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.4568329Z [command]/usr/bin/docker buildx version
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.5103462Z github.com/docker/buildx v0.30.1 9e66234aa13328a5e75b75aa5574e1ca6d6d9c01
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.5137119Z ##[endgroup]
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.5310854Z ##[group]Inspecting default docker context
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.5457423Z [
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.5459911Z   {
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.5463962Z     "Name": "default",
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.5468404Z     "Metadata": {},
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.5468986Z     "Endpoints": {
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.5469713Z       "docker": {
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.5470325Z         "Host": "unix:///var/run/docker.sock",
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.5471057Z         "SkipTLSVerify": false
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.5471645Z       }
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.5472106Z     },
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.5472673Z     "TLSMaterial": {},
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.5473275Z     "Storage": {
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.5473846Z       "MetadataPath": "<IN MEMORY>",
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.5474522Z       "TLSPath": "<IN MEMORY>"
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.5475113Z     }
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.5475575Z   }
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.5476011Z ]
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.5477773Z ##[endgroup]
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.5478780Z ##[group]Creating a new builder instance
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.6959738Z [command]/usr/bin/docker buildx create --name builder-3a6484b0-fda9-4854-b33b-f42c7e8f58b8 --driver docker-container --buildkitd-flags --allow-insecure-entitlement security.insecure --allow-insecure-entitlement network.host --use
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.7567021Z builder-3a6484b0-fda9-4854-b33b-f42c7e8f58b8
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.7601650Z ##[endgroup]
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.7603831Z ##[group]Booting builder
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.7646753Z [command]/usr/bin/docker buildx inspect --bootstrap --builder builder-3a6484b0-fda9-4854-b33b-f42c7e8f58b8
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.8199162Z #1 [internal] booting buildkit
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:47.9714567Z #1 pulling image moby/buildkit:buildx-stable-1
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:31:01.0335255Z #1 pulling image moby/buildkit:buildx-stable-1 13.2s done
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:31:01.0339995Z #1 ERROR: Error response from daemon: Head "https://registry-1.docker.io/v2/moby/buildkit/manifests/buildx-stable-1": received unexpected HTTP status: 500 Internal Server Error
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:31:01.0341251Z ------
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:31:01.0341548Z  > [internal] booting buildkit:
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:31:01.0342042Z ------
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:31:01.0343010Z ERROR: Error response from daemon: Head "https://registry-1.docker.io/v2/moby/buildkit/manifests/buildx-stable-1": received unexpected HTTP status: 500 Internal Server Error
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:31:01.0390613Z ##[endgroup]
+build-frontend	Run docker/setup-buildx-action@v3	2026-01-16T15:31:01.0415164Z ##[error]ERROR: Error response from daemon: Head "https://registry-1.docker.io/v2/moby/buildkit/manifests/buildx-stable-1": received unexpected HTTP status: 500 Internal Server Error
+build-frontend	Post Run docker/setup-buildx-action@v3	﻿2026-01-16T15:31:01.0600328Z Post job cleanup.
+build-frontend	Post Run docker/setup-buildx-action@v3	2026-01-16T15:31:01.3462755Z ##[group]Removing builder
+build-frontend	Post Run docker/setup-buildx-action@v3	2026-01-16T15:31:01.4666187Z [command]/usr/bin/docker buildx rm builder-3a6484b0-fda9-4854-b33b-f42c7e8f58b8
+build-frontend	Post Run docker/setup-buildx-action@v3	2026-01-16T15:31:01.5233386Z builder-3a6484b0-fda9-4854-b33b-f42c7e8f58b8 removed
+build-frontend	Post Run docker/setup-buildx-action@v3	2026-01-16T15:31:01.5268016Z ##[endgroup]
+build-frontend	Post Run docker/setup-buildx-action@v3	2026-01-16T15:31:01.5271289Z ##[group]Cleaning up certificates
+build-frontend	Post Run docker/setup-buildx-action@v3	2026-01-16T15:31:01.5276465Z ##[endgroup]
+build-frontend	Post Run docker/setup-buildx-action@v3	2026-01-16T15:31:01.5279730Z ##[group]Post cache
+build-frontend	Post Run docker/setup-buildx-action@v3	2026-01-16T15:31:01.5280350Z State not set
+build-frontend	Post Run docker/setup-buildx-action@v3	2026-01-16T15:31:01.5282697Z ##[endgroup]
+build-frontend	Post Checkout repository	﻿2026-01-16T15:31:01.5428586Z Post job cleanup.
+build-frontend	Post Checkout repository	2026-01-16T15:31:01.6382966Z [command]/usr/bin/git version
+build-frontend	Post Checkout repository	2026-01-16T15:31:01.6423188Z git version 2.52.0
+build-frontend	Post Checkout repository	2026-01-16T15:31:01.6471888Z Temporarily overriding HOME='/home/runner/work/_temp/17dc17ed-2db3-4447-90ef-aaf6c55a65b4' before making global git config changes
+build-frontend	Post Checkout repository	2026-01-16T15:31:01.6473667Z Adding repository directory to the temporary git global config as a safe directory
+build-frontend	Post Checkout repository	2026-01-16T15:31:01.6554576Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/task-management-app/task-management-app
+build-frontend	Post Checkout repository	2026-01-16T15:31:01.6557371Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+build-frontend	Post Checkout repository	2026-01-16T15:31:01.6569034Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+build-frontend	Post Checkout repository	2026-01-16T15:31:01.6813711Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+build-frontend	Post Checkout repository	2026-01-16T15:31:01.6838087Z http.https://github.com/.extraheader
+build-frontend	Post Checkout repository	2026-01-16T15:31:01.6853357Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+build-frontend	Post Checkout repository	2026-01-16T15:31:01.6887150Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+build-frontend	Post Checkout repository	2026-01-16T15:31:01.7124065Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+build-frontend	Post Checkout repository	2026-01-16T15:31:01.7160713Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+build-frontend	Complete job	﻿2026-01-16T15:31:01.7515281Z Evaluate and set job outputs
+build-frontend	Complete job	2026-01-16T15:31:01.7522773Z Set output 'version'
+build-frontend	Complete job	2026-01-16T15:31:01.7524983Z Cleaning up orphan processes
+build-backend	Set up job	﻿2026-01-16T15:30:42.1766013Z Current runner version: '2.331.0'
+build-backend	Set up job	2026-01-16T15:30:42.1800102Z ##[group]Runner Image Provisioner
+build-backend	Set up job	2026-01-16T15:30:42.1801306Z Hosted Compute Agent
+build-backend	Set up job	2026-01-16T15:30:42.1802257Z Version: 20251211.462
+build-backend	Set up job	2026-01-16T15:30:42.1803244Z Commit: 6cbad8c2bb55d58165063d031ccabf57e2d2db61
+build-backend	Set up job	2026-01-16T15:30:42.1804370Z Build Date: 2025-12-11T16:28:49Z
+build-backend	Set up job	2026-01-16T15:30:42.1805449Z Worker ID: {29a82692-be9f-4069-a1e2-6cb9f21e1d28}
+build-backend	Set up job	2026-01-16T15:30:42.1806641Z ##[endgroup]
+build-backend	Set up job	2026-01-16T15:30:42.1807709Z ##[group]Operating System
+build-backend	Set up job	2026-01-16T15:30:42.1808682Z Ubuntu
+build-backend	Set up job	2026-01-16T15:30:42.1809423Z 24.04.3
+build-backend	Set up job	2026-01-16T15:30:42.1810086Z LTS
+build-backend	Set up job	2026-01-16T15:30:42.1811022Z ##[endgroup]
+build-backend	Set up job	2026-01-16T15:30:42.1811836Z ##[group]Runner Image
+build-backend	Set up job	2026-01-16T15:30:42.1812645Z Image: ubuntu-24.04
+build-backend	Set up job	2026-01-16T15:30:42.1813562Z Version: 20260111.209.1
+build-backend	Set up job	2026-01-16T15:30:42.1815290Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260111.209/images/ubuntu/Ubuntu2404-Readme.md
+build-backend	Set up job	2026-01-16T15:30:42.1817867Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260111.209
+build-backend	Set up job	2026-01-16T15:30:42.1819892Z ##[endgroup]
+build-backend	Set up job	2026-01-16T15:30:42.1821867Z ##[group]GITHUB_TOKEN Permissions
+build-backend	Set up job	2026-01-16T15:30:42.1824654Z Contents: write
+build-backend	Set up job	2026-01-16T15:30:42.1825447Z Metadata: read
+build-backend	Set up job	2026-01-16T15:30:42.1826372Z PullRequests: write
+build-backend	Set up job	2026-01-16T15:30:42.1827525Z ##[endgroup]
+build-backend	Set up job	2026-01-16T15:30:42.1830854Z Secret source: Actions
+build-backend	Set up job	2026-01-16T15:30:42.1832316Z Prepare workflow directory
+build-backend	Set up job	2026-01-16T15:30:42.2596653Z Prepare all required actions
+build-backend	Set up job	2026-01-16T15:30:42.2651134Z Getting action download info
+build-backend	Set up job	2026-01-16T15:30:42.6497684Z Download action repository 'actions/checkout@v4' (SHA:34e114876b0b11c390a56381ad16ebd13914f8d5)
+build-backend	Set up job	2026-01-16T15:30:42.7577081Z Download action repository 'docker/setup-buildx-action@v3' (SHA:8d2750c68a42422c14e847fe6c8ac0403b4cbd6f)
+build-backend	Set up job	2026-01-16T15:30:43.0830305Z Download action repository 'docker/login-action@v3' (SHA:5e57cd118135c172c3672efd75eb46360885c0ef)
+build-backend	Set up job	2026-01-16T15:30:43.4466359Z Download action repository 'docker/build-push-action@v5' (SHA:ca052bb54ab0790a636c9b5f226502c73d547a25)
+build-backend	Set up job	2026-01-16T15:30:43.8793250Z Complete job name: build-backend
+build-backend	Debug - Backend build decision	﻿2026-01-16T15:30:43.9380116Z ##[group]Run echo "=== Build Backend Decision ==="
+build-backend	Debug - Backend build decision	2026-01-16T15:30:43.9381206Z [36;1mecho "=== Build Backend Decision ==="[0m
+build-backend	Debug - Backend build decision	2026-01-16T15:30:43.9382037Z [36;1mecho "Event: push"[0m
+build-backend	Debug - Backend build decision	2026-01-16T15:30:43.9382807Z [36;1mecho "Backend changed (from filter): true"[0m
+build-backend	Debug - Backend build decision	2026-01-16T15:30:43.9383720Z [36;1mecho "Manual component selected: "[0m
+build-backend	Debug - Backend build decision	2026-01-16T15:30:43.9384658Z [36;1mecho "This job IS running (condition passed)"[0m
+build-backend	Debug - Backend build decision	2026-01-16T15:30:43.9385586Z [36;1mecho "=============================="[0m
+build-backend	Debug - Backend build decision	2026-01-16T15:30:43.9421757Z shell: /usr/bin/bash -e {0}
+build-backend	Debug - Backend build decision	2026-01-16T15:30:43.9422710Z env:
+build-backend	Debug - Backend build decision	2026-01-16T15:30:43.9423446Z   IMAGE_NAME: ***/taskmanagement-backend
+build-backend	Debug - Backend build decision	2026-01-16T15:30:43.9424297Z   DOCKER_NAMESPACE: ***
+build-backend	Debug - Backend build decision	2026-01-16T15:30:43.9424940Z   DOCKER_REPO: taskmanagement-backend
+build-backend	Debug - Backend build decision	2026-01-16T15:30:43.9425724Z   DOCKERFILE_PATH: ./backend/Dockerfile
+build-backend	Debug - Backend build decision	2026-01-16T15:30:43.9426483Z   BUILD_CONTEXT: ./backend
+build-backend	Debug - Backend build decision	2026-01-16T15:30:43.9427088Z ##[endgroup]
+build-backend	Debug - Backend build decision	2026-01-16T15:30:43.9568135Z === Build Backend Decision ===
+build-backend	Debug - Backend build decision	2026-01-16T15:30:43.9569729Z Event: push
+build-backend	Debug - Backend build decision	2026-01-16T15:30:43.9570999Z Backend changed (from filter): true
+build-backend	Debug - Backend build decision	2026-01-16T15:30:43.9572390Z Manual component selected: 
+build-backend	Debug - Backend build decision	2026-01-16T15:30:43.9573255Z This job IS running (condition passed)
+build-backend	Debug - Backend build decision	2026-01-16T15:30:43.9574211Z ==============================
+build-backend	Checkout repository	﻿2026-01-16T15:30:43.9814866Z ##[group]Run actions/checkout@v4
+build-backend	Checkout repository	2026-01-16T15:30:43.9815853Z with:
+build-backend	Checkout repository	2026-01-16T15:30:43.9816374Z   fetch-depth: 0
+build-backend	Checkout repository	2026-01-16T15:30:43.9817270Z   repository: shaizshaikh/task-management-app
+build-backend	Checkout repository	2026-01-16T15:30:43.9818551Z   token: ***
+build-backend	Checkout repository	2026-01-16T15:30:43.9819154Z   ssh-strict: true
+build-backend	Checkout repository	2026-01-16T15:30:43.9819764Z   ssh-user: git
+build-backend	Checkout repository	2026-01-16T15:30:43.9820446Z   persist-credentials: true
+build-backend	Checkout repository	2026-01-16T15:30:43.9821124Z   clean: true
+build-backend	Checkout repository	2026-01-16T15:30:43.9821754Z   sparse-checkout-cone-mode: true
+build-backend	Checkout repository	2026-01-16T15:30:43.9822616Z   fetch-tags: false
+build-backend	Checkout repository	2026-01-16T15:30:43.9823544Z   show-progress: true
+build-backend	Checkout repository	2026-01-16T15:30:43.9824273Z   lfs: false
+build-backend	Checkout repository	2026-01-16T15:30:43.9824948Z   submodules: false
+build-backend	Checkout repository	2026-01-16T15:30:43.9825598Z   set-safe-directory: true
+build-backend	Checkout repository	2026-01-16T15:30:43.9826245Z env:
+build-backend	Checkout repository	2026-01-16T15:30:43.9827066Z   IMAGE_NAME: ***/taskmanagement-backend
+build-backend	Checkout repository	2026-01-16T15:30:43.9828102Z   DOCKER_NAMESPACE: ***
+build-backend	Checkout repository	2026-01-16T15:30:43.9828809Z   DOCKER_REPO: taskmanagement-backend
+build-backend	Checkout repository	2026-01-16T15:30:43.9829711Z   DOCKERFILE_PATH: ./backend/Dockerfile
+build-backend	Checkout repository	2026-01-16T15:30:43.9830628Z   BUILD_CONTEXT: ./backend
+build-backend	Checkout repository	2026-01-16T15:30:43.9831414Z ##[endgroup]
+build-backend	Checkout repository	2026-01-16T15:30:44.0948946Z Syncing repository: shaizshaikh/task-management-app
+build-backend	Checkout repository	2026-01-16T15:30:44.0951841Z ##[group]Getting Git version info
+build-backend	Checkout repository	2026-01-16T15:30:44.0953745Z Working directory is '/home/runner/work/task-management-app/task-management-app'
+build-backend	Checkout repository	2026-01-16T15:30:44.0956652Z [command]/usr/bin/git version
+build-backend	Checkout repository	2026-01-16T15:30:44.1034186Z git version 2.52.0
+build-backend	Checkout repository	2026-01-16T15:30:44.1064385Z ##[endgroup]
+build-backend	Checkout repository	2026-01-16T15:30:44.1080358Z Temporarily overriding HOME='/home/runner/work/_temp/d2bd73f1-fd05-409b-88ee-6317ca9dd0e4' before making global git config changes
+build-backend	Checkout repository	2026-01-16T15:30:44.1094497Z Adding repository directory to the temporary git global config as a safe directory
+build-backend	Checkout repository	2026-01-16T15:30:44.1098997Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/task-management-app/task-management-app
+build-backend	Checkout repository	2026-01-16T15:30:44.1142720Z Deleting the contents of '/home/runner/work/task-management-app/task-management-app'
+build-backend	Checkout repository	2026-01-16T15:30:44.1146649Z ##[group]Initializing the repository
+build-backend	Checkout repository	2026-01-16T15:30:44.1153194Z [command]/usr/bin/git init /home/runner/work/task-management-app/task-management-app
+build-backend	Checkout repository	2026-01-16T15:30:44.1358671Z hint: Using 'master' as the name for the initial branch. This default branch name
+build-backend	Checkout repository	2026-01-16T15:30:44.1362840Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+build-backend	Checkout repository	2026-01-16T15:30:44.1365418Z hint: to use in all of your new repositories, which will suppress this warning,
+build-backend	Checkout repository	2026-01-16T15:30:44.1367788Z hint: call:
+build-backend	Checkout repository	2026-01-16T15:30:44.1368756Z hint:
+build-backend	Checkout repository	2026-01-16T15:30:44.1369987Z hint: 	git config --global init.defaultBranch <name>
+build-backend	Checkout repository	2026-01-16T15:30:44.1371513Z hint:
+build-backend	Checkout repository	2026-01-16T15:30:44.1372977Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+build-backend	Checkout repository	2026-01-16T15:30:44.1375571Z hint: 'development'. The just-created branch can be renamed via this command:
+build-backend	Checkout repository	2026-01-16T15:30:44.1377973Z hint:
+build-backend	Checkout repository	2026-01-16T15:30:44.1378964Z hint: 	git branch -m <name>
+build-backend	Checkout repository	2026-01-16T15:30:44.1380242Z hint:
+build-backend	Checkout repository	2026-01-16T15:30:44.1382022Z hint: Disable this message with "git config set advice.defaultBranchName false"
+build-backend	Checkout repository	2026-01-16T15:30:44.1385402Z Initialized empty Git repository in /home/runner/work/task-management-app/task-management-app/.git/
+build-backend	Checkout repository	2026-01-16T15:30:44.1391150Z [command]/usr/bin/git remote add origin https://github.com/shaizshaikh/task-management-app
+build-backend	Checkout repository	2026-01-16T15:30:44.1395881Z ##[endgroup]
+build-backend	Checkout repository	2026-01-16T15:30:44.1398298Z ##[group]Disabling automatic garbage collection
+build-backend	Checkout repository	2026-01-16T15:30:44.1400080Z [command]/usr/bin/git config --local gc.auto 0
+build-backend	Checkout repository	2026-01-16T15:30:44.1405224Z ##[endgroup]
+build-backend	Checkout repository	2026-01-16T15:30:44.1407437Z ##[group]Setting up auth
+build-backend	Checkout repository	2026-01-16T15:30:44.1410113Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+build-backend	Checkout repository	2026-01-16T15:30:44.1444079Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+build-backend	Checkout repository	2026-01-16T15:30:44.2504507Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+build-backend	Checkout repository	2026-01-16T15:30:44.2513071Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+build-backend	Checkout repository	2026-01-16T15:30:44.2520777Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+build-backend	Checkout repository	2026-01-16T15:30:44.2526025Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+build-backend	Checkout repository	2026-01-16T15:30:44.2758597Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+build-backend	Checkout repository	2026-01-16T15:30:44.2800544Z ##[endgroup]
+build-backend	Checkout repository	2026-01-16T15:30:44.2803620Z ##[group]Fetching the repository
+build-backend	Checkout repository	2026-01-16T15:30:44.2812838Z [command]/usr/bin/git -c protocol.version=2 fetch --prune --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/*
+build-backend	Checkout repository	2026-01-16T15:30:45.1246443Z From https://github.com/shaizshaikh/task-management-app
+build-backend	Checkout repository	2026-01-16T15:30:45.1250491Z  * [new branch]      dev        -> origin/dev
+build-backend	Checkout repository	2026-01-16T15:30:45.1253319Z  * [new branch]      feature/user-management-enhancement -> origin/feature/user-management-enhancement
+build-backend	Checkout repository	2026-01-16T15:30:45.1257413Z  * [new branch]      main       -> origin/main
+build-backend	Checkout repository	2026-01-16T15:30:45.1293406Z [command]/usr/bin/git branch --list --remote origin/dev
+build-backend	Checkout repository	2026-01-16T15:30:45.1318880Z   origin/dev
+build-backend	Checkout repository	2026-01-16T15:30:45.1329069Z [command]/usr/bin/git rev-parse refs/remotes/origin/dev
+build-backend	Checkout repository	2026-01-16T15:30:45.1351651Z 24cfd441ee2aa89630898cc851364385db586786
+build-backend	Checkout repository	2026-01-16T15:30:45.1360568Z ##[endgroup]
+build-backend	Checkout repository	2026-01-16T15:30:45.1362677Z ##[group]Determining the checkout info
+build-backend	Checkout repository	2026-01-16T15:30:45.1368873Z ##[endgroup]
+build-backend	Checkout repository	2026-01-16T15:30:45.1370328Z [command]/usr/bin/git sparse-checkout disable
+build-backend	Checkout repository	2026-01-16T15:30:45.1428750Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+build-backend	Checkout repository	2026-01-16T15:30:45.1459768Z ##[group]Checking out the ref
+build-backend	Checkout repository	2026-01-16T15:30:45.1465753Z [command]/usr/bin/git checkout --progress --force -B dev refs/remotes/origin/dev
+build-backend	Checkout repository	2026-01-16T15:30:45.1631698Z Switched to a new branch 'dev'
+build-backend	Checkout repository	2026-01-16T15:30:45.1637609Z branch 'dev' set up to track 'origin/dev'.
+build-backend	Checkout repository	2026-01-16T15:30:45.1650794Z ##[endgroup]
+build-backend	Checkout repository	2026-01-16T15:30:45.1689084Z [command]/usr/bin/git log -1 --format=%H
+build-backend	Checkout repository	2026-01-16T15:30:45.1716427Z 24cfd441ee2aa89630898cc851364385db586786
+build-backend	Get latest Docker Hub version	﻿2026-01-16T15:30:45.1882495Z ##[group]Run set -euo pipefail
+build-backend	Get latest Docker Hub version	2026-01-16T15:30:45.1883682Z [36;1mset -euo pipefail[0m
+build-backend	Get latest Docker Hub version	2026-01-16T15:30:45.1884693Z [36;1m[0m
+build-backend	Get latest Docker Hub version	2026-01-16T15:30:45.1886338Z [36;1mURL="https://hub.docker.com/v2/repositories/${DOCKER_NAMESPACE}/${DOCKER_REPO}/tags?page_size=100"[0m
+build-backend	Get latest Docker Hub version	2026-01-16T15:30:45.1888405Z [36;1m[0m
+build-backend	Get latest Docker Hub version	2026-01-16T15:30:45.1889391Z [36;1mecho "Fetching tags from Docker Hub..."[0m
+build-backend	Get latest Docker Hub version	2026-01-16T15:30:45.1890860Z [36;1mRESPONSE="$(curl -fsSL "$URL" 2>/dev/null || echo '{}')"[0m
+build-backend	Get latest Docker Hub version	2026-01-16T15:30:45.1892211Z [36;1m[0m
+build-backend	Get latest Docker Hub version	2026-01-16T15:30:45.1893240Z [36;1mif [[ -z "$RESPONSE" ]] || [[ "$RESPONSE" == "{}" ]]; then[0m
+build-backend	Get latest Docker Hub version	2026-01-16T15:30:45.1894880Z [36;1m  echo "No response from Docker Hub, using default version"[0m
+build-backend	Get latest Docker Hub version	2026-01-16T15:30:45.1896269Z [36;1m  LATEST="0.0.0"[0m
+build-backend	Get latest Docker Hub version	2026-01-16T15:30:45.1897299Z [36;1melse[0m
+build-backend	Get latest Docker Hub version	2026-01-16T15:30:45.1898182Z [36;1m  TAGS="$(echo "$RESPONSE" \[0m
+build-backend	Get latest Docker Hub version	2026-01-16T15:30:45.1899442Z [36;1m    | jq -r '.results // [] | .[].name' 2>/dev/null \[0m
+build-backend	Get latest Docker Hub version	2026-01-16T15:30:45.1900893Z [36;1m    | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' || echo "")"[0m
+build-backend	Get latest Docker Hub version	2026-01-16T15:30:45.1902219Z [36;1m[0m
+build-backend	Get latest Docker Hub version	2026-01-16T15:30:45.1903078Z [36;1m  if [[ -z "$TAGS" ]]; then[0m
+build-backend	Get latest Docker Hub version	2026-01-16T15:30:45.1904459Z [36;1m    echo "No semantic version tags found, starting at 0.0.0"[0m
+build-backend	Get latest Docker Hub version	2026-01-16T15:30:45.1905844Z [36;1m    LATEST="0.0.0"[0m
+build-backend	Get latest Docker Hub version	2026-01-16T15:30:45.1906809Z [36;1m  else[0m
+build-backend	Get latest Docker Hub version	2026-01-16T15:30:45.1908233Z [36;1m    LATEST="$(echo "$TAGS" | sed 's/^v//' | sort -V | tail -n 1)"[0m
+build-backend	Get latest Docker Hub version	2026-01-16T15:30:45.1909805Z [36;1m    echo "Found latest version: v$LATEST"[0m
+build-backend	Get latest Docker Hub version	2026-01-16T15:30:45.1910999Z [36;1m  fi[0m
+build-backend	Get latest Docker Hub version	2026-01-16T15:30:45.1911803Z [36;1mfi[0m
+build-backend	Get latest Docker Hub version	2026-01-16T15:30:45.1912586Z [36;1m[0m
+build-backend	Get latest Docker Hub version	2026-01-16T15:30:45.1913595Z [36;1mecho "current_version=$LATEST" >> "$GITHUB_OUTPUT"[0m
+build-backend	Get latest Docker Hub version	2026-01-16T15:30:45.1951247Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+build-backend	Get latest Docker Hub version	2026-01-16T15:30:45.1952559Z env:
+build-backend	Get latest Docker Hub version	2026-01-16T15:30:45.1953732Z   IMAGE_NAME: ***/taskmanagement-backend
+build-backend	Get latest Docker Hub version	2026-01-16T15:30:45.1954923Z   DOCKER_NAMESPACE: ***
+build-backend	Get latest Docker Hub version	2026-01-16T15:30:45.1955896Z   DOCKER_REPO: taskmanagement-backend
+build-backend	Get latest Docker Hub version	2026-01-16T15:30:45.1957558Z   DOCKERFILE_PATH: ./backend/Dockerfile
+build-backend	Get latest Docker Hub version	2026-01-16T15:30:45.1958674Z   BUILD_CONTEXT: ./backend
+build-backend	Get latest Docker Hub version	2026-01-16T15:30:45.1959594Z ##[endgroup]
+build-backend	Get latest Docker Hub version	2026-01-16T15:30:45.2023981Z Fetching tags from Docker Hub...
+build-backend	Get latest Docker Hub version	2026-01-16T15:30:45.3710858Z No response from Docker Hub, using default version
+build-backend	Calculate next version	﻿2026-01-16T15:30:45.3802400Z ##[group]Run set -euo pipefail
+build-backend	Calculate next version	2026-01-16T15:30:45.3804348Z [36;1mset -euo pipefail[0m
+build-backend	Calculate next version	2026-01-16T15:30:45.3805808Z [36;1m[0m
+build-backend	Calculate next version	2026-01-16T15:30:45.3807009Z [36;1mCURRENT="0.0.0"[0m
+build-backend	Calculate next version	2026-01-16T15:30:45.3808617Z [36;1m[0m
+build-backend	Calculate next version	2026-01-16T15:30:45.3810089Z [36;1mif [[ ! "$CURRENT" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then[0m
+build-backend	Calculate next version	2026-01-16T15:30:45.3812249Z [36;1m  echo "Invalid version '$CURRENT', defaulting to 0.0.0"[0m
+build-backend	Calculate next version	2026-01-16T15:30:45.3813686Z [36;1m  CURRENT="0.0.0"[0m
+build-backend	Calculate next version	2026-01-16T15:30:45.3814679Z [36;1mfi[0m
+build-backend	Calculate next version	2026-01-16T15:30:45.3815724Z [36;1m[0m
+build-backend	Calculate next version	2026-01-16T15:30:45.3816847Z [36;1mIFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT"[0m
+build-backend	Calculate next version	2026-01-16T15:30:45.3818327Z [36;1m[0m
+build-backend	Calculate next version	2026-01-16T15:30:45.3819097Z [36;1mMAJOR=$((10#$MAJOR))[0m
+build-backend	Calculate next version	2026-01-16T15:30:45.3820057Z [36;1mMINOR=$((10#$MINOR))[0m
+build-backend	Calculate next version	2026-01-16T15:30:45.3821581Z [36;1mPATCH=$((10#$PATCH))[0m
+build-backend	Calculate next version	2026-01-16T15:30:45.3823098Z [36;1m[0m
+build-backend	Calculate next version	2026-01-16T15:30:45.3824326Z [36;1mBUMP="patch"[0m
+build-backend	Calculate next version	2026-01-16T15:30:45.3825402Z [36;1m[0m
+build-backend	Calculate next version	2026-01-16T15:30:45.3826228Z [36;1mcase "$BUMP" in[0m
+build-backend	Calculate next version	2026-01-16T15:30:45.3827994Z [36;1m  major) MAJOR=$((MAJOR + 1)); MINOR=0; PATCH=0 ;;[0m
+build-backend	Calculate next version	2026-01-16T15:30:45.3829373Z [36;1m  minor) MINOR=$((MINOR + 1)); PATCH=0 ;;[0m
+build-backend	Calculate next version	2026-01-16T15:30:45.3830562Z [36;1m  patch) PATCH=$((PATCH + 1)) ;;[0m
+build-backend	Calculate next version	2026-01-16T15:30:45.3831605Z [36;1mesac[0m
+build-backend	Calculate next version	2026-01-16T15:30:45.3832346Z [36;1m[0m
+build-backend	Calculate next version	2026-01-16T15:30:45.3833208Z [36;1mNEW_VERSION="${MAJOR}.${MINOR}.${PATCH}"[0m
+build-backend	Calculate next version	2026-01-16T15:30:45.3834575Z [36;1mecho "new_version=$NEW_VERSION" >> "$GITHUB_OUTPUT"[0m
+build-backend	Calculate next version	2026-01-16T15:30:45.3836795Z [36;1mecho "Backend version: v$NEW_VERSION (was: v$CURRENT)"[0m
+build-backend	Calculate next version	2026-01-16T15:30:45.3873673Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+build-backend	Calculate next version	2026-01-16T15:30:45.3874925Z env:
+build-backend	Calculate next version	2026-01-16T15:30:45.3875891Z   IMAGE_NAME: ***/taskmanagement-backend
+build-backend	Calculate next version	2026-01-16T15:30:45.3877005Z   DOCKER_NAMESPACE: ***
+build-backend	Calculate next version	2026-01-16T15:30:45.3878172Z   DOCKER_REPO: taskmanagement-backend
+build-backend	Calculate next version	2026-01-16T15:30:45.3879270Z   DOCKERFILE_PATH: ./backend/Dockerfile
+build-backend	Calculate next version	2026-01-16T15:30:45.3880340Z   BUILD_CONTEXT: ./backend
+build-backend	Calculate next version	2026-01-16T15:30:45.3881210Z ##[endgroup]
+build-backend	Calculate next version	2026-01-16T15:30:45.3945232Z Backend version: v0.0.1 (was: v0.0.0)
+build-backend	Run docker/setup-buildx-action@v3	﻿2026-01-16T15:30:45.4107981Z ##[group]Run docker/setup-buildx-action@v3
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:45.4109169Z with:
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:45.4110120Z   driver: docker-container
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:45.4111037Z   use: true
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:45.4111852Z   keep-state: false
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:45.4112787Z   cache-binary: true
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:45.4113641Z   cleanup: true
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:45.4114493Z   install: false
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:45.4115406Z env:
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:45.4116393Z   IMAGE_NAME: ***/taskmanagement-backend
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:45.4117697Z   DOCKER_NAMESPACE: ***
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:45.4118756Z   DOCKER_REPO: taskmanagement-backend
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:45.4119891Z   DOCKERFILE_PATH: ./backend/Dockerfile
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:45.4120955Z   BUILD_CONTEXT: ./backend
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:45.4122013Z ##[endgroup]
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:45.7278623Z ##[group]Docker info
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:45.7304557Z [command]/usr/bin/docker version
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:45.8143924Z Client: Docker Engine - Community
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:45.8153347Z  Version:           28.0.4
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:45.8163898Z  API version:       1.48
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:45.8165421Z  Go version:        go1.23.7
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:45.8166866Z  Git commit:        b8034c0
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:45.8170423Z  Built:             Tue Mar 25 15:07:16 2025
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:45.8172064Z  OS/Arch:           linux/amd64
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:45.8173572Z  Context:           default
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:45.8174493Z 
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:45.8175109Z Server: Docker Engine - Community
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:45.8176602Z  Engine:
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:45.8185054Z   Version:          28.0.4
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:45.8187022Z   API version:      1.48 (minimum version 1.24)
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:45.8189053Z   Go version:       go1.23.7
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:45.8190546Z   Git commit:       6430e49
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:45.8192063Z   Built:            Tue Mar 25 15:07:16 2025
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:45.8193625Z   OS/Arch:          linux/amd64
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:45.8195081Z   Experimental:     false
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:45.8196418Z  containerd:
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:45.8197802Z   Version:          v2.2.1
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:45.8203769Z   GitCommit:        dea7da592f5d1d2b7755e3a161be07f43fad8f75
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:45.8205623Z  runc:
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:45.8206750Z   Version:          1.3.4
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:45.8208466Z   GitCommit:        v1.3.4-0-gd6d73eb8
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:45.8210064Z  docker-init:
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:45.8211328Z   Version:          0.19.0
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:45.8212789Z   GitCommit:        de40ad0
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:45.8224090Z [command]/usr/bin/docker info
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0322011Z Client: Docker Engine - Community
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0328524Z  Version:    28.0.4
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0331168Z  Context:    default
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0332762Z  Debug Mode: false
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0345329Z  Plugins:
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0346598Z   buildx: Docker Buildx (Docker Inc.)
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0348590Z     Version:  v0.30.1
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0350178Z     Path:     /usr/libexec/docker/cli-plugins/docker-buildx
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0352133Z   compose: Docker Compose (Docker Inc.)
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0353763Z     Version:  v2.38.2
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0355514Z     Path:     /usr/libexec/docker/cli-plugins/docker-compose
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0356880Z 
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0357699Z Server:
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0358896Z  Containers: 0
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0360155Z   Running: 0
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0361377Z   Paused: 0
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0362593Z   Stopped: 0
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0363793Z  Images: 1
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0365007Z  Server Version: 28.0.4
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0366403Z  Storage Driver: overlay2
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0368072Z   Backing Filesystem: extfs
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0369621Z   Supports d_type: true
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0371066Z   Using metacopy: false
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0372574Z   Native Overlay Diff: false
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0374071Z   userxattr: false
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0375418Z  Logging Driver: json-file
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0376877Z  Cgroup Driver: systemd
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0378475Z  Cgroup Version: 2
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0379782Z  Plugins:
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0380978Z   Volume: local
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0382462Z   Network: bridge host ipvlan macvlan null overlay
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0385210Z   Log: awslogs fluentd gcplogs gelf journald json-file local splunk syslog
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0387527Z  Swarm: inactive
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0388857Z  Runtimes: io.containerd.runc.v2 runc
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0390346Z  Default Runtime: runc
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0391575Z  Init Binary: docker-init
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0393223Z  containerd version: dea7da592f5d1d2b7755e3a161be07f43fad8f75
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0395039Z  runc version: v1.3.4-0-gd6d73eb8
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0396481Z  init version: de40ad0
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0399236Z  Security Options:
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0400344Z   apparmor
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0401397Z   seccomp
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0402468Z    Profile: builtin
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0403645Z   cgroupns
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0404784Z  Kernel Version: 6.11.0-1018-azure
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0406269Z  Operating System: Ubuntu 24.04.3 LTS
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0408197Z  OSType: linux
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0409422Z  Architecture: x86_64
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0410776Z  CPUs: 2
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0411933Z  Total Memory: 7.758GiB
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0413228Z  Name: runnervmmtnos
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0414540Z  ID: 5a446069-012f-4a61-9e1e-c3a17d5c9c05
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0416085Z  Docker Root Dir: /var/lib/docker
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0417670Z  Debug Mode: false
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0418975Z  Username: githubactions
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0420384Z  Experimental: false
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0421708Z  Insecure Registries:
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0428204Z   ::1/128
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0429609Z   127.0.0.0/8
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0430797Z  Live Restore Enabled: false
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0431697Z 
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.0433184Z ##[endgroup]
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.1006435Z ##[group]Buildx version
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.1034389Z [command]/usr/bin/docker buildx version
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.1665117Z github.com/docker/buildx v0.30.1 9e66234aa13328a5e75b75aa5574e1ca6d6d9c01
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.1695965Z ##[endgroup]
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.1984691Z ##[group]Inspecting default docker context
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.2238192Z [
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.2239636Z   {
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.2242039Z     "Name": "default",
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.2243336Z     "Metadata": {},
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.2244519Z     "Endpoints": {
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.2245646Z       "docker": {
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.2246901Z         "Host": "unix:///var/run/docker.sock",
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.2248811Z         "SkipTLSVerify": false
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.2250150Z       }
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.2251156Z     },
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.2252225Z     "TLSMaterial": {},
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.2253475Z     "Storage": {
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.2254672Z       "MetadataPath": "<IN MEMORY>",
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.2256209Z       "TLSPath": "<IN MEMORY>"
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.2257750Z     }
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.2258747Z   }
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.2259706Z ]
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.2261634Z ##[endgroup]
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.2263653Z ##[group]Creating a new builder instance
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.5436249Z [command]/usr/bin/docker buildx create --name builder-2837a1d0-37c1-4c18-b511-6f2a1f633833 --driver docker-container --buildkitd-flags --allow-insecure-entitlement security.insecure --allow-insecure-entitlement network.host --use
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.6396021Z builder-2837a1d0-37c1-4c18-b511-6f2a1f633833
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.6447274Z ##[endgroup]
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.6453982Z ##[group]Booting builder
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.6528764Z [command]/usr/bin/docker buildx inspect --bootstrap --builder builder-2837a1d0-37c1-4c18-b511-6f2a1f633833
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.7439419Z #1 [internal] booting buildkit
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:30:46.8932098Z #1 pulling image moby/buildkit:buildx-stable-1
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:31:01.7994326Z #1 pulling image moby/buildkit:buildx-stable-1 15.1s done
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:31:01.8003178Z #1 ERROR: Error response from daemon: Head "https://registry-1.docker.io/v2/moby/buildkit/manifests/buildx-stable-1": Get "https://auth.docker.io/token?account=githubactions&scope=repository%3Amoby%2Fbuildkit%3Apull&service=registry.docker.io": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:31:01.8006286Z ------
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:31:01.8006983Z  > [internal] booting buildkit:
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:31:01.8007600Z ------
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:31:01.8009602Z ERROR: Error response from daemon: Head "https://registry-1.docker.io/v2/moby/buildkit/manifests/buildx-stable-1": Get "https://auth.docker.io/token?account=githubactions&scope=repository%3Amoby%2Fbuildkit%3Apull&service=registry.docker.io": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:31:01.8061317Z ##[endgroup]
+build-backend	Run docker/setup-buildx-action@v3	2026-01-16T15:31:01.8087764Z ##[error]ERROR: Error response from daemon: Head "https://registry-1.docker.io/v2/moby/buildkit/manifests/buildx-stable-1": Get "https://auth.docker.io/token?account=githubactions&scope=repository%3Amoby%2Fbuildkit%3Apull&service=registry.docker.io": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+build-backend	Post Run docker/setup-buildx-action@v3	﻿2026-01-16T15:31:01.8260657Z Post job cleanup.
+build-backend	Post Run docker/setup-buildx-action@v3	2026-01-16T15:31:02.1190527Z ##[group]Removing builder
+build-backend	Post Run docker/setup-buildx-action@v3	2026-01-16T15:31:02.1855450Z [command]/usr/bin/docker buildx rm builder-2837a1d0-37c1-4c18-b511-6f2a1f633833
+build-backend	Post Run docker/setup-buildx-action@v3	2026-01-16T15:31:02.2400850Z builder-2837a1d0-37c1-4c18-b511-6f2a1f633833 removed
+build-backend	Post Run docker/setup-buildx-action@v3	2026-01-16T15:31:02.2435176Z ##[endgroup]
+build-backend	Post Run docker/setup-buildx-action@v3	2026-01-16T15:31:02.2438251Z ##[group]Cleaning up certificates
+build-backend	Post Run docker/setup-buildx-action@v3	2026-01-16T15:31:02.2442944Z ##[endgroup]
+build-backend	Post Run docker/setup-buildx-action@v3	2026-01-16T15:31:02.2444199Z ##[group]Post cache
+build-backend	Post Run docker/setup-buildx-action@v3	2026-01-16T15:31:02.2446860Z State not set
+build-backend	Post Run docker/setup-buildx-action@v3	2026-01-16T15:31:02.2448516Z ##[endgroup]
+build-backend	Post Checkout repository	﻿2026-01-16T15:31:02.2618832Z Post job cleanup.
+build-backend	Post Checkout repository	2026-01-16T15:31:02.3559656Z [command]/usr/bin/git version
+build-backend	Post Checkout repository	2026-01-16T15:31:02.3604136Z git version 2.52.0
+build-backend	Post Checkout repository	2026-01-16T15:31:02.3649750Z Temporarily overriding HOME='/home/runner/work/_temp/4cc35efe-e1ca-4741-a497-8d481efc1f6a' before making global git config changes
+build-backend	Post Checkout repository	2026-01-16T15:31:02.3652811Z Adding repository directory to the temporary git global config as a safe directory
+build-backend	Post Checkout repository	2026-01-16T15:31:02.3657079Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/task-management-app/task-management-app
+build-backend	Post Checkout repository	2026-01-16T15:31:02.3701065Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+build-backend	Post Checkout repository	2026-01-16T15:31:02.3737418Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+build-backend	Post Checkout repository	2026-01-16T15:31:02.3979817Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+build-backend	Post Checkout repository	2026-01-16T15:31:02.4004441Z http.https://github.com/.extraheader
+build-backend	Post Checkout repository	2026-01-16T15:31:02.4018930Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+build-backend	Post Checkout repository	2026-01-16T15:31:02.4053242Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+build-backend	Post Checkout repository	2026-01-16T15:31:02.4326691Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+build-backend	Post Checkout repository	2026-01-16T15:31:02.4398434Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+build-backend	Complete job	﻿2026-01-16T15:31:02.4863674Z Evaluate and set job outputs
+build-backend	Complete job	2026-01-16T15:31:02.4870058Z Set output 'version'
+build-backend	Complete job	2026-01-16T15:31:02.4871730Z Cleaning up orphan processes
