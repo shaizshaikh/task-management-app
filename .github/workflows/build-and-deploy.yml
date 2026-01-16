@@ -47,6 +47,13 @@ jobs:
               - 'backend/**'
             frontend:
               - 'frontend/**'
+      
+      - name: Debug - Show detected changes
+        run: |
+          echo "=== Path Filter Results ==="
+          echo "Backend changed: ${{ steps.filter.outputs.backend }}"
+          echo "Frontend changed: ${{ steps.filter.outputs.frontend }}"
+          echo "=========================="
 
   # --------------------------------------------------
   # Build Backend
@@ -69,6 +76,15 @@ jobs:
       BUILD_CONTEXT: ./backend
 
     steps:
+      - name: Debug - Backend build decision
+        run: |
+          echo "=== Build Backend Decision ==="
+          echo "Event: ${{ github.event_name }}"
+          echo "Backend changed (from filter): ${{ needs.detect-changes.outputs.backend }}"
+          echo "Manual component selected: ${{ github.event.inputs.component }}"
+          echo "This job IS running (condition passed)"
+          echo "=============================="
+      
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
