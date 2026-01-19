@@ -10,23 +10,7 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/cont
 ##command for installing the ssl cert
 kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.13.2/cert-manager.yaml
 
-##setting up the init script for the MySQL setup
-kubectl create configmap database-init-script --from-file=init-schema.sql=database/init-schema.sql --namespace=task-management
-
-##setting up the keycloak realm export file.
-kubectl create configmap keycloak-realm-config --from-file=realm-export.json=realm-export.json --namespace=task-management
-
-##application configs and secrets setup command
-kubectl apply -f k8s/configmap.yaml
-
-##adding secrets
-kubectl apply -f k8s/secrets.yaml
-
-
-
-
 ## Install ArgoCD
-
 kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
 ## Wait for ArgoCD Pods to Become Ready

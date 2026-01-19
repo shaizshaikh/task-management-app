@@ -7,13 +7,19 @@ metadata:
   name: task-management-ingress
   namespace: task-management
   annotations:
-    # Enable SSL redirect now that certificate is working
+    # Enable SSL redirect, but allow ACME HTTP-01 challenge over plain HTTP
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-    
+
+    # Allow ACME challenge path over HTTP
+    nginx.ingress.kubernetes.io/server-snippet: |
+      location /.well-known/acme-challenge/ {
+        allow all;
+      }
+
     # Enable cert-manager for automatic SSL certificates
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
-    
+
     # Security headers
     nginx.ingress.kubernetes.io/configuration-snippet: |
       add_header X-Frame-Options "SAMEORIGIN" always;
@@ -21,19 +27,19 @@ metadata:
       add_header X-XSS-Protection "1; mode=block" always;
       add_header Referrer-Policy "strict-origin-when-cross-origin" always;
       add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
-    
+
     # Rate limiting
     nginx.ingress.kubernetes.io/rate-limit: "100"
     nginx.ingress.kubernetes.io/rate-limit-window: "1m"
-    
+
     # Client body size for file uploads
     nginx.ingress.kubernetes.io/proxy-body-size: "10m"
-    
+
     # Timeout settings
     nginx.ingress.kubernetes.io/proxy-connect-timeout: "10"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "30"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "30"
-    
+
 spec:
   ingressClassName: nginx
   tls:
@@ -62,6 +68,7 @@ spec:
             name: nginx-service
             port:
               number: 80
+
 ---
 # ClusterIssuer for Let's Encrypt SSL certificates
 apiVersion: cert-manager.io/v1
