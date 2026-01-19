@@ -359,18 +359,18 @@ jobs:
         run: |
           IMAGE="${{ steps.images.outputs.backend_image }}"
           echo "Updating backend manifest with: $IMAGE"
-          sed -i -E "s|(^\s*image:\s*).+|\1${IMAGE}|" k8s/backend.yaml
-          echo "Updated backend.yaml:"
-          grep "image:" k8s/backend.yaml
+          sed -i -E "s|(^\s*image:\s*).+|\1${IMAGE}|" k8s/backend/deployment.yaml
+          echo "Updated backend/deployment.yaml:"
+          grep "image:" k8s/backend/deployment.yaml
 
       - name: Update frontend manifest
         if: needs.build-frontend.result == 'success'
         run: |
           IMAGE="${{ steps.images.outputs.frontend_image }}"
           echo "Updating frontend manifest with: $IMAGE"
-          sed -i -E "s|(^\s*image:\s*).+|\1${IMAGE}|" k8s/frontend.yaml
-          echo "Updated frontend.yaml:"
-          grep "image:" k8s/frontend.yaml
+          sed -i -E "s|(^\s*image:\s*).+|\1${IMAGE}|" k8s/frontend/deployment.yaml
+          echo "Updated frontend/deployment.yaml:"
+          grep "image:" k8s/frontend/deployment.yaml
 
       - name: Validate manifests
         run: |
@@ -430,7 +430,7 @@ jobs:
             
             # Update the PR body
             gh pr edit "$EXISTING_PR" --body "$(cat <<EOF
-          ## 🚀 Automated Deployment PR (Updated)
+          ## Automated Deployment PR (Updated)
           
           This PR contains the latest deployment changes from the \`dev\` branch.
           
