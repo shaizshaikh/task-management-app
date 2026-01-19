@@ -15,7 +15,7 @@ const router = express.Router();
 // Apply audit middleware for unauthorized access tracking
 router.use(auditUnauthorized);
 
-// Authentication routes
+// Authentication routes!
 router.use('/auth', authRoutes);
 
 // User management routes
