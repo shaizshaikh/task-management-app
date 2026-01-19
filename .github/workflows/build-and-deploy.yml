@@ -375,12 +375,12 @@ jobs:
       - name: Validate manifests
         run: |
           if [[ "${{ needs.build-backend.result }}" == "success" ]]; then
-            python3 -c "import yaml; yaml.safe_load(open('k8s/backend.yaml'))"
+            python3 -c "import yaml; yaml.safe_load(open('k8s/backend/deployment.yaml'))"
             echo "✅ Backend manifest valid"
           fi
           
           if [[ "${{ needs.build-frontend.result }}" == "success" ]]; then
-            python3 -c "import yaml; yaml.safe_load(open('k8s/frontend.yaml'))"
+            python3 -c "import yaml; yaml.safe_load(open('k8s/frontend/deployment.yaml'))"
             echo "✅ Frontend manifest valid"
           fi
 
