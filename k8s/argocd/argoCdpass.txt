@@ -1,0 +1,2 @@
+argo_user: admin
+argo_pass: BSy7lJTsMlTZyunY
