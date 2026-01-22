@@ -317,7 +317,7 @@ jobs:
             if [[ -z "$BACKEND_IMAGE" ]]; then
               # Fallback: construct from Docker Hub username and version
               BACKEND_IMAGE="${{ secrets.DOCKERHUB_USERNAME }}/taskmanagement-backend:v${{ needs.build-backend.outputs.version }}"
-              echo "⚠️  Backend image was empty, constructed: $BACKEND_IMAGE"
+              echo "Warning: Backend image was empty, constructed: $BACKEND_IMAGE"
             fi
             echo "backend_image=$BACKEND_IMAGE" >> "$GITHUB_OUTPUT"
             echo "Backend image: $BACKEND_IMAGE"
@@ -329,7 +329,7 @@ jobs:
             if [[ -z "$FRONTEND_IMAGE" ]]; then
               # Fallback: construct from Docker Hub username and version
               FRONTEND_IMAGE="${{ secrets.DOCKERHUB_USERNAME }}/taskmanagement-frontend:v${{ needs.build-frontend.outputs.version }}"
-              echo "⚠️  Frontend image was empty, constructed: $FRONTEND_IMAGE"
+              echo "Warning: Frontend image was empty, constructed: $FRONTEND_IMAGE"
             fi
             echo "frontend_image=$FRONTEND_IMAGE" >> "$GITHUB_OUTPUT"
             echo "Frontend image: $FRONTEND_IMAGE"
@@ -357,7 +357,7 @@ jobs:
         run: |
           if [[ "${{ needs.build-backend.result }}" == "success" ]]; then
             python3 -c "import yaml; yaml.safe_load(open('k8s/backend/deployment.yaml'))"
-            echo "✅ Backend manifest valid"
+            echo "Backend manifest valid"
           fi
           
           if [[ "${{ needs.build-frontend.result }}" == "success" ]]; then

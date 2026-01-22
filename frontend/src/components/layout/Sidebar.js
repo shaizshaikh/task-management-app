@@ -168,22 +168,14 @@ const Sidebar = ({ collapsed, isMobile, onCollapse }) => {
                 onClick={() => handleNavigation(item.path, index)}
                 role="menuitem"
                 aria-current={isActive(item.path) ? 'page' : undefined}
-                aria-describedby={`nav-desc-${item.id}`}
+                aria-label={`${item.label} - ${item.description}`}
                 tabIndex={focusedIndex === index ? 0 : -1}
               >
                 <span className="nav-icon" aria-hidden="true">
                   {item.icon}
                 </span>
                 {!collapsed && (
-                  <>
-                    <span className="nav-label">{item.label}</span>
-                    <span 
-                      id={`nav-desc-${item.id}`}
-                      className="sr-only"
-                    >
-                      {item.description}
-                    </span>
-                  </>
+                  <span className="nav-label">{item.label}</span>
                 )}
               </button>
             </li>
@@ -233,6 +225,8 @@ const Sidebar = ({ collapsed, isMobile, onCollapse }) => {
         .sidebar.mobile {
           transform: translateX(-100%);
           transition: transform var(--animation-duration) ease-in-out;
+          width: 280px;
+          box-shadow: var(--shadow-xl);
         }
 
         .sidebar.mobile:not(.collapsed) {

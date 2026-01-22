@@ -37,7 +37,7 @@ const Dashboard = () => {
     return (
       <div className="page-container">
         <div className="alert alert-error">
-          <span className="alert-icon" aria-hidden="true">⚠️</span>
+          <span className="alert-icon" aria-hidden="true">Warning</span>
           Failed to load dashboard data. Please try refreshing the page.
         </div>
       </div>
@@ -51,7 +51,7 @@ const Dashboard = () => {
       {/* Page Header */}
       <header className="page-header">
         <div>
-          <h2 className="page-title">📊 Project Dashboard</h2>
+          <h2 className="page-title">Project Dashboard</h2>
           <p className="page-subtitle">
             Overview of tasks, progress, and team performance
           </p>
@@ -64,29 +64,29 @@ const Dashboard = () => {
         <div className="stat-card info">
           <div className="stat-value">{stats.total_tasks}</div>
           <div className="stat-label">Total Tasks</div>
-          <div className="stat-icon" aria-hidden="true">📋</div>
+          <div className="stat-icon" aria-hidden="true">Tasks</div>
         </div>
 
         {/* Completion Rate */}
         <div className="stat-card success">
           <div className="stat-value">{completionRate}%</div>
           <div className="stat-label">Completion Rate</div>
-          <div className="stat-icon" aria-hidden="true">✅</div>
+          <div className="stat-icon" aria-hidden="true">Done</div>
         </div>
 
         {/* In Progress */}
         <div className="stat-card warning">
-          <div className="stat-value">{stats.in_progress_count}</div>
+          <div className="stat-value">{stats.in_progress_count || 0}</div>
           <div className="stat-label">In Progress</div>
-          <div className="stat-icon" aria-hidden="true">⚡</div>
+          <div className="stat-icon" aria-hidden="true">Active</div>
         </div>
 
         {/* Overdue Tasks */}
         <div className={`stat-card ${stats.overdue_count > 0 ? 'error' : 'success'}`}>
-          <div className="stat-value">{stats.overdue_count}</div>
+          <div className="stat-value">{stats.overdue_count || 0}</div>
           <div className="stat-label">Overdue Tasks</div>
           <div className="stat-icon" aria-hidden="true">
-            {stats.overdue_count > 0 ? '⚠️' : '✨'}
+            {stats.overdue_count > 0 ? 'Overdue' : 'Good'}
           </div>
         </div>
       </div>
@@ -98,18 +98,18 @@ const Dashboard = () => {
         </div>
         <div className="card-body">
           {/* Status Legend */}
-          <div className="status-legend">
+          <div className="status-legend md:flex md:justify-between sm:flex-col sm:gap-2">
             <div className="legend-item">
               <div className="legend-color legend-color-info"></div>
-              <span className="legend-label">To Do: {stats.todo_count}</span>
+              <span className="legend-label">To Do: {stats.todo_count || 0}</span>
             </div>
             <div className="legend-item">
               <div className="legend-color legend-color-warning"></div>
-              <span className="legend-label">In Progress: {stats.in_progress_count}</span>
+              <span className="legend-label">In Progress: {stats.in_progress_count || 0}</span>
             </div>
             <div className="legend-item">
               <div className="legend-color legend-color-success"></div>
-              <span className="legend-label">Done: {stats.done_count}</span>
+              <span className="legend-label">Done: {stats.done_count || 0}</span>
             </div>
           </div>
 
@@ -161,23 +161,23 @@ const Dashboard = () => {
             <div className="priority-item">
               <div className="priority-indicator high-priority"></div>
               <div className="priority-content">
-                <div className="priority-count">{stats.high_priority_count}</div>
+                <div className="priority-count">{stats.high_priority_count || 0}</div>
                 <div className="priority-label">High Priority</div>
               </div>
             </div>
             <div className="priority-item">
               <div className="priority-indicator medium-priority"></div>
               <div className="priority-content">
-                <div className="priority-count">{stats.total_tasks - stats.high_priority_count}</div>
+                <div className="priority-count">{(stats.total_tasks || 0) - (stats.high_priority_count || 0)}</div>
                 <div className="priority-label">Medium/Low Priority</div>
               </div>
             </div>
           </div>
 
-          {stats.high_priority_count > 0 && (
+          {(stats.high_priority_count || 0) > 0 && (
             <div className="alert alert-warning mt-3">
-              <span className="alert-icon" aria-hidden="true">⚡</span>
-              You have <strong>{stats.high_priority_count}</strong> high-priority task{stats.high_priority_count !== 1 ? 's' : ''} that need attention.
+              <span className="alert-icon" aria-hidden="true">Priority</span>
+              You have <strong>{stats.high_priority_count || 0}</strong> high-priority task{(stats.high_priority_count || 0) !== 1 ? 's' : ''} that need attention.
             </div>
           )}
         </div>

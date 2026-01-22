@@ -33,7 +33,7 @@ const TasksPage = () => {
 
   // Debug connection status
   useEffect(() => {
-    console.log(`🔌 [DEBUG] TasksPage - Connection status:`, {
+    console.log(`[DEBUG] TasksPage - Connection status:`, {
       isConnected,
       connectionError,
       user: user?.username,
@@ -43,7 +43,7 @@ const TasksPage = () => {
 
   // Enhanced real-time task updates with RBAC awareness
   useTaskRealtime((eventType, notification) => {
-    console.log(`🔄 [${user?.username}] Processing ${eventType} event:`, notification);
+    console.log(`[${user?.username}] Processing ${eventType} event:`, notification);
     
     switch (eventType) {
       case 'created':
@@ -54,11 +54,11 @@ const TasksPage = () => {
           );
           
           if (taskExists) {
-            console.log('🔄 Task already exists, skipping creation');
+            console.log('Task already exists, skipping creation');
             return prevTasks;
           }
           
-          console.log('✅ Adding new task to list');
+          console.log('Adding new task to list');
           return [notification.task, ...prevTasks];
         });
         break;
@@ -68,7 +68,7 @@ const TasksPage = () => {
           const updatedTasks = prevTasks.map(task => 
             parseInt(task.id) === parseInt(notification.task.id) ? notification.task : task
           );
-          console.log('✅ Task updated in list');
+          console.log('Task updated in list');
           return updatedTasks;
         });
         break;
@@ -78,7 +78,7 @@ const TasksPage = () => {
           const filteredTasks = prevTasks.filter(task => 
             parseInt(task.id) !== parseInt(notification.task.id)
           );
-          console.log('✅ Task removed from list');
+          console.log('Task removed from list');
           return filteredTasks;
         });
         break;
@@ -288,7 +288,7 @@ const TasksPage = () => {
       
       <div className="page-header">
         <h2 className="page-title">
-          📋 Tasks ({tasks.length})
+          Tasks ({tasks.length})
         </h2>
         
         {canCreateTasks() && (
@@ -313,7 +313,7 @@ const TasksPage = () => {
             {/* Permission explanation */}
             {!isAdmin() && !isManager() && (
               <div className="alert alert-info mb-3">
-                <span className="alert-icon" aria-hidden="true">💡</span>
+                <span className="alert-icon" aria-hidden="true">Note</span>
                 You can create tasks only for teams where you are a manager.
               </div>
             )}

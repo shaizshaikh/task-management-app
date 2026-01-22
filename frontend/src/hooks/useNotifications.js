@@ -117,7 +117,7 @@ export const useNotifications = () => {
 
     // Task-related notifications
     const unsubscribeTaskCreated = subscribe('taskCreated', (data) => {
-      console.log('🔔 Task created event received:', {
+      console.log('Task created event received:', {
         taskId: data.task.id,
         taskTitle: data.task.title,
         creatorId: data.creator?.id,
@@ -129,23 +129,23 @@ export const useNotifications = () => {
 
       // Don't notify the creator themselves
       if (data.creator?.id === user.id) {
-        console.log('🔔 Skipping notification - user is the creator');
+        console.log('Skipping notification - user is the creator');
         return;
       }
 
       if (data.task.assigned_to === user.id) {
-        console.log('🔔 Adding task assigned notification');
+        console.log('Adding task assigned notification');
         addNotification({
           type: 'task_assigned',
           title: 'New task assigned to you',
           message: `Task "${data.task.title}" has been assigned to you`,
-          icon: '📋',
+          icon: 'Task',
           priority: 'normal',
           actionUrl: `/tasks`,
           metadata: { taskId: data.task.id }
         });
       } else if (data.task.team_id && user.teams?.some(t => t.id === data.task.team_id)) {
-        console.log('🔔 Adding team task notification');
+        console.log('Adding team task notification');
         addNotification({
           type: 'task_created',
           title: 'New task in your team',

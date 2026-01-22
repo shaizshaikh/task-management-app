@@ -234,7 +234,7 @@ const TaskComments = ({ taskId }) => {
           onClick={() => setShowComments(!showComments)}
           className={`comments-toggle-btn ${showComments ? 'active' : ''}`}
         >
-          💬 Comments ({comments.length})
+          Comments ({comments.length})
           <span className="comment-toggle-icon">
             {showComments ? '▼' : '▶'}
           </span>

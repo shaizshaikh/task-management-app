@@ -273,7 +273,7 @@ class UserSyncService {
    */
   async cleanupOrphanedUsers() {
     try {
-      console.log('🧹 Starting orphaned user cleanup...');
+      console.log('Starting orphaned user cleanup...');
       
       // Get all active users from database
       const [dbUsers] = await pool.execute(
@@ -303,7 +303,7 @@ class UserSyncService {
               [dbUser.id]
             );
             
-            console.log(`🗑️ Deactivated orphaned user: ${dbUser.username} (${dbUser.email})`);
+            console.log(`Deactivated orphaned user: ${dbUser.username} (${dbUser.email})`);
             cleanedCount++;
           }
         } catch (error) {
@@ -312,7 +312,7 @@ class UserSyncService {
         }
       }
 
-      console.log(`✅ Cleanup complete: ${cleanedCount} orphaned users deactivated`);
+      console.log(`Cleanup complete: ${cleanedCount} orphaned users deactivated`);
       return { cleaned: cleanedCount, errors };
 
     } catch (error) {
@@ -333,7 +333,7 @@ class UserSyncService {
 
     try {
       this.syncInProgress = true;
-      console.log('🔄 Starting full user synchronization...');
+      console.log('Starting full user synchronization...');
 
       // First, clean up orphaned users
       await this.cleanupOrphanedUsers();
@@ -365,7 +365,7 @@ class UserSyncService {
       }
 
       this.lastSyncTime = new Date();
-      console.log(`✅ Full sync complete: ${syncedCount} users synchronized`);
+      console.log(`Full sync complete: ${syncedCount} users synchronized`);
       
       return { synced: syncedCount, errors };
 

@@ -108,7 +108,7 @@
   letter-spacing: 0.025em;
 }
 
-/* Input Fields */
+/* Input Fields - PERFORMANCE OPTIMIZED */
 .form-input {
   width: 100%;
   padding: var(--spacing-md);
@@ -117,7 +117,10 @@
   border-radius: var(--radius-md);
   color: var(--text-primary);
   font-size: 0.875rem;
-  transition: all var(--animation-duration) ease;
+  /* Optimized transition for better typing performance */
+  transition: border-color 0.1s ease;
+  /* Performance optimization */
+  will-change: border-color;
 }
 
 .form-input:focus {
@@ -144,7 +147,7 @@
   box-shadow: 0 0 0 2px rgba(248, 81, 73, 0.2);
 }
 
-/* Select Fields */
+/* Select Fields - PERFORMANCE OPTIMIZED */
 .form-select {
   width: 100%;
   padding: var(--spacing-md);
@@ -160,12 +163,16 @@
   background-repeat: no-repeat;
   background-size: 1rem;
   padding-right: 2.5rem;
+  /* Performance optimization */
+  will-change: border-color;
 }
 
 .form-select:focus {
   outline: none;
   border-color: var(--color-primary);
   box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+  /* Reduced transition */
+  transition: border-color 0.1s ease;
 }
 
 .form-select:disabled {
@@ -181,7 +188,7 @@
   padding-right: 2rem;
 }
 
-/* Textarea */
+/* Textarea - PERFORMANCE OPTIMIZED */
 .form-textarea {
   width: 100%;
   padding: var(--spacing-md);
@@ -194,12 +201,16 @@
   min-height: 80px;
   font-family: inherit;
   line-height: 1.5;
+  /* Performance optimization */
+  will-change: border-color;
 }
 
 .form-textarea:focus {
   outline: none;
   border-color: var(--color-primary);
   box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+  /* Reduced transition */
+  transition: border-color 0.1s ease;
 }
 
 .form-textarea:disabled {
@@ -417,6 +428,32 @@
   }
 }
 
+/* Performance Optimizations */
+.performance-optimized {
+  /* GPU acceleration for smooth interactions */
+  transform: translateZ(0);
+  will-change: transform, opacity;
+  /* Reduce repaints */
+  contain: layout style paint;
+  /* Optimize compositing */
+  isolation: isolate;
+}
+
+.performance-optimized input,
+.performance-optimized textarea,
+.performance-optimized select {
+  /* Optimize input rendering */
+  will-change: border-color, box-shadow;
+  /* Reduce layout thrashing */
+  contain: layout style;
+}
+
+/* Debounced input optimization */
+.debounced-input {
+  /* Prevent excessive reflows during typing */
+  contain: layout;
+}
+
 /* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
   .form-input,
@@ -428,5 +465,11 @@
 
   .form-loading::after {
     animation: none;
+  }
+  
+  /* Disable all modal animations */
+  .modal-overlay,
+  .modal-container {
+    animation: none !important;
   }
 }

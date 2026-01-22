@@ -19,7 +19,9 @@ const AppLayout = ({ children }) => {
     const handleResize = () => {
       const mobile = window.innerWidth < 768;
       setIsMobile(mobile);
-      if (mobile) {
+      
+      // Auto-collapse sidebar on mobile
+      if (mobile && !sidebarCollapsed) {
         setSidebarCollapsed(true);
       }
     };
@@ -27,7 +29,7 @@ const AppLayout = ({ children }) => {
     handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, [sidebarCollapsed]);
 
   // Skip layout for login page
   if (!isAuthenticated) {

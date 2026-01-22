@@ -539,7 +539,7 @@ class TaskService {
                 taskInfo[0],
                 updater
               );
-              console.log(`📧 Task assignment notification sent to: ${assigneeInfo[0].email}`);
+              console.log(`Task assignment notification sent to: ${assigneeInfo[0].email}`);
             }
           }
         }
@@ -589,7 +589,7 @@ class TaskService {
                   updater,
                   recentAttachments
                 );
-                console.log(`📧 Task status update notification sent to team leader: ${leader.email}`);
+                console.log(`Task status update notification sent to team leader: ${leader.email}`);
               }
             }
           }

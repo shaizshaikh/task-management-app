@@ -624,13 +624,13 @@ router.post('/:id/members', authenticateJWT, requireTeamPermission('ADD_TEAM_MEM
         );
 
         if (emailResult.success) {
-          console.log(`📧 Team assignment notification sent to: ${user.email}`);
+          console.log(`Team assignment notification sent to: ${user.email}`);
         } else {
-          console.warn(`📧 Failed to send team assignment notification to: ${user.email} - ${emailResult.error}`);
+          console.warn(`Failed to send team assignment notification to: ${user.email} - ${emailResult.error}`);
         }
       }
     } catch (emailError) {
-      console.error(`📧 Email error for team assignment notification:`, emailError.message);
+      console.error(`Email error for team assignment notification:`, emailError.message);
     }
 
     res.status(201).json({
@@ -759,13 +759,13 @@ router.put('/:id/members/:userId', authenticateJWT, requireTeamPermission('ADD_T
         );
 
         if (emailResult.success) {
-          console.log(`📧 Team role update notification sent to: ${userInfo[0].email}`);
+          console.log(`Team role update notification sent to: ${userInfo[0].email}`);
         } else {
-          console.warn(`📧 Failed to send team role update notification to: ${userInfo[0].email} - ${emailResult.error}`);
+          console.warn(`Failed to send team role update notification to: ${userInfo[0].email} - ${emailResult.error}`);
         }
       }
     } catch (emailError) {
-      console.error(`📧 Email error for team role update notification:`, emailError.message);
+      console.error(`Email error for team role update notification:`, emailError.message);
     }
 
     res.json({

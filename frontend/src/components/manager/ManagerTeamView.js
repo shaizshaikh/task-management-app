@@ -110,7 +110,7 @@ const ManagerTeamView = ({ teams, onRefresh }) => {
     <div>
       <div className="manager-header">
         <h3 className="manager-title">
-          👥 My Teams ({teams.length})
+          My Teams ({teams.length})
         </h3>
       </div>
 

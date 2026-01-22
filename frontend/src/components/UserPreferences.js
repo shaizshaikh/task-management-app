@@ -26,7 +26,7 @@ const UserPreferences = ({ isOpen, onClose }) => {
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h2 className="mb-0">⚙️ Preferences</h2>
+          <h2 className="mb-0">Preferences</h2>
           <button 
             className="modal-close"
             onClick={onClose}

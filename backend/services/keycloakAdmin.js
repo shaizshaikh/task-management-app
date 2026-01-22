@@ -570,10 +570,10 @@ class KeycloakAdminService {
           temporaryPassword: userInfo.temporaryPassword || false
         });
 
-        console.log(`✅ User created: ${userInfo.username} (${i + 1}/${usersArray.length})`);
+        console.log(`User created: ${userInfo.username} (${i + 1}/${usersArray.length})`);
         
       } catch (error) {
-        console.error(`❌ Failed to create user ${userInfo.username}:`, error.message);
+        console.error(`Failed to create user ${userInfo.username}:`, error.message);
         
         results.failed.push({
           index: i + 1,

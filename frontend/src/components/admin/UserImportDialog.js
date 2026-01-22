@@ -1,9 +1,9 @@
 /**
- * User Import Dialog Component
- * Handles bulk user import from CSV/Excel files
+ * User Import Dialog Component - PERFORMANCE OPTIMIZED
+ * Reduced re-renders and DOM operations for better typing performance
  */
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback, useMemo } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
@@ -15,8 +15,8 @@ const UserImportDialog = ({ onClose, onImportComplete }) => {
   const [showResults, setShowResults] = useState(false);
   const fileInputRef = useRef(null);
 
-  const handleFileSelect = (file) => {
-    // Validate file type
+  // Memoized file validation
+  const validateFile = useCallback((file) => {
     const allowedTypes = [
       'text/csv',
       'application/csv',
@@ -29,38 +29,51 @@ const UserImportDialog = ({ onClose, onImportComplete }) => {
     
     if (!allowedTypes.includes(file.type) && !allowedExtensions.includes(fileExtension)) {
       toast.error('Please select a CSV or Excel file');
-      return;
+      return false;
     }
 
-    // Validate file size (10MB limit)
     if (file.size > 10 * 1024 * 1024) {
       toast.error('File size must be less than 10MB');
-      return;
+      return false;
     }
 
+    return true;
+  }, []);
+
+  const handleFileSelect = useCallback((file) => {
+    if (!validateFile(file)) return;
+    
     setSelectedFile(file);
     setImportResults(null);
     setShowResults(false);
-  };
+  }, [validateFile]);
 
-  const handleFileInputChange = (e) => {
+  const handleFileInputChange = useCallback((e) => {
     const file = e.target.files[0];
     if (file) {
       handleFileSelect(file);
     }
-  };
+  }, [handleFileSelect]);
 
-  const handleDrag = (e) => {
+  // Optimized drag handlers
+  const handleDragEnter = useCallback((e) => {
     e.preventDefault();
     e.stopPropagation();
-    if (e.type === 'dragenter' || e.type === 'dragover') {
-      setDragActive(true);
-    } else if (e.type === 'dragleave') {
-      setDragActive(false);
-    }
-  };
+    setDragActive(true);
+  }, []);
 
-  const handleDrop = (e) => {
+  const handleDragLeave = useCallback((e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+  }, []);
+
+  const handleDragOver = useCallback((e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  }, []);
+
+  const handleDrop = useCallback((e) => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
@@ -69,9 +82,9 @@ const UserImportDialog = ({ onClose, onImportComplete }) => {
     if (file) {
       handleFileSelect(file);
     }
-  };
+  }, [handleFileSelect]);
 
-  const handleImport = async () => {
+  const handleImport = useCallback(async () => {
     if (!selectedFile) {
       toast.error('Please select a file to import');
       return;
@@ -106,7 +119,6 @@ const UserImportDialog = ({ onClose, onImportComplete }) => {
         toast.info(`${results.skipped} users were skipped (already exist)`);
       }
 
-      // Notify parent component
       if (onImportComplete) {
         onImportComplete(response.data);
       }
@@ -118,9 +130,9 @@ const UserImportDialog = ({ onClose, onImportComplete }) => {
     } finally {
       setImporting(false);
     }
-  };
+  }, [selectedFile, onImportComplete]);
 
-  const handleDownloadTemplate = async (format = 'csv') => {
+  const handleDownloadTemplate = useCallback(async (format = 'csv') => {
     try {
       const response = await axios.get(`/api/users/import/template?format=${format}`, {
         responseType: 'blob'
@@ -144,39 +156,38 @@ const UserImportDialog = ({ onClose, onImportComplete }) => {
       console.error('Template download error:', error);
       toast.error('Failed to download template');
     }
-  };
+  }, []);
 
-  const formatFileSize = (bytes) => {
+  // Memoized file size formatter
+  const formatFileSize = useMemo(() => (bytes) => {
     if (bytes === 0) return '0 Bytes';
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-  };
+  }, []);
 
-  const getFileIcon = (filename) => {
+  // Memoized file icon
+  const getFileIcon = useMemo(() => (filename) => {
     const extension = filename.toLowerCase().substring(filename.lastIndexOf('.'));
     switch (extension) {
-      case '.csv': return '📊';
+      case '.csv': return 'CSV';
       case '.xls':
-      case '.xlsx': return '📈';
-      default: return '📄';
+      case '.xlsx': return 'XLS';
+      default: return 'FILE';
     }
-  };
+  }, []);
 
+  // Results modal content
   if (showResults && importResults) {
     return (
       <div className="modal-overlay">
         <div className="modal-content modal-large">
-          {/* Results Header */}
           <div className="import-results-header">
-            <span className="import-results-icon">✅</span>
-            <h3 className="import-results-title">
-              Import Results
-            </h3>
+            <span className="import-results-icon">Success</span>
+            <h3 className="import-results-title">Import Results</h3>
           </div>
 
-          {/* Summary */}
           <div className="import-results-summary">
             <div className="import-results-stat success">
               <div className="import-results-stat-number">
@@ -207,90 +218,6 @@ const UserImportDialog = ({ onClose, onImportComplete }) => {
             </div>
           </div>
 
-          {/* Successful Users */}
-          {importResults.details.successful_users.length > 0 && (
-            <div className="import-results-section">
-              <h4 className="import-results-section-title success">
-                ✅ Successfully Imported ({importResults.details.successful_users.length})
-              </h4>
-              <div className="import-results-list">
-                {importResults.details.successful_users.map((user, index) => (
-                  <div key={index} className="import-results-item">
-                    <div>
-                      <div className="import-results-item-name">{user.full_name} (@{user.username})</div>
-                      <div className="import-results-item-details">
-                        {user.email} - {user.role}
-                      </div>
-                    </div>
-                    {user.password && (
-                      <div className="import-results-item-password">
-                        Password: {user.password}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Failed Users */}
-          {importResults.details.failed_users.length > 0 && (
-            <div className="import-results-section">
-              <h4 className="import-results-section-title error">
-                ❌ Failed Imports ({importResults.details.failed_users.length})
-              </h4>
-              <div className="import-results-list">
-                {importResults.details.failed_users.map((user, index) => (
-                  <div key={index} className="import-results-item">
-                    <div className="import-results-item-name">{user.username} ({user.email})</div>
-                    <div className="import-results-item-error">
-                      Error: {user.error}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Skipped Users */}
-          {importResults.details.skipped_users.length > 0 && (
-            <div className="import-results-section">
-              <h4 className="import-results-section-title warning">
-                ⚠️ Skipped Users ({importResults.details.skipped_users.length})
-              </h4>
-              <div className="import-results-list">
-                {importResults.details.skipped_users.map((user, index) => (
-                  <div key={index} className="import-results-item">
-                    <div className="import-results-item-name">{user.username} ({user.email})</div>
-                    <div className="import-results-item-details">
-                      {user.reason}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Parse Errors */}
-          {importResults.details.parse_errors.length > 0 && (
-            <div className="import-results-section">
-              <h4 className="import-results-section-title error">
-                📋 File Parse Errors ({importResults.details.parse_errors.length})
-              </h4>
-              <div className="import-results-list">
-                {importResults.details.parse_errors.map((error, index) => (
-                  <div key={index} className="import-results-item">
-                    <div className="import-results-item-name">Row {error.row}</div>
-                    <div className="import-results-item-error">
-                      {error.errors.join(', ')}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Action Buttons */}
           <div className="modal-actions">
             <button
               onClick={() => {
@@ -318,56 +245,35 @@ const UserImportDialog = ({ onClose, onImportComplete }) => {
   return (
     <div className="modal-overlay">
       <div className="modal-content modal-medium">
-        {/* Header */}
         <div className="import-header">
-          <span className="import-icon">📥</span>
-          <h3 className="import-title">
-            Import Users
-          </h3>
+          <span className="import-icon">Import</span>
+          <h3 className="import-title">Import Users</h3>
         </div>
 
-        {/* Instructions */}
-        <div className="import-instructions-box">
-          <div className="import-instructions-title">
-            📋 Import Instructions
-          </div>
-          <ul className="import-instructions-list">
-            <li>Upload a CSV or Excel file with user data</li>
-            <li>Required columns: username, email, firstName, lastName, role</li>
-            <li>Optional columns: groups, temporaryPassword, enabled</li>
-            <li>Maximum file size: 10MB</li>
-            <li>Existing users will be skipped</li>
-          </ul>
-        </div>
-
-        {/* Template Download */}
         <div className="import-template-section">
-          <div className="import-template-title">
-            📄 Download Templates
-          </div>
+          <div className="import-template-title">Download Templates</div>
           <div className="import-template-buttons">
             <button
               onClick={() => handleDownloadTemplate('csv')}
               className="import-template-button csv"
             >
-              📊 Download CSV Template
+              Download CSV Template
             </button>
             
             <button
               onClick={() => handleDownloadTemplate('excel')}
               className="import-template-button excel"
             >
-              📈 Download Excel Template
+              Download Excel Template
             </button>
           </div>
         </div>
 
-        {/* File Upload Area */}
         <div
           className={`import-upload-area ${dragActive ? 'drag-active' : ''}`}
-          onDragEnter={handleDrag}
-          onDragLeave={handleDrag}
-          onDragOver={handleDrag}
+          onDragEnter={handleDragEnter}
+          onDragLeave={handleDragLeave}
+          onDragOver={handleDragOver}
           onDrop={handleDrop}
           onClick={() => fileInputRef.current?.click()}
         >
@@ -376,6 +282,7 @@ const UserImportDialog = ({ onClose, onImportComplete }) => {
             type="file"
             accept=".csv,.xls,.xlsx"
             onChange={handleFileInputChange}
+            style={{ display: 'none' }}
           />
           
           {selectedFile ? (
@@ -401,7 +308,7 @@ const UserImportDialog = ({ onClose, onImportComplete }) => {
             </div>
           ) : (
             <div className="import-upload-placeholder">
-              <div className="import-upload-icon">📁</div>
+              <div className="import-upload-icon">Upload</div>
               <div className="import-upload-text">
                 Click to select a file or drag and drop
               </div>
@@ -412,7 +319,6 @@ const UserImportDialog = ({ onClose, onImportComplete }) => {
           )}
         </div>
 
-        {/* Action Buttons */}
         <div className="modal-actions">
           <button
             onClick={onClose}
@@ -427,15 +333,14 @@ const UserImportDialog = ({ onClose, onImportComplete }) => {
             disabled={!selectedFile || importing}
             className={`btn ${!selectedFile || importing ? 'btn-disabled' : 'btn-primary'}`}
           >
-            {importing ? '🔄 Importing...' : '📥 Import Users'}
+            {importing ? 'Importing...' : 'Import Users'}
           </button>
         </div>
 
-        {/* Loading Overlay */}
         {importing && (
           <div className="import-loading-overlay">
             <div className="import-loading-content">
-              <div className="import-loading-icon">🔄</div>
+              <div className="import-loading-icon">Loading</div>
               <div className="import-loading-title">Importing users...</div>
               <div className="import-loading-subtitle">
                 This may take a few moments
@@ -448,4 +353,4 @@ const UserImportDialog = ({ onClose, onImportComplete }) => {
   );
 };
 
-export default UserImportDialog;
+export default React.memo(UserImportDialog);

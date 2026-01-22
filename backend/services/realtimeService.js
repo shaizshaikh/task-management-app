@@ -41,8 +41,8 @@ class RealtimeService {
       // Join team-based rooms
       await this.joinTeamRooms(socket, userInfo);
 
-      console.log(`✅ User ${userInfo.username} (${userInfo.global_role}) connected: ${socket.id}`);
-      console.log(`📡 [DEBUG] User ${userInfo.username} joined rooms:`, Array.from(socket.rooms));
+      console.log(`User ${userInfo.username} (${userInfo.global_role}) connected: ${socket.id}`);
+      console.log(`[DEBUG] User ${userInfo.username} joined rooms:`, Array.from(socket.rooms));
       
       // Send welcome message with user's notification scope
       socket.emit('connectionEstablished', {
@@ -83,7 +83,7 @@ class RealtimeService {
       });
 
       this.connectedUsers.delete(socket.id);
-      console.log(`❌ User ${userInfo.username} disconnected: ${socket.id}`);
+      console.log(`User ${userInfo.username} disconnected: ${socket.id}`);
     }
   }
 
@@ -136,7 +136,7 @@ class RealtimeService {
         const teamRoleRoom = `team:${team.team_id}:${team.team_role}`;
         socket.join(teamRoleRoom);
 
-        console.log(`👥 User ${userInfo.username} joined team ${team.team_name} as ${team.team_role}`);
+        console.log(`User ${userInfo.username} joined team ${team.team_name} as ${team.team_role}`);
       }
     } catch (error) {
       console.error('Error joining team rooms:', error);
@@ -267,20 +267,20 @@ class RealtimeService {
     }
 
     // Debug: Log current connections
-    console.log(`📡 [DEBUG] Broadcasting ${eventType} for task "${task.title}"`);
-    console.log(`📡 [DEBUG] Connected users: ${this.connectedUsers.size}`);
-    console.log(`📡 [DEBUG] Target rooms: ${Array.from(rooms).join(', ')}`);
+    console.log(`[DEBUG] Broadcasting ${eventType} for task "${task.title}"`);
+    console.log(`[DEBUG] Connected users: ${this.connectedUsers.size}`);
+    console.log(`[DEBUG] Target rooms: ${Array.from(rooms).join(', ')}`);
     
     // Log users in each room
     rooms.forEach(room => {
       const socketsInRoom = this.io.sockets.adapter.rooms.get(room);
-      console.log(`📡 [DEBUG] Room ${room}: ${socketsInRoom ? socketsInRoom.size : 0} users`);
+      console.log(`[DEBUG] Room ${room}: ${socketsInRoom ? socketsInRoom.size : 0} users`);
     });
 
     // Broadcast to all rooms
     rooms.forEach(room => {
       this.io.to(room).emit(eventType, baseNotification);
-      console.log(`📡 [DEBUG] Sent ${eventType} to room: ${room}`);
+      console.log(`[DEBUG] Sent ${eventType} to room: ${room}`);
     });
 
     // Send personal notification to assigned user
@@ -292,7 +292,7 @@ class RealtimeService {
       });
     }
 
-    console.log(`📡 Broadcasted ${eventType} for task "${task.title}" to ${rooms.size} rooms`);
+    console.log(`Broadcasted ${eventType} for task "${task.title}" to ${rooms.size} rooms`);
   }
 
   /**
@@ -371,7 +371,7 @@ class RealtimeService {
     this.io.to('role:admin').emit('teamUpdated', notification);
     this.io.to('role:manager').emit('teamUpdated', notification);
 
-    console.log(`👥 Broadcasted team update (${updateType}) for team ${teamId}`);
+    console.log(`Broadcasted team update (${updateType}) for team ${teamId}`);
   }
 
   /**
@@ -400,7 +400,7 @@ class RealtimeService {
       });
     }
 
-    console.log(`👤 Broadcasted user update (${updateType}) for user ${userData.username || userData.id}`);
+    console.log(`Broadcasted user update (${updateType}) for user ${userData.username || userData.id}`);
   }
 
   /**
@@ -418,7 +418,7 @@ class RealtimeService {
     // Only admins receive system notifications
     this.io.to('role:admin').emit('system_notification', notification);
     
-    console.log(`🔔 System notification (${level}): ${message}`);
+    console.log(`System notification (${level}): ${message}`);
   }
 
   /**
@@ -458,7 +458,7 @@ class RealtimeService {
         const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
         const username = payload.preferred_username || payload.sub;
         
-        console.log(`🔐 [DEBUG] Token decoded for user: ${username}`);
+        console.log(`[DEBUG] Token decoded for user: ${username}`);
         
         if (username) {
           // Get user info from database
@@ -470,7 +470,7 @@ class RealtimeService {
 
           if (users.length > 0) {
             const user = users[0];
-            console.log(`✅ [DEBUG] User authenticated: ${user.username} (${user.global_role})`);
+            console.log(`[DEBUG] User authenticated: ${user.username} (${user.global_role})`);
             return {
               id: user.id,
               username: user.username,
@@ -479,15 +479,15 @@ class RealtimeService {
               email: user.email
             };
           } else {
-            console.log(`❌ [DEBUG] User not found in database: ${username}`);
+            console.log(`[DEBUG] User not found in database: ${username}`);
           }
         }
       } catch (decodeError) {
-        console.log('❌ [DEBUG] Token decode failed:', decodeError.message);
+        console.log('[DEBUG] Token decode failed:', decodeError.message);
       }
 
       // No fallback - require proper authentication
-      console.log('❌ Token verification failed - no valid user found');
+      console.log('Token verification failed - no valid user found');
       return null;
     } catch (error) {
       console.error('Token verification failed:', error);

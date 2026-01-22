@@ -17,11 +17,11 @@ const pool = mysql.createPool({
 async function testConnection() {
   try {
     const connection = await pool.getConnection();
-    console.log('✅ Database connected successfully!');
+    console.log('Database connected successfully!');
     connection.release();
     return true;
   } catch (error) {
-    console.error('❌ Database connection failed:', error.message);
+    console.error('Database connection failed:', error.message);
     return false;
   }
 }
@@ -39,14 +39,14 @@ async function verifyRBACSchema() {
     const hasRBACTables = tables.length === 3;
     
     if (hasRBACTables) {
-      console.log('✅ RBAC schema verified and ready');
+      console.log('RBAC schema verified and ready');
       return true;
     } else {
       console.log('⏳ RBAC schema not ready yet, waiting for automatic migration...');
       return false;
     }
   } catch (error) {
-    console.error('❌ RBAC schema verification failed:', error);
+    console.error('RBAC schema verification failed:', error);
     return false;
   }
 }

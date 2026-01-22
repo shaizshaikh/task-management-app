@@ -34,7 +34,7 @@ const AdminPanel = () => {
       
       setStats(systemStatsResponse.data);
       setUserStats(userStatsResponse.data.statistics || userStatsResponse.data);
-      console.log('📊 All stats refreshed in real-time');
+      console.log('All stats refreshed in real-time');
     } catch (error) {
       console.error('Failed to refresh stats:', error);
     }
@@ -75,17 +75,17 @@ const AdminPanel = () => {
       try {
         systemStats = await axios.get('/api/stats');
         setStats(systemStats.data);
-        console.log('✅ System stats loaded successfully');
+        console.log('System stats loaded successfully');
       } catch (error) {
-        console.error('❌ Failed to load system stats:', error.response?.status, error.response?.data);
+        console.error('Failed to load system stats:', error.response?.status, error.response?.data);
       }
 
       try {
         usersStats = await axios.get('/api/users/stats');
         setUserStats(usersStats.data.statistics || usersStats.data);
-        console.log('✅ User stats loaded successfully');
+        console.log('User stats loaded successfully');
       } catch (error) {
-        console.error('❌ Failed to load user stats:', error.response?.status, error.response?.data);
+        console.error('Failed to load user stats:', error.response?.status, error.response?.data);
         // Set default user stats if endpoint fails
         setUserStats({
           total_users: 0,
@@ -100,9 +100,9 @@ const AdminPanel = () => {
       try {
         auditData = await axios.get('/api/audit/stats?range=7d');
         setAuditStats(auditData.data.statistics || auditData.data);
-        console.log('✅ Audit stats loaded successfully');
+        console.log('Audit stats loaded successfully');
       } catch (error) {
-        console.error('❌ Failed to load audit stats:', error.response?.status, error.response?.data);
+        console.error('Failed to load audit stats:', error.response?.status, error.response?.data);
         // Set default audit stats if endpoint fails
         setAuditStats({
           daily_activity: [],
@@ -138,7 +138,7 @@ const AdminPanel = () => {
       {/* Header */}
       <header className="page-header">
         <div>
-          <h2 className="page-title">⚙️ Admin Panel</h2>
+          <h2 className="page-title">Admin Panel</h2>
           <p className="page-subtitle">
             Welcome back, {user?.name}! System administration dashboard.
           </p>
@@ -150,11 +150,11 @@ const AdminPanel = () => {
       {/* Navigation Tabs */}
       <nav className="tab-navigation" role="tablist" aria-label="Admin panel sections">
         {[
-          { id: 'overview', label: 'Overview', icon: '📊' },
-          { id: 'users', label: 'Users', icon: '👥' },
-          { id: 'teams', label: 'Teams', icon: '🏢' },
-          { id: 'audit', label: 'Audit', icon: '📜' },
-          { id: 'notifications', label: 'Notifications', icon: '🔔' }
+          { id: 'overview', label: 'Overview', icon: 'Overview' },
+          { id: 'users', label: 'Users', icon: 'Users' },
+          { id: 'teams', label: 'Teams', icon: 'Teams' },
+          { id: 'audit', label: 'Audit', icon: 'Audit' },
+          { id: 'notifications', label: 'Notifications', icon: 'Notifications' }
         ].map(tab => (
           <button
             key={tab.id}
@@ -274,7 +274,7 @@ const OverviewTab = ({ stats, userStats, auditStats }) => {
       <div className="dashboard-grid mb-4">
         {/* Task Statistics */}
         <div className="stat-card info">
-          <h4 className="mb-3">📋 Tasks</h4>
+          <h4 className="mb-3">Tasks</h4>
           <div className="stat-value">
             {stats?.total_tasks || 0}
           </div>
@@ -285,7 +285,7 @@ const OverviewTab = ({ stats, userStats, auditStats }) => {
 
         {/* User Statistics */}
         <div className="stat-card success">
-          <h4 className="mb-3">👥 Users</h4>
+          <h4 className="mb-3">Users</h4>
           <div className="stat-value">
             {userStats?.total_users || 0}
           </div>
@@ -296,7 +296,7 @@ const OverviewTab = ({ stats, userStats, auditStats }) => {
 
         {/* Team Statistics */}
         <div className="stat-card warning">
-          <h4 className="mb-3">🏢 Teams</h4>
+          <h4 className="mb-3">Teams</h4>
           <div className="stat-value">
             {stats?.total_teams || 0}
           </div>
@@ -307,7 +307,7 @@ const OverviewTab = ({ stats, userStats, auditStats }) => {
 
         {/* Audit Activity */}
         <div className="stat-card primary">
-          <h4 className="mb-3">📜 Activity</h4>
+          <h4 className="mb-3">Activity</h4>
           <div className="stat-value">
             {auditStats?.daily_activity?.reduce((sum, day) => sum + day.total_events, 0) || 0}
           </div>
@@ -366,9 +366,9 @@ const OverviewTab = ({ stats, userStats, auditStats }) => {
                 <div key={index} className="activity-item">
                   <span className="activity-date font-semibold">{day.date}</span>
                   <div className="activity-stats">
-                    <span className="activity-stat">📋 {day.operations} ops</span>
-                    <span className="activity-stat">🔐 {day.auth_events} auth</span>
-                    <span className="activity-stat">⚙️ {day.system_events} system</span>
+                    <span className="activity-stat">Tasks: {day.operations}</span>
+                    <span className="activity-stat">Auth: {day.auth_events}</span>
+                    <span className="activity-stat">System: {day.system_events}</span>
                   </div>
                 </div>
               ))}
@@ -404,7 +404,7 @@ const NotificationsTab = () => {
         <div className="card-body">
           <div className="text-center py-4">
             <div className="mb-3">
-              <span className="text-success" style={{ fontSize: '3rem' }}>✅</span>
+              <span className="text-success" style={{ fontSize: '3rem' }}>Active</span>
             </div>
             <h4 className="mb-2">Notification System Active</h4>
             <p className="text-muted mb-4">
@@ -413,11 +413,11 @@ const NotificationsTab = () => {
             <div className="notification-features">
               <div className="feature-list">
                 <div className="feature-item">
-                  <span className="feature-icon">🔔</span>
+                  <span className="feature-icon">Bell</span>
                   <span>Real-time notifications for task updates</span>
                 </div>
                 <div className="feature-item">
-                  <span className="feature-icon">📧</span>
+                  <span className="feature-icon">Email</span>
                   <span>Email notifications for assignments</span>
                 </div>
                 <div className="feature-item">
@@ -425,7 +425,7 @@ const NotificationsTab = () => {
                   <span>Accessible notifications with screen reader support</span>
                 </div>
                 <div className="feature-item">
-                  <span className="feature-icon">🎨</span>
+                  <span className="feature-icon">Theme</span>
                   <span>Consistent styling with dark theme</span>
                 </div>
               </div>

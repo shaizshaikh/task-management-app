@@ -3,7 +3,7 @@
  * Shows history of user import operations
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
@@ -79,11 +79,11 @@ const ImportHistoryView = ({ onClose }) => {
 
   const getStatusIcon = (status) => {
     switch (status) {
-      case 'completed': return '✅';
-      case 'partial': return '⚠️';
-      case 'failed': return '❌';
-      case 'in_progress': return '🔄';
-      default: return '❓';
+      case 'completed': return 'Success';
+      case 'partial': return 'Warning';
+      case 'failed': return 'Error';
+      case 'in_progress': return 'Loading';
+      default: return 'Unknown';
     }
   };
 
@@ -92,7 +92,7 @@ const ImportHistoryView = ({ onClose }) => {
     const icon = getStatusIcon(status);
     return (
       <span 
-        className="import-history-status-badge"
+        className="status-badge"
         style={{ backgroundColor: color }}
       >
         {icon} {status}
@@ -104,132 +104,152 @@ const ImportHistoryView = ({ onClose }) => {
     <div className="modal-overlay">
       <div className="modal-content import-history-modal">
         {/* Header */}
-        <div className="import-history-header">
-          <h2 className="import-history-title">
-            📥 Import History ({pagination.total})
+        <div className="modal-header">
+          <h2 className="modal-title">
+            Import History ({pagination.total})
           </h2>
           <button
             onClick={onClose}
-            className="import-history-close-button"
+            className="modal-close-button"
+            aria-label="Close import history view"
           >
-            ✕ Close
+            Close
           </button>
         </div>
 
         {/* Content */}
-        <div className="import-history-content">
+        <div className="modal-body">
           {loading ? (
-            <div className="import-history-loading">
-              <div className="import-history-loading-icon">🔄</div>
+            <div className="loading-state">
+              <div className="loading-spinner" aria-hidden="true"></div>
               <div>Loading import history...</div>
             </div>
           ) : importHistory.length === 0 ? (
-            <div className="import-history-empty">
-              <div className="import-history-empty-icon">📥</div>
-              <h3 className="import-history-empty-title">No import history found</h3>
+            <div className="empty-state">
+              <div className="empty-state-icon" aria-hidden="true">No Imports</div>
+              <h3 className="empty-state-title">No import history found</h3>
               <p>No user imports have been performed yet.</p>
             </div>
           ) : (
             <>
-              {/* History Table */}
-              <div className="import-history-table">
-                {/* Table Header */}
-                <div className="import-history-table-header">
-                  <div>Date</div>
-                  <div>File</div>
-                  <div>Status</div>
-                  <div>Total</div>
-                  <div>Success</div>
-                  <div>Failed</div>
-                  <div>Duration</div>
-                  <div>Admin</div>
-                  <div>Size</div>
-                </div>
+              {/* Accessible HTML Table */}
+              <div className="table-container">
+                <table className="data-table" role="table" aria-label="Import history">
+                  <thead>
+                    <tr>
+                      <th scope="col">Date</th>
+                      <th scope="col">File</th>
+                      <th scope="col">Status</th>
+                      <th scope="col">Total</th>
+                      <th scope="col">Success</th>
+                      <th scope="col">Failed</th>
+                      <th scope="col">Duration</th>
+                      <th scope="col">Admin</th>
+                      <th scope="col">Size</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {importHistory.map(operation => (
+                      <tr key={operation.id}>
+                        {/* Date */}
+                        <td data-label="Date">
+                          <div className="date-display">
+                            <div className="date-day">
+                              {formatDate(operation.started_at).split(' ')[0]}
+                            </div>
+                            <div className="date-time">
+                              {formatDate(operation.started_at).split(' ')[1]}
+                            </div>
+                          </div>
+                        </td>
 
-                {/* Table Rows */}
-                {importHistory.map(operation => (
-                  <div key={operation.id} className="import-history-table-row">
-                    {/* Date */}
-                    <div className="import-history-date">
-                      <div className="import-history-date-day">
-                        {formatDate(operation.started_at).split(' ')[0]}
-                      </div>
-                      <div className="import-history-date-time">
-                        {formatDate(operation.started_at).split(' ')[1]}
-                      </div>
-                    </div>
+                        {/* File */}
+                        <td data-label="File">
+                          <span className="filename" title={operation.file_name}>
+                            {operation.file_name || 'Unknown'}
+                          </span>
+                        </td>
 
-                    {/* File */}
-                    <div className="import-history-file">
-                      <div className="import-history-filename" title={operation.file_name}>
-                        {operation.file_name || 'Unknown'}
-                      </div>
-                    </div>
+                        {/* Status */}
+                        <td data-label="Status">
+                          {getStatusBadge(operation.status)}
+                        </td>
 
-                    {/* Status */}
-                    <div>
-                      {getStatusBadge(operation.status)}
-                    </div>
+                        {/* Total */}
+                        <td data-label="Total">
+                          <span className="stat-number total">
+                            {operation.affected_users_count || 0}
+                          </span>
+                        </td>
 
-                    {/* Total */}
-                    <div className="import-history-stat total">
-                      {operation.affected_users_count || 0}
-                    </div>
+                        {/* Success */}
+                        <td data-label="Success">
+                          <span className="stat-number success">
+                            {operation.successful_count || 0}
+                          </span>
+                        </td>
 
-                    {/* Success */}
-                    <div className="import-history-stat success">
-                      {operation.successful_count || 0}
-                    </div>
+                        {/* Failed */}
+                        <td data-label="Failed">
+                          <span className={`stat-number ${operation.failed_count > 0 ? 'failed' : ''}`}>
+                            {operation.failed_count || 0}
+                          </span>
+                        </td>
 
-                    {/* Failed */}
-                    <div className={`import-history-stat ${operation.failed_count > 0 ? 'failed' : ''}`}>
-                      {operation.failed_count || 0}
-                    </div>
+                        {/* Duration */}
+                        <td data-label="Duration">
+                          <span className="duration">
+                            {formatDuration(operation.duration_seconds)}
+                          </span>
+                        </td>
 
-                    {/* Duration */}
-                    <div className="import-history-duration">
-                      {formatDuration(operation.duration_seconds)}
-                    </div>
+                        {/* Admin */}
+                        <td data-label="Admin">
+                          <div className="user-info">
+                            <div className="user-name">
+                              {operation.admin_full_name || 'Unknown'}
+                            </div>
+                            <div className="user-username">
+                              @{operation.admin_username || 'unknown'}
+                            </div>
+                          </div>
+                        </td>
 
-                    {/* Admin */}
-                    <div className="import-history-admin">
-                      <div className="import-history-admin-name">
-                        {operation.admin_full_name || 'Unknown'}
-                      </div>
-                      <div className="import-history-admin-username">
-                        @{operation.admin_username || 'unknown'}
-                      </div>
-                    </div>
-
-                    {/* Size */}
-                    <div className="import-history-filesize">
-                      {formatFileSize(operation.file_size)}
-                    </div>
-                  </div>
-                ))}
+                        {/* Size */}
+                        <td data-label="Size">
+                          <span className="file-size">
+                            {formatFileSize(operation.file_size)}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
 
               {/* Pagination */}
               {pagination.total > pagination.limit && (
-                <div className="import-history-pagination">
+                <div className="table-pagination">
                   <button
                     onClick={() => handlePageChange(Math.max(0, pagination.offset - pagination.limit))}
                     disabled={pagination.offset === 0}
-                    className="import-history-pagination-button"
+                    className="btn btn-secondary"
+                    aria-label="Go to previous page"
                   >
-                    ← Previous
+                    Previous
                   </button>
                   
-                  <span className="import-history-pagination-info">
+                  <span className="pagination-info">
                     Showing {pagination.offset + 1} - {Math.min(pagination.offset + pagination.limit, pagination.total)} of {pagination.total}
                   </span>
                   
                   <button
                     onClick={() => handlePageChange(pagination.offset + pagination.limit)}
                     disabled={!pagination.has_more}
-                    className="import-history-pagination-button"
+                    className="btn btn-secondary"
+                    aria-label="Go to next page"
                   >
-                    Next →
+                    Next
                   </button>
                 </div>
               )}

@@ -19,7 +19,7 @@ const LoginPage = () => {
     return (
       <div className="login-loading">
         <div className="loading-content">
-          <div className="loading-text">🔐 Initializing authentication...</div>
+          <div className="loading-text">Initializing authentication...</div>
           <div className="loading"></div>
         </div>
       </div>
@@ -31,7 +31,7 @@ const LoginPage = () => {
       <div className="login-container">
         {/* Header Section */}
         <div className="login-header">
-          <div className="app-logo">📋</div>
+          <div className="app-logo">TM</div>
           <h2 className="app-title">Task ManagementV1</h2>
           <p className="app-description">
             Secure RBAC-enabled task management system
@@ -42,7 +42,7 @@ const LoginPage = () => {
         <div className="auth-card">
           <div className="auth-header">
             <h2 className="auth-title">
-              <span className="auth-icon" aria-hidden="true">🔐</span>
+              <span className="auth-icon" aria-hidden="true">Auth</span>
               Authentication Required
             </h2>
             <p className="auth-description">
@@ -56,7 +56,7 @@ const LoginPage = () => {
             className="btn btn-primary login-button"
             aria-label="Login with Keycloak authentication"
           >
-            <span className="login-icon" aria-hidden="true">🚀</span>
+            <span className="login-icon" aria-hidden="true">Login</span>
             Login with Keycloak
           </button>
 

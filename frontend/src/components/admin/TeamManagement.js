@@ -1,9 +1,9 @@
 /**
- * Team Management Component
- * Admin interface for managing teams and memberships
+ * Team Management Component - PERFORMANCE OPTIMIZED
+ * Reduced re-renders and improved modal performance
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useAuth } from '../../contexts/AuthContext';
@@ -25,22 +25,60 @@ const TeamManagement = () => {
     color: '#2196F3'
   });
 
-  // Check if user can create teams (only admins and managers)
-  const canCreateTeams = () => {
-    return isAdmin() || isManager();
-  };
-
-  // Filter teams based on user role
-  const getVisibleTeams = () => {
-    if (isAdmin() || user?.globalRole === 'manager') {
-      return teams; // Admins and Global Managers see all teams
+  // Memoized permission check
+  const canCreateTeams = useMemo(() => {
+    // Ensure functions are available before calling
+    if (typeof isAdmin !== 'function' || typeof isManager !== 'function') {
+      return false;
     }
-    
-    // Members and Viewers only see teams they belong to
+    return isAdmin() || isManager();
+  }, [isAdmin, isManager]);
+
+  // Memoized visible teams
+  const visibleTeams = useMemo(() => {
+    // Ensure functions are available before calling
+    if (typeof isAdmin !== 'function' || !user) {
+      return [];
+    }
+    if (isAdmin() || user?.globalRole === 'manager') {
+      return teams;
+    }
     return teams.filter(team => 
       user?.teams?.some(userTeam => userTeam.id === team.id)
     );
-  };
+  }, [teams, isAdmin, user]);
+
+  // Memoized callbacks
+  const loadTeams = useCallback(async () => {
+    try {
+      const response = await axios.get('/api/teams');
+      setTeams(response.data.teams || response.data);
+    } catch (error) {
+      console.error('Error loading teams:', error);
+      toast.error('Failed to load teams');
+    }
+  }, []);
+
+  const loadUsers = useCallback(async () => {
+    try {
+      const response = await axios.get('/api/users');
+      setUsers(response.data.users || response.data);
+    } catch (error) {
+      console.error('Error loading users:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const loadTeamMembers = useCallback(async (teamId) => {
+    try {
+      const response = await axios.get(`/api/teams/${teamId}/members`);
+      setTeamMembers(response.data.members || response.data);
+    } catch (error) {
+      console.error('Error loading team members:', error);
+      toast.error('Failed to load team members');
+    }
+  }, []);
 
   useEffect(() => {
     loadTeams();
@@ -48,7 +86,7 @@ const TeamManagement = () => {
 
     // Listen for real-time team updates
     const handleTeamUpdate = (notification) => {
-      console.log('🔄 Team update received:', notification);
+      console.log('Team update received:', notification);
       if (notification.updateType === 'deleted') {
         // Remove deleted team from list
         setTeams(prev => prev.filter(t => t.id !== notification.team_id));
@@ -65,38 +103,7 @@ const TeamManagement = () => {
     };
   }, [subscribe]);
 
-  const loadTeams = async () => {
-    try {
-      const response = await axios.get('/api/teams');
-      setTeams(response.data.teams || response.data);
-    } catch (error) {
-      console.error('Error loading teams:', error);
-      toast.error('Failed to load teams');
-    }
-  };
-
-  const loadUsers = async () => {
-    try {
-      const response = await axios.get('/api/users');
-      setUsers(response.data.users || response.data);
-    } catch (error) {
-      console.error('Error loading users:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const loadTeamMembers = async (teamId) => {
-    try {
-      const response = await axios.get(`/api/teams/${teamId}/members`);
-      setTeamMembers(response.data.members || response.data);
-    } catch (error) {
-      console.error('Error loading team members:', error);
-      toast.error('Failed to load team members');
-    }
-  };
-
-  const handleCreateTeam = async (e) => {
+  const handleCreateTeam = useCallback(async (e) => {
     e.preventDefault();
     
     if (!newTeam.name.trim()) {
@@ -114,9 +121,9 @@ const TeamManagement = () => {
       console.error('Error creating team:', error);
       toast.error(error.response?.data?.error?.message || 'Failed to create team');
     }
-  };
+  }, [newTeam, loadTeams]);
 
-  const handleDeleteTeam = async (teamId, teamName) => {
+  const handleDeleteTeam = useCallback(async (teamId, teamName) => {
     if (!window.confirm(`Are you sure you want to delete team "${teamName}"? This will also delete all associated tasks.`)) {
       return;
     }
@@ -129,9 +136,9 @@ const TeamManagement = () => {
       console.error('Error deleting team:', error);
       toast.error(error.response?.data?.error?.message || 'Failed to delete team');
     }
-  };
+  }, [loadTeams]);
 
-  const handleAddMember = async (userId, teamRole = 'member') => {
+  const handleAddMember = useCallback(async (userId, teamRole = 'member') => {
     try {
       await axios.post(`/api/teams/${selectedTeam.id}/members`, {
         user_id: userId,
@@ -144,9 +151,9 @@ const TeamManagement = () => {
       console.error('Error adding member:', error);
       toast.error(error.response?.data?.error?.message || 'Failed to add member');
     }
-  };
+  }, [selectedTeam, loadTeamMembers, loadTeams]);
 
-  const handleRemoveMember = async (userId, userName) => {
+  const handleRemoveMember = useCallback(async (userId, userName) => {
     if (!window.confirm(`Remove ${userName} from ${selectedTeam.name}?`)) {
       return;
     }
@@ -160,9 +167,9 @@ const TeamManagement = () => {
       console.error('Error removing member:', error);
       toast.error(error.response?.data?.error?.message || 'Failed to remove member');
     }
-  };
+  }, [selectedTeam, loadTeamMembers, loadTeams]);
 
-  const handleUpdateMemberRole = async (userId, newRole) => {
+  const handleUpdateMemberRole = useCallback(async (userId, newRole) => {
     try {
       await axios.put(`/api/teams/${selectedTeam.id}/members/${userId}`, {
         team_role: newRole
@@ -173,21 +180,21 @@ const TeamManagement = () => {
       console.error('Error updating member role:', error);
       toast.error(error.response?.data?.error?.message || 'Failed to update member role');
     }
-  };
+  }, [selectedTeam, loadTeamMembers]);
 
-  const getAvailableUsers = () => {
+  const getAvailableUsers = useCallback(() => {
     const memberIds = teamMembers.map(member => member.user_id);
     return users.filter(user => !memberIds.includes(user.id));
-  };
+  }, [teamMembers, users]);
 
-  const getTeamRoleColor = (role) => {
+  const getTeamRoleColor = useCallback((role) => {
     switch (role) {
       case 'leader': return '#ff9800';
       case 'member': return '#4caf50';
       case 'viewer': return '#2196f3';
       default: return '#666';
     }
-  };
+  }, []);
 
   if (loading) {
     return <div className="team-management-loading">Loading teams...</div>;
@@ -196,8 +203,8 @@ const TeamManagement = () => {
   return (
     <div>
       <div className="team-management-header">
-        <h2 className="team-management-title">🏢 Team Management</h2>
-        {canCreateTeams() && (
+        <h2 className="team-management-title">Team Management</h2>
+        {canCreateTeams && (
           <button
             onClick={() => setShowCreateModal(true)}
             className="team-create-button"
@@ -209,8 +216,8 @@ const TeamManagement = () => {
 
       {/* Teams Grid */}
       <div className="teams-grid">
-        {getVisibleTeams().map(team => (
-          <div key={team.id} className="team-card">
+        {visibleTeams.map(team => (
+          <div key={team.id} className="team-card performance-optimized">
             {/* Team Header */}
             <div 
               className="team-card-header"
@@ -255,13 +262,13 @@ const TeamManagement = () => {
                   }}
                   className="team-action-button"
                 >
-                  👥 Members
+                  Members
                 </button>
                 <button
                   onClick={() => handleDeleteTeam(team.id, team.name)}
                   className="team-action-button danger"
                 >
-                  🗑️
+                  Delete
                 </button>
               </div>
             </div>
@@ -269,12 +276,12 @@ const TeamManagement = () => {
         ))}
       </div>
 
-      {getVisibleTeams().length === 0 && !loading && (
+      {visibleTeams.length === 0 && !loading && (
         <div className="teams-empty-state">
-          <div className="teams-empty-icon">🏢</div>
+          <div className="teams-empty-icon">No Teams</div>
           <div className="teams-empty-title">No teams available</div>
           <div className="teams-empty-text">
-            {canCreateTeams() 
+            {canCreateTeams 
               ? 'Create your first team to get started with team management.'
               : 'You are not a member of any teams yet.'
             }
@@ -284,8 +291,8 @@ const TeamManagement = () => {
 
       {/* Create Team Modal */}
       {showCreateModal && (
-        <div className="modal-overlay">
-          <div className="modal-content modal-medium">
+        <div className="modal-overlay performance-optimized">
+          <div className="modal-content modal-medium performance-optimized">
             <h3 className="team-create-modal-title">Create New Team</h3>
             
             <form onSubmit={handleCreateTeam}>
@@ -349,8 +356,8 @@ const TeamManagement = () => {
 
       {/* Team Members Modal */}
       {showMembersModal && selectedTeam && (
-        <div className="modal-overlay">
-          <div className="modal-content team-members-modal">
+        <div className="modal-overlay performance-optimized">
+          <div className="modal-content team-members-modal performance-optimized">
             <div className="team-members-header">
               <h3 className="team-members-title">
                 {selectedTeam.name} Members ({teamMembers.length})
@@ -421,7 +428,7 @@ const TeamManagement = () => {
 
               {teamMembers.length === 0 && (
                 <div className="team-members-empty">
-                  <div className="team-members-empty-icon">👥</div>
+                  <div className="team-members-empty-icon">No Members</div>
                   <div className="team-members-empty-text">No members in this team yet.</div>
                 </div>
               )}
@@ -433,4 +440,4 @@ const TeamManagement = () => {
   );
 };
 
-export default TeamManagement;
+export default React.memo(TeamManagement);

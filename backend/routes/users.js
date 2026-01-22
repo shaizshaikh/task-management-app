@@ -1009,12 +1009,12 @@ router.delete('/:id', authenticateJWT, requireGlobalPermission('MANAGE_GLOBAL_US
         });
 
         if (emailResult.success) {
-          console.log(`📧 Deletion notification sent to: ${targetUser.email}`);
+          console.log(`Deletion notification sent to: ${targetUser.email}`);
         } else {
-          console.warn(`📧 Failed to send deletion notification to: ${targetUser.email} - ${emailResult.error}`);
+          console.warn(`Failed to send deletion notification to: ${targetUser.email} - ${emailResult.error}`);
         }
       } catch (emailError) {
-        console.error(`📧 Email error for deletion notification:`, emailError.message);
+        console.error(`Email error for deletion notification:`, emailError.message);
       }
 
       // Step 7: Update operation log as completed
@@ -1175,12 +1175,12 @@ router.post('/:id/restore', authenticateJWT, requireGlobalPermission('MANAGE_GLO
       });
 
       if (emailResult.success) {
-        console.log(`📧 Restoration notification with credentials sent to: ${restoreResult.restoredUser.email}`);
+        console.log(`Restoration notification with credentials sent to: ${restoreResult.restoredUser.email}`);
       } else {
-        console.warn(`📧 Failed to send restoration notification to: ${restoreResult.restoredUser.email} - ${emailResult.error}`);
+        console.warn(`Failed to send restoration notification to: ${restoreResult.restoredUser.email} - ${emailResult.error}`);
       }
     } catch (emailError) {
-      console.error(`📧 Email error for restoration notification:`, emailError.message);
+      console.error(`Email error for restoration notification:`, emailError.message);
     }
 
     res.json({
@@ -1373,9 +1373,9 @@ router.post('/import', authenticateJWT, requireGlobalPermission('MANAGE_GLOBAL_U
                   role: localUser.global_role
                 });
 
-                console.log(`✅ User created: ${successfulUser.username} (Local ID: ${localUser.id})`);
+                console.log(`User created: ${successfulUser.username} (Local ID: ${localUser.id})`);
               } catch (syncError) {
-                console.error(`❌ Failed to sync user ${successfulUser.username} to local DB:`, syncError.message);
+                console.error(`Failed to sync user ${successfulUser.username} to local DB:`, syncError.message);
                 
                 // Try to cleanup Keycloak user
                 try {
@@ -1445,18 +1445,18 @@ router.post('/import', authenticateJWT, requireGlobalPermission('MANAGE_GLOBAL_U
 
               if (emailResult.success) {
                 emailsSent++;
-                console.log(`📧 Welcome email sent to: ${successfulUser.email}`);
+                console.log(`Welcome email sent to: ${successfulUser.email}`);
               } else {
                 emailsFailed++;
-                console.warn(`📧 Failed to send welcome email to: ${successfulUser.email} - ${emailResult.error}`);
+                console.warn(`Failed to send welcome email to: ${successfulUser.email} - ${emailResult.error}`);
               }
             } catch (emailError) {
               emailsFailed++;
-              console.error(`📧 Email error for ${successfulUser.email}:`, emailError.message);
+              console.error(`Email error for ${successfulUser.email}:`, emailError.message);
             }
           }
 
-          console.log(`📧 Email summary: ${emailsSent} sent, ${emailsFailed} failed`);
+          console.log(`Email summary: ${emailsSent} sent, ${emailsFailed} failed`);
 
           // Step 6: Send import completion notification to admin
           try {
@@ -1465,9 +1465,9 @@ router.post('/import', authenticateJWT, requireGlobalPermission('MANAGE_GLOBAL_U
               failed: creationResults.failed,
               total: totalProcessed
             });
-            console.log(`📧 Import completion email sent to admin: ${req.user.email}`);
+            console.log(`Import completion email sent to admin: ${req.user.email}`);
           } catch (adminEmailError) {
-            console.warn(`📧 Failed to send completion email to admin:`, adminEmailError.message);
+            console.warn(`Failed to send completion email to admin:`, adminEmailError.message);
           }
 
           console.log(`=== BULK USER IMPORT COMPLETED ===`);
@@ -1792,7 +1792,7 @@ POST /api/users/sync
  */
 router.post('/sync', authenticateJWT, requireGlobalPermission('admin'), async (req, res) => {
   try {
-    console.log('🔄 Manual user sync triggered by:', req.user.username);
+    console.log('Manual user sync triggered by:', req.user.username);
     
     const result = await userSyncService.performFullSync();
     
@@ -1822,7 +1822,7 @@ router.post('/sync', authenticateJWT, requireGlobalPermission('admin'), async (r
  */
 router.post('/cleanup-orphaned', authenticateJWT, requireGlobalPermission('admin'), async (req, res) => {
   try {
-    console.log('🧹 Manual orphaned user cleanup triggered by:', req.user.username);
+    console.log('Manual orphaned user cleanup triggered by:', req.user.username);
     
     const result = await userSyncService.cleanupOrphanedUsers();
     

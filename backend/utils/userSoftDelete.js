@@ -33,6 +33,14 @@ class UserSoftDeleteService {
         [deletedByUserId, userId]
       );
       
+      // Create deletion log entry
+      await connection.execute(
+        `INSERT INTO user_deletion_log 
+         (deleted_user_id, keycloak_user_id, admin_user_id, deletion_reason, deleted_at, deletion_status) 
+         VALUES (?, ?, ?, ?, NOW(), 'completed')`,
+        [userId, user.keycloak_user_id, deletedByUserId, reason]
+      );
+      
       await connection.commit();
       
       return {
@@ -172,9 +180,14 @@ class UserSoftDeleteService {
            u.global_role,
            u.deleted_at,
            deleter.username as deleted_by_username,
-           deleter.full_name as deleted_by_name
+           deleter.full_name as deleted_by_name,
+           udl.deletion_reason,
+           udl.tasks_reassigned_count,
+           udl.tasks_unassigned_count,
+           udl.team_memberships_removed
          FROM users u
          LEFT JOIN users deleter ON u.deleted_by = deleter.id
+         LEFT JOIN user_deletion_log udl ON u.id = udl.deleted_user_id
          WHERE u.deleted_at IS NOT NULL
          ORDER BY u.deleted_at DESC
          LIMIT ${limitInt} OFFSET ${offsetInt}`

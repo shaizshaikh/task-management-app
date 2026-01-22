@@ -238,7 +238,7 @@ const ManagerTaskManagement = ({ teams, onRefresh }) => {
       {/* Header and Controls */}
       <div className="manager-header">
         <h3 className="manager-title">
-          📋 Task Management ({filteredTasks.length} tasks)
+          Task Management ({filteredTasks.length} tasks)
         </h3>
         
         <div className="manager-controls">
@@ -310,7 +310,7 @@ const ManagerTaskManagement = ({ teams, onRefresh }) => {
       {/* Tasks List */}
       {filteredTasks.length === 0 ? (
         <div className="manager-tasks-empty">
-          <div className="manager-tasks-empty-icon">📋</div>
+          <div className="manager-tasks-empty-icon">No Tasks</div>
           <h3 className="manager-tasks-empty-title">No Tasks Found</h3>
           <p className="manager-tasks-empty-description">
             {tasks.length === 0 

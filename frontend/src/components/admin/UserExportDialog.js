@@ -66,9 +66,9 @@ const UserExportDialog = ({ onClose }) => {
 
   const getFormatIcon = (format) => {
     switch (format) {
-      case 'csv': return '📊';
-      case 'excel': return '📈';
-      default: return '📄';
+      case 'csv': return 'CSV';
+      case 'excel': return 'XLS';
+      default: return 'FILE';
     }
   };
 
@@ -88,7 +88,7 @@ const UserExportDialog = ({ onClose }) => {
       <div className="modal-content modal-medium">
         {/* Header */}
         <div className="export-header">
-          <span className="export-icon">📤</span>
+          <span className="export-icon">Export</span>
           <h3 className="export-title">
             Export Users
           </h3>
@@ -111,7 +111,7 @@ const UserExportDialog = ({ onClose }) => {
               />
               <div className="export-format-content">
                 <div className="export-format-header">
-                  <span className="export-format-icon">📊</span>
+                  <span className="export-format-icon">CSV</span>
                   CSV Format
                 </div>
                 <div className="export-format-description">
@@ -132,7 +132,7 @@ const UserExportDialog = ({ onClose }) => {
               />
               <div className="export-format-content">
                 <div className="export-format-header">
-                  <span className="export-format-icon">📈</span>
+                  <span className="export-format-icon">XLS</span>
                   Excel Format
                 </div>
                 <div className="export-format-description">
@@ -168,7 +168,7 @@ const UserExportDialog = ({ onClose }) => {
         {/* Export Information */}
         <div className="export-info-box">
           <div className="export-info-title">
-            📋 Export Information
+            Export Information
           </div>
           <div className="export-info-content">
             <ul className="export-info-list">
@@ -184,7 +184,7 @@ const UserExportDialog = ({ onClose }) => {
         {/* Preview Information */}
         <div className="export-preview-box">
           <div className="export-preview-title">
-            📊 Export Preview
+            Export Preview
           </div>
           <div className="export-preview-grid">
             <span className="export-preview-label">Format:</span>
@@ -220,7 +220,7 @@ const UserExportDialog = ({ onClose }) => {
             disabled={exporting}
             className={`btn ${exporting ? 'btn-disabled' : 'btn-primary'}`}
           >
-            {exporting ? '🔄 Exporting...' : `📤 Export ${exportFormat.toUpperCase()}`}
+            {exporting ? 'Exporting...' : `Export ${exportFormat.toUpperCase()}`}
           </button>
         </div>
 
@@ -228,7 +228,7 @@ const UserExportDialog = ({ onClose }) => {
         {exporting && (
           <div className="export-loading-overlay">
             <div className="export-loading-content">
-              <div className="export-loading-icon">🔄</div>
+              <div className="export-loading-icon">Loading</div>
               <div className="export-loading-title">Exporting users...</div>
               <div className="export-loading-subtitle">
                 Fetching data from Keycloak and generating file

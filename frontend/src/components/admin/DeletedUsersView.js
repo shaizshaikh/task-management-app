@@ -3,7 +3,7 @@
  * Shows soft-deleted users with restoration options
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
@@ -49,7 +49,7 @@ const DeletedUsersView = ({ onClose }) => {
 
     try {
       setRestoring(userId);
-      const response = await axios.post(`/api/users/${userId}/restore`);
+      await axios.post(`/api/users/${userId}/restore`);
       
       toast.success(`User "${username}" restored successfully`);
       loadDeletedUsers(pagination.offset); // Reload current page
@@ -86,7 +86,7 @@ const DeletedUsersView = ({ onClose }) => {
     const color = getRoleColor(role);
     return (
       <span 
-        className="deleted-user-role-badge"
+        className="role-badge"
         style={{ backgroundColor: color }}
       >
         {role}
@@ -98,145 +98,162 @@ const DeletedUsersView = ({ onClose }) => {
     <div className="modal-overlay">
       <div className="modal-content deleted-users-modal">
         {/* Header */}
-        <div className="deleted-users-header">
-          <h2 className="deleted-users-title">
-            🗑️ Deleted Users ({pagination.total})
+        <div className="modal-header">
+          <h2 className="modal-title">
+            Deleted Users ({pagination.total})
           </h2>
           <button
             onClick={onClose}
-            className="deleted-users-close-button"
+            className="modal-close-button"
+            aria-label="Close deleted users view"
           >
-            ✕ Close
+            Close
           </button>
         </div>
 
         {/* Content */}
-        <div className="deleted-users-content">
+        <div className="modal-body">
           {loading ? (
-            <div className="deleted-users-loading">
-              <div className="deleted-users-loading-icon">🔄</div>
+            <div className="loading-state">
+              <div className="loading-spinner" aria-hidden="true"></div>
               <div>Loading deleted users...</div>
             </div>
           ) : deletedUsers.length === 0 ? (
-            <div className="deleted-users-empty">
-              <div className="deleted-users-empty-icon">👥</div>
-              <h3 className="deleted-users-empty-title">No deleted users found</h3>
+            <div className="empty-state">
+              <div className="empty-state-icon" aria-hidden="true">No Users</div>
+              <h3 className="empty-state-title">No deleted users found</h3>
               <p>All users are currently active.</p>
             </div>
           ) : (
             <>
-              {/* Users Table */}
-              <div className="deleted-users-table">
-                {/* Table Header */}
-                <div className="deleted-users-table-header">
-                  <div>User</div>
-                  <div>Email</div>
-                  <div>Role</div>
-                  <div>Deleted By</div>
-                  <div>Deleted At</div>
-                  <div>Reason</div>
-                  <div>Actions</div>
-                </div>
-
-                {/* Table Rows */}
-                {deletedUsers.map(user => (
-                  <div 
-                    key={user.id} 
-                    className={`deleted-users-table-row ${restoring === user.id ? 'restoring' : ''}`}
-                  >
-                    {/* User Info */}
-                    <div className="deleted-user-info">
-                      <div className="deleted-user-name">
-                        {user.full_name || user.username}
-                      </div>
-                      <div className="deleted-user-username">
-                        @{user.username}
-                      </div>
-                    </div>
-
-                    {/* Email */}
-                    <div className="deleted-user-email">
-                      {user.email}
-                    </div>
-
-                    {/* Role */}
-                    <div>
-                      {getRoleBadge(user.global_role)}
-                    </div>
-
-                    {/* Deleted By */}
-                    <div className="deleted-user-admin">
-                      <div className="deleted-user-admin-name">
-                        {user.deleted_by_name || 'Unknown'}
-                      </div>
-                      <div className="deleted-user-admin-username">
-                        @{user.deleted_by_username || 'unknown'}
-                      </div>
-                    </div>
-
-                    {/* Deleted At */}
-                    <div className="deleted-user-date">
-                      {formatDate(user.deleted_at)}
-                    </div>
-
-                    {/* Reason */}
-                    <div>
-                      <div className="deleted-user-reason" title={user.deletion_reason || 'No reason provided'}>
-                        {user.deletion_reason || 'No reason provided'}
-                      </div>
-                      {user.tasks_reassigned_count > 0 && (
-                        <div className="deleted-user-reason-details reassigned">
-                          {user.tasks_reassigned_count} tasks reassigned
-                        </div>
-                      )}
-                      {user.tasks_unassigned_count > 0 && (
-                        <div className="deleted-user-reason-details unassigned">
-                          {user.tasks_unassigned_count} tasks unassigned
-                        </div>
-                      )}
-                      {user.team_memberships_removed > 0 && (
-                        <div className="deleted-user-reason-details teams">
-                          {user.team_memberships_removed} teams left
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Actions */}
-                    <div className="deleted-user-actions">
-                      <button
-                        onClick={() => handleRestoreUser(user.id, user.username)}
-                        disabled={restoring === user.id}
-                        className={`deleted-user-restore-button ${restoring === user.id ? 'disabled' : ''}`}
-                        title="Restore User"
+              {/* Accessible HTML Table */}
+              <div className="table-container">
+                <table className="data-table" role="table" aria-label="Deleted users">
+                  <thead>
+                    <tr>
+                      <th scope="col">User</th>
+                      <th scope="col">Email</th>
+                      <th scope="col">Role</th>
+                      <th scope="col">Deleted By</th>
+                      <th scope="col">Deleted At</th>
+                      <th scope="col">Reason</th>
+                      <th scope="col">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {deletedUsers.map(user => (
+                      <tr 
+                        key={user.id} 
+                        className={restoring === user.id ? 'row-processing' : ''}
                       >
-                        {restoring === user.id ? '🔄' : '🔄 Restore'}
-                      </button>
-                    </div>
-                  </div>
-                ))}
+                        {/* User Info */}
+                        <td data-label="User">
+                          <div className="user-info">
+                            <div className="user-name">
+                              {user.full_name || user.username}
+                            </div>
+                            <div className="user-username">
+                              @{user.username}
+                            </div>
+                          </div>
+                        </td>
+
+                        {/* Email */}
+                        <td data-label="Email">
+                          <span className="user-email">
+                            {user.email}
+                          </span>
+                        </td>
+
+                        {/* Role */}
+                        <td data-label="Role">
+                          {getRoleBadge(user.global_role)}
+                        </td>
+
+                        {/* Deleted By */}
+                        <td data-label="Deleted By">
+                          <div className="user-info">
+                            <div className="user-name">
+                              {user.deleted_by_name || 'Unknown'}
+                            </div>
+                            <div className="user-username">
+                              @{user.deleted_by_username || 'unknown'}
+                            </div>
+                          </div>
+                        </td>
+
+                        {/* Deleted At */}
+                        <td data-label="Deleted At">
+                          <span className="date-display">
+                            {formatDate(user.deleted_at)}
+                          </span>
+                        </td>
+
+                        {/* Reason */}
+                        <td data-label="Reason">
+                          <div className="deletion-details">
+                            <div className="deletion-reason" title={user.deletion_reason || 'No reason provided'}>
+                              {user.deletion_reason || 'No reason provided'}
+                            </div>
+                            {user.tasks_reassigned_count > 0 && (
+                              <div className="deletion-stat reassigned">
+                                {user.tasks_reassigned_count} tasks reassigned
+                              </div>
+                            )}
+                            {user.tasks_unassigned_count > 0 && (
+                              <div className="deletion-stat unassigned">
+                                {user.tasks_unassigned_count} tasks unassigned
+                              </div>
+                            )}
+                            {user.team_memberships_removed > 0 && (
+                              <div className="deletion-stat teams">
+                                {user.team_memberships_removed} teams left
+                              </div>
+                            )}
+                          </div>
+                        </td>
+
+                        {/* Actions */}
+                        <td data-label="Actions">
+                          <button
+                            onClick={() => handleRestoreUser(user.id, user.username)}
+                            disabled={restoring === user.id}
+                            className={`btn btn-sm ${restoring === user.id ? 'btn-disabled' : 'btn-primary'}`}
+                            title="Restore User"
+                            aria-label={`Restore user ${user.username}`}
+                          >
+                            {restoring === user.id ? 'Restoring...' : 'Restore'}
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
 
               {/* Pagination */}
               {pagination.total > pagination.limit && (
-                <div className="deleted-users-pagination">
+                <div className="table-pagination">
                   <button
                     onClick={() => handlePageChange(Math.max(0, pagination.offset - pagination.limit))}
                     disabled={pagination.offset === 0}
-                    className="deleted-users-pagination-button"
+                    className="btn btn-secondary"
+                    aria-label="Go to previous page"
                   >
-                    ← Previous
+                    Previous
                   </button>
                   
-                  <span className="deleted-users-pagination-info">
+                  <span className="pagination-info">
                     Showing {pagination.offset + 1} - {Math.min(pagination.offset + pagination.limit, pagination.total)} of {pagination.total}
                   </span>
                   
                   <button
                     onClick={() => handlePageChange(pagination.offset + pagination.limit)}
                     disabled={!pagination.has_more}
-                    className="deleted-users-pagination-button"
+                    className="btn btn-secondary"
+                    aria-label="Go to next page"
                   >
-                    Next →
+                    Next
                   </button>
                 </div>
               )}

@@ -13,7 +13,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Allowed origins from environment (comma-separated)
-const allowedOrigins = (process.env.CORS_ORIGIN || "http://localhost:3000,http://localhost:8080,http://frontend:3000")
+const allowedOrigins = (process.env.CORS_ORIGIN || "http://localhost:3000,http://localhost:8080,http://192.168.0.115:8080,http://frontend:3000")
   .split(",");
 
 // Middleware - CORS setup
@@ -138,7 +138,7 @@ io.on('connection', (socket) => {
   socket.on('testBroadcast', () => {
     const userInfo = realtimeService.connectedUsers.get(socket.id);
     if (userInfo) {
-      console.log(`🧪 [DEBUG] Test broadcast from ${userInfo.username}`);
+      console.log(`[DEBUG] Test broadcast from ${userInfo.username}`);
       io.emit('testMessage', {
         message: `Test from ${userInfo.username}`,
         timestamp: new Date().toISOString()
@@ -183,7 +183,7 @@ const waitForDbAndSchema = async (retries = 10, delay = 3000) => {
     try {
       const schemaReady = await testConnectionAndSchema();
       if (schemaReady) {
-        console.log('✅ Database connected and RBAC schema ready!');
+        console.log('Database connected and RBAC schema ready!');
         return true;
       }
       console.log(`Waiting for database and schema... (${i + 1})`);
@@ -228,7 +228,7 @@ const waitForDbAndSchema = async (retries = 10, delay = 3000) => {
     });
   } catch (err) {
     console.error(err.message);
-    console.log('\n💡 If you see schema-related errors:');
+    console.log('\nNote: If you see schema-related errors:');
     console.log('   1. Stop containers: docker-compose down');
     console.log('   2. Remove database volume: docker volume rm task-management-app_mysql_data');
     console.log('   3. Restart: docker-compose up -d');

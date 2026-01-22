@@ -210,7 +210,7 @@ const UserManagement = () => {
     <div className="admin-panel">
       <div className="header">
         <div className="header-content">
-          <h2 className="page-title">👥 User Management</h2>
+          <h2 className="page-title">User Management</h2>
           <p className="page-subtitle">
             {filteredUsers.length} of {users.length} users
           </p>
@@ -220,14 +220,14 @@ const UserManagement = () => {
             onClick={() => setShowImportDialog(true)}
             className="btn btn-primary"
           >
-            📥 Import Users
+            Import Users
           </button>
           
           <button
             onClick={() => setShowExportDialog(true)}
             className="btn btn-success"
           >
-            📤 Export Users
+            Export Users
           </button>
           
           <button
@@ -265,102 +265,123 @@ const UserManagement = () => {
           onClick={loadUsers}
           className="btn-refresh"
         >
-          🔄 Refresh
+          Refresh
         </button>
 
         <button
           onClick={handleSyncUsers}
           className="btn-sync"
         >
-          🔄 Sync from Keycloak
+          Sync from Keycloak
         </button>
 
         <button
           onClick={() => setShowDeletedUsers(true)}
           className="btn btn-danger"
         >
-          🗑️ View Deleted Users
+          View Deleted Users
         </button>
 
         <button
           onClick={() => setShowImportHistory(true)}
           className="btn btn-purple"
         >
-          📋 Import History
+          Import History
         </button>
       </div>
 
       {/* Users Table */}
       <div className="card">
-        <div className="admin-table-header">
-          <div>User</div>
-          <div>Email</div>
-          <div>Role</div>
-          <div>Teams</div>
-          <div>Last Active</div>
-          <div>Actions</div>
+        <div className="table-container">
+          <table className="table table-striped table-responsive-stack" role="table" aria-label="Users management table">
+            <caption className="sr-only">
+              List of {filteredUsers.length} users with their roles, teams, and management actions
+            </caption>
+            <thead>
+              <tr>
+                <th scope="col" className="col-lg">User</th>
+                <th scope="col" className="col-lg">Email</th>
+                <th scope="col" className="col-sm">Role</th>
+                <th scope="col" className="col-sm">Teams</th>
+                <th scope="col" className="col-md">Last Active</th>
+                <th scope="col" className="col-md cell-actions">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredUsers.length === 0 ? (
+                <tr>
+                  <td colSpan="6" className="table-empty">
+                    <div className="table-empty-icon">👥</div>
+                    <div className="table-empty-title">No users found</div>
+                    <div className="table-empty-description">
+                      {searchTerm || roleFilter 
+                        ? 'No users match your filters' 
+                        : 'No users found'
+                      }
+                    </div>
+                  </td>
+                </tr>
+              ) : (
+                filteredUsers.map(user => (
+                  <tr key={user.id}>
+                    {/* User Info */}
+                    <td data-label="User">
+                      <div className="admin-user-info">
+                        {user.full_name || user.username}
+                      </div>
+                      <div className="admin-user-username">
+                        @{user.username}
+                      </div>
+                    </td>
+
+                    {/* Email */}
+                    <td data-label="Email" className="admin-user-email">
+                      {user.email}
+                    </td>
+
+                    {/* Role */}
+                    <td data-label="Role" className="cell-center">
+                      {getRoleBadge(user.global_role)}
+                    </td>
+
+                    {/* Teams */}
+                    <td data-label="Teams" className="admin-user-teams cell-center">
+                      {user.team_count || 0} teams
+                    </td>
+
+                    {/* Last Active */}
+                    <td data-label="Last Active" className="admin-user-last-active">
+                      {user.updated_at ? new Date(user.updated_at).toLocaleDateString() : 'Never'}
+                    </td>
+
+                    {/* Actions */}
+                    <td data-label="Actions" className="admin-user-actions cell-actions">
+                      <button
+                        onClick={() => {
+                          setEditingUser(user);
+                          setShowRoleModal(true);
+                        }}
+                        className="btn btn-table btn-primary"
+                        aria-label={`Edit role for ${user.full_name || user.username}`}
+                      >
+                        Edit Role
+                      </button>
+                      
+                      <button
+                        onClick={() => handleDeleteUser(user)}
+                        className="btn btn-table btn-danger"
+                        title="Delete User"
+                        aria-label={`Delete user ${user.full_name || user.username}`}
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
         </div>
-
-        {filteredUsers.map(user => (
-          <div key={user.id} className="admin-table-row">
-            {/* User Info */}
-            <div>
-              <div className="admin-user-info">
-                {user.full_name || user.username}
-              </div>
-              <div className="admin-user-username">
-                @{user.username}
-              </div>
-            </div>
-
-            {/* Email */}
-            <div className="admin-user-email">
-              {user.email}
-            </div>
-
-            {/* Role */}
-            <div>
-              {getRoleBadge(user.global_role)}
-            </div>
-
-            {/* Teams */}
-            <div className="admin-user-teams">
-              {user.team_count || 0} teams
-            </div>
-
-            {/* Last Active */}
-            <div className="admin-user-last-active">
-              {user.updated_at ? new Date(user.updated_at).toLocaleDateString() : 'Never'}
-            </div>
-
-            {/* Actions */}
-            <div className="admin-user-actions">
-              <button
-                onClick={() => {
-                  setEditingUser(user);
-                  setShowRoleModal(true);
-                }}
-                className="btn btn-sm btn-primary"
-              >
-                Edit Role
-              </button>
-              
-              <button
-                onClick={() => handleDeleteUser(user)}
-                className="btn btn-sm btn-danger"
-                title="Delete User"
-              >
-                🗑️ Delete
-              </button>
-            </div>
-          </div>
-        ))}
-
-        {filteredUsers.length === 0 && (
-          <div className="admin-empty-state">
-            {searchTerm || roleFilter ? 'No users match your filters' : 'No users found'}
-          </div>
-        )}
       </div>
 
       {/* Role Change Modal */}

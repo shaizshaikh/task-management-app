@@ -188,7 +188,7 @@ const ManagerDashboard = ({ teams, onRefresh }) => {
         {/* Team Statistics */}
         <div className="manager-dashboard-section">
           <h3 className="manager-dashboard-section-title">
-            📊 Team Performance
+            Team Performance
           </h3>
           
           {dashboardData.teamStats.map(team => (
@@ -206,10 +206,10 @@ const ManagerDashboard = ({ teams, onRefresh }) => {
               
               <div className="manager-team-stat-metrics">
                 <span className="manager-team-stat-metric stat-metric-primary">
-                  📋 {team.taskCount} tasks
+                  Tasks: {team.taskCount}
                 </span>
                 <span className="manager-team-stat-metric stat-metric-success">
-                  ✅ {team.completedCount} done
+                  Done: {team.completedCount}
                 </span>
                 <span className="manager-team-stat-metric stat-metric-warning">
                   ⏳ {team.pendingCount} pending

@@ -19,38 +19,38 @@ const Navigation = () => {
   const navItems = [
     {
       path: '/dashboard',
-      label: '📊 Dashboard',
-      icon: '📊',
+      label: 'Dashboard',
+      icon: 'Dashboard',
       roles: ['admin', 'manager', 'member', 'viewer']
     },
     {
       path: '/tasks',
-      label: '📋 Tasks',
-      icon: '📋',
+      label: 'Tasks',
+      icon: 'Tasks',
       roles: ['admin', 'manager', 'member', 'viewer']
     },
     {
       path: '/teams',
-      label: '👥 Teams',
-      icon: '👥',
+      label: 'Teams',
+      icon: 'Teams',
       roles: ['admin', 'manager', 'member']
     },
     {
       path: '/admin',
-      label: '⚙️ Admin Panel',
-      icon: '⚙️',
+      label: 'Admin Panel',
+      icon: 'Admin',
       roles: ['admin']
     },
     {
       path: '/manager',
-      label: '👔 Manager Panel',
-      icon: '👔',
+      label: 'Manager Panel',
+      icon: 'Manager',
       roles: ['admin', 'manager']
     },
     {
       path: '/audit',
-      label: '📜 Audit Logs',
-      icon: '📜',
+      label: 'Audit Logs',
+      icon: 'Audit',
       roles: ['admin', 'manager']
     }
   ];
@@ -72,7 +72,7 @@ const Navigation = () => {
           onClick={() => navigate('/dashboard')}
           className="nav-brand"
         >
-          📋 Task Management
+          Task Management
         </div>
 
         {/* Navigation Links */}

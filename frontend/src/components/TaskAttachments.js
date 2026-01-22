@@ -158,16 +158,16 @@ const TaskAttachments = ({ taskId, isEditing = false }) => {
   const getFileIcon = (filename, mimeType) => {
     const ext = filename.split('.').pop().toLowerCase();
     
-    if (mimeType?.startsWith('image/')) return '🖼️';
-    if (mimeType === 'application/pdf') return '📄';
-    if (ext === 'doc' || ext === 'docx') return '📝';
-    if (ext === 'xls' || ext === 'xlsx') return '📊';
-    if (ext === 'ppt' || ext === 'pptx') return '📋';
-    if (ext === 'zip' || ext === 'rar') return '🗜️';
-    if (ext === 'txt') return '📃';
-    if (ext === 'csv') return '📈';
+    if (mimeType?.startsWith('image/')) return 'IMG';
+    if (mimeType === 'application/pdf') return 'PDF';
+    if (ext === 'doc' || ext === 'docx') return 'DOC';
+    if (ext === 'xls' || ext === 'xlsx') return 'XLS';
+    if (ext === 'ppt' || ext === 'pptx') return 'PPT';
+    if (ext === 'zip' || ext === 'rar') return 'ZIP';
+    if (ext === 'txt') return 'TXT';
+    if (ext === 'csv') return 'CSV';
     
-    return '📎';
+    return 'FILE';
   };
 
   const formatFileSize = (bytes) => {
@@ -182,7 +182,7 @@ const TaskAttachments = ({ taskId, isEditing = false }) => {
     <div className="attachments-wrapper">
       <div className="attachments-header">
         <h4 className="attachments-title">
-          📎 Attachments ({attachments.length})
+          Attachments ({attachments.length})
         </h4>
         
         {isEditing && (
@@ -223,7 +223,7 @@ const TaskAttachments = ({ taskId, isEditing = false }) => {
               </div>
             ) : (
               <div>
-                <div>📁 Drag & drop files here or click to browse</div>
+                <div>Drag & drop files here or click to browse</div>
                 <div className="attachments-dropzone-help">
                   Max 10MB per file • Images, PDFs, Documents, Archives
                 </div>
@@ -273,7 +273,7 @@ const TaskAttachments = ({ taskId, isEditing = false }) => {
                   className="attachment-action-btn"
                   title="Download"
                 >
-                  ⬇️
+                  Download
                 </button>
                 
                 {isEditing && (
@@ -282,7 +282,7 @@ const TaskAttachments = ({ taskId, isEditing = false }) => {
                     className="attachment-action-btn delete"
                     title="Delete"
                   >
-                    🗑️
+                    Delete
                   </button>
                 )}
               </div>

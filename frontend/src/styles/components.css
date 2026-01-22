@@ -733,36 +733,6 @@
   margin-top: var(--spacing-sm);
 }
 
-/* Tab Navigation */
-.tab-navigation-manager {
-  display: flex;
-  border-bottom: 2px solid var(--border-secondary);
-  margin-bottom: var(--spacing-xl);
-}
-
-.tab-button-manager {
-  padding: var(--spacing-md) var(--spacing-lg);
-  border: none;
-  background: none;
-  color: var(--text-secondary);
-  cursor: pointer;
-  border-bottom: 2px solid transparent;
-  transition: all var(--animation-duration) ease;
-  font-size: 0.875rem;
-  font-weight: 500;
-}
-
-.tab-button-manager:hover {
-  color: var(--text-primary);
-  background-color: var(--bg-tertiary);
-}
-
-.tab-button-manager.active {
-  color: var(--color-primary);
-  border-bottom-color: var(--color-primary);
-  background-color: var(--bg-secondary);
-}
-
 /* Profile Page Styles */
 .profile-container {
   max-width: 800px;
@@ -2440,7 +2410,7 @@
   font-style: italic;
 }
 
-/* Modal Components */
+/* Modal Components - PERFORMANCE OPTIMIZED */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -2452,8 +2422,9 @@
   justify-content: center;
   align-items: center;
   z-index: 9999;
-  backdrop-filter: blur(4px);
-  /* Accessibility improvements */
+  /* Removed backdrop-filter for performance */
+  /* Performance optimizations */
+  will-change: opacity;
   isolation: isolate;
 }
 
@@ -2469,7 +2440,9 @@
   box-shadow: var(--shadow-xl);
   position: relative;
   z-index: 10000;
-  /* Accessibility improvements */
+  /* Performance optimizations */
+  will-change: transform;
+  contain: layout style paint;
   outline: 2px solid transparent;
   outline-offset: 2px;
 }
@@ -2777,13 +2750,15 @@
   color: var(--text-primary);
 }
 
-/* Fix for form elements in dialogs */
+/* Form elements in dialogs - OPTIMIZED */
 .modal-content input,
 .modal-content select,
 .modal-content textarea {
   background-color: var(--bg-tertiary);
   border: 1px solid var(--border-primary);
   color: var(--text-primary);
+  /* Performance optimization */
+  will-change: border-color;
 }
 
 .modal-content input:focus,
@@ -2791,6 +2766,8 @@
 .modal-content textarea:focus {
   border-color: var(--border-focus);
   box-shadow: 0 0 0 2px rgba(56, 139, 253, 0.2);
+  /* Reduced transition for better typing performance */
+  transition: border-color 0.1s ease;
 }
 
 /* Fix for labels in modals */

@@ -1,9 +1,9 @@
 /**
- * Modern Dark Theme Modal Component
- * Consistent modal styling across the entire application
+ * Modern Dark Theme Modal Component - PERFORMANCE OPTIMIZED
+ * Reduced DOM operations and improved focus management
  */
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 import './Modal.css';
 
 const Modal = ({ 
@@ -12,33 +12,39 @@ const Modal = ({
   title, 
   children, 
   footer,
-  size = 'medium', // small, medium, large, xlarge
+  size = 'medium',
   closeOnOverlayClick = true,
   showCloseButton = true
 }) => {
   const modalRef = useRef(null);
   const previousActiveElement = useRef(null);
 
-  // Handle ESC key to close modal and focus management
-  useEffect(() => {
-    const handleEscape = (e) => {
-      if (e.key === 'Escape' && isOpen) {
-        onClose();
-      }
-    };
+  // Memoized escape handler
+  const handleEscape = useCallback((e) => {
+    if (e.key === 'Escape' && isOpen) {
+      onClose();
+    }
+  }, [isOpen, onClose]);
 
+  // Memoized overlay click handler
+  const handleOverlayClick = useCallback((e) => {
+    if (closeOnOverlayClick && e.target === e.currentTarget) {
+      onClose();
+    }
+  }, [closeOnOverlayClick, onClose]);
+
+  useEffect(() => {
     if (isOpen) {
-      // Store the previously focused element
+      // Store focus and prevent scroll
       previousActiveElement.current = document.activeElement;
-      
       document.addEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'hidden'; // Prevent background scroll
+      document.body.style.overflow = 'hidden';
       
-      // Focus the modal after a brief delay to ensure it's rendered
-      setTimeout(() => {
+      // Optimized focus management - single RAF
+      requestAnimationFrame(() => {
         if (modalRef.current) {
           const firstFocusable = modalRef.current.querySelector(
-            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+            'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"]):not([disabled])'
           );
           if (firstFocusable) {
             firstFocusable.focus();
@@ -46,27 +52,21 @@ const Modal = ({
             modalRef.current.focus();
           }
         }
-      }, 100);
+      });
     }
 
     return () => {
       document.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = '';
       
-      // Restore focus to the previously focused element
+      // Restore focus
       if (previousActiveElement.current && !isOpen) {
         previousActiveElement.current.focus();
       }
     };
-  }, [isOpen, onClose]);
+  }, [isOpen, handleEscape]);
 
   if (!isOpen) return null;
-
-  const handleOverlayClick = (e) => {
-    if (closeOnOverlayClick && e.target === e.currentTarget) {
-      onClose();
-    }
-  };
 
   return (
     <div className="modal-overlay" onClick={handleOverlayClick} aria-hidden={!isOpen}>
@@ -113,4 +113,4 @@ const Modal = ({
   );
 };
 
-export default Modal;
+export default React.memo(Modal);

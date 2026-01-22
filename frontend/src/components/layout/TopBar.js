@@ -143,12 +143,12 @@ const TopBar = ({ user, onToggleSidebar, sidebarCollapsed }) => {
               className={`notifications-button ${!isConnected ? 'disconnected' : ''}`}
               onClick={() => setNotificationsOpen(!notificationsOpen)}
               onKeyDown={(e) => handleMenuKeyDown(e, 'notifications')}
-              aria-label={unreadCount > 0 ? `Notifications, ${unreadCount} unread` : 'Notifications, no unread messages'}
+              aria-label={unreadCount > 0 ? `Notifications, ${unreadCount} unread` : 'Notifications'}
               aria-expanded={notificationsOpen}
               aria-haspopup="true"
               title={unreadCount > 0 ? `${unreadCount} unread notifications` : 'No unread notifications'}
             >
-              <span className="notification-icon" aria-hidden="true">🔔</span>
+              <span className="notification-icon" aria-hidden="true">Bell</span>
               {unreadCount > 0 && (
                 <span 
                   className="notification-badge" 
@@ -183,7 +183,7 @@ const TopBar = ({ user, onToggleSidebar, sidebarCollapsed }) => {
                 <div className="menu-content">
                   {notifications.length === 0 ? (
                     <div className="no-notifications">
-                      <span className="no-notifications-icon">🔔</span>
+                      <span className="no-notifications-icon">Bell</span>
                       <p>No notifications yet</p>
                     </div>
                   ) : (
@@ -286,7 +286,7 @@ const TopBar = ({ user, onToggleSidebar, sidebarCollapsed }) => {
                     role="menuitem"
                     onClick={() => {
                       setProfileMenuOpen(false);
-                      toast.info('📚 Help documentation is being prepared. Contact your admin for support.');
+                      toast.info('Help documentation is being prepared. Contact your admin for support.');
                     }}
                   >
                     <span className="menu-icon" aria-hidden="true">❓</span>
@@ -350,8 +350,8 @@ const TopBar = ({ user, onToggleSidebar, sidebarCollapsed }) => {
           display: flex;
           align-items: center;
           justify-content: center;
-          width: var(--min-touch-target);
-          height: var(--min-touch-target);
+          min-width: var(--min-touch-target);
+          min-height: var(--min-touch-target);
           background: transparent;
           border: none;
           color: var(--text-secondary);
@@ -426,6 +426,7 @@ const TopBar = ({ user, onToggleSidebar, sidebarCollapsed }) => {
           align-items: center;
           gap: var(--spacing-sm);
           min-height: var(--min-touch-target);
+          min-width: var(--min-touch-target);
           padding: var(--spacing-sm);
           background: transparent;
           border: none;
@@ -767,6 +768,10 @@ const TopBar = ({ user, onToggleSidebar, sidebarCollapsed }) => {
 
         /* Mobile Responsive */
         @media (max-width: 768px) {
+          .top-bar-content {
+            padding: 0 var(--spacing-md);
+          }
+
           .page-info {
             display: none;
           }
@@ -777,7 +782,49 @@ const TopBar = ({ user, onToggleSidebar, sidebarCollapsed }) => {
 
           .notifications-menu,
           .profile-menu {
-            min-width: 260px;
+            position: fixed;
+            top: 60px;
+            left: var(--spacing-sm);
+            right: var(--spacing-sm);
+            min-width: auto;
+            max-width: calc(100vw - 2 * var(--spacing-sm));
+          }
+
+          .connection-status {
+            display: none;
+          }
+
+          .top-bar-right {
+            gap: var(--spacing-xs);
+          }
+
+          .notifications-button,
+          .profile-button {
+            min-width: var(--min-touch-target);
+            padding: var(--spacing-sm);
+          }
+        }
+
+        @media (max-width: 480px) {
+          .top-bar-content {
+            padding: 0 var(--spacing-sm);
+          }
+
+          .notifications-menu,
+          .profile-menu {
+            left: var(--spacing-xs);
+            right: var(--spacing-xs);
+            max-width: calc(100vw - 2 * var(--spacing-xs));
+          }
+
+          .profile-avatar {
+            width: 28px;
+            height: 28px;
+            font-size: 0.75rem;
+          }
+
+          .notification-icon {
+            font-size: 1.125rem;
           }
         }
 

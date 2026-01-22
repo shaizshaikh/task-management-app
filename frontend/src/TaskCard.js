@@ -29,7 +29,7 @@ const AttachmentCountBadge = ({ taskId }) => {
 
   return (
     <span className="attachment-badge">
-      <span aria-hidden="true">📎</span>
+      <span aria-hidden="true">Files</span>
       {count} file{count !== 1 ? 's' : ''}
     </span>
   );
@@ -270,7 +270,7 @@ const TaskCard = ({ task, onUpdate, onDelete }) => {
         <div className="card-header">
           <div className="alert alert-info mb-0">
             <span className="alert-icon" aria-hidden="true">
-              {canFullEdit ? '🔧' : '✏️'}
+              {canFullEdit ? 'Admin' : 'Edit'}
             </span>
             {canFullEdit ? 'Full Edit Mode (Admin/Manager)' : 'Limited Edit Mode (Member)'}
           </div>
@@ -294,7 +294,7 @@ const TaskCard = ({ task, onUpdate, onDelete }) => {
             />
             {!canEditContent && (
               <small id={`task-title-help-${task.id}`} className="form-help">
-                📝 Title can only be edited by managers and admins
+                Note: Title can only be edited by managers and admins
               </small>
             )}
           </div>
@@ -311,7 +311,7 @@ const TaskCard = ({ task, onUpdate, onDelete }) => {
           />
           {!canEditContent && (
             <div className="form-help">
-              📝 Description can only be edited by managers and admins
+              Note: Description can only be edited by managers and admins
             </div>
           )}
         </div>
@@ -333,12 +333,12 @@ const TaskCard = ({ task, onUpdate, onDelete }) => {
         {/* Admin/Manager only fields */}
         {canFullEdit && (
           <div className="task-edit-section-admin">
-            <h4 className="task-edit-title">🔒 Manager/Admin Only</h4>
+            <h4 className="task-edit-title">Manager/Admin Only</h4>
             
             {/* Permission explanation for team managers */}
             {!isAdmin() && !isManager() && (
               <div className="alert alert-info mb-md">
-                💡 You can only move tasks between teams where you are a manager.
+                Note: You can only move tasks between teams where you are a manager.
               </div>
             )}
             
@@ -385,7 +385,7 @@ const TaskCard = ({ task, onUpdate, onDelete }) => {
                 </select>
                 {editedTask.assigned_to && !users.find(u => u.id === editedTask.assigned_to) && (
                   <small className="task-form-warning">
-                    ⚠️ Currently assigned user is not in this team
+                    Warning: Currently assigned user is not in this team
                   </small>
                 )}
               </div>
@@ -419,7 +419,7 @@ const TaskCard = ({ task, onUpdate, onDelete }) => {
         {/* Member view of restricted fields */}
         {!canFullEdit && (
           <div className="task-readonly-section">
-            <h4 className="task-readonly-title">📋 Task Details (Read-only)</h4>
+            <h4 className="task-readonly-title">Task Details (Read-only)</h4>
             <div className="task-readonly-grid">
               <div className="task-readonly-item">
                 <span className="task-readonly-label">Team:</span>
@@ -506,7 +506,7 @@ const TaskCard = ({ task, onUpdate, onDelete }) => {
             className="team-badge team-badge-dynamic"
             style={{ '--team-color': task.team_color }}
           >
-            <span className="team-badge-icon" aria-hidden="true">🏢</span>
+            <span className="team-badge-icon" aria-hidden="true">Team</span>
             {task.team_name}
           </span>
         )}
@@ -532,7 +532,7 @@ const TaskCard = ({ task, onUpdate, onDelete }) => {
         {/* Due Date Badge */}
         {task.due_date && (
           <span className={`due-date-badge ${isOverdue ? 'overdue' : 'normal'}`}>
-            <span aria-hidden="true">📅</span>
+            <span aria-hidden="true">Due</span>
             {new Date(task.due_date).toLocaleDateString()}
           </span>
         )}

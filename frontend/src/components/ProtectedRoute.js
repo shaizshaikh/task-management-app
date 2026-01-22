@@ -21,7 +21,7 @@ const ProtectedRoute = ({
   if (loading) {
     return (
       <div className="auth-loading auth-loading-fullscreen">
-        <div className="auth-loading-text">🔐 Checking authentication...</div>
+        <div className="auth-loading-text">Checking authentication...</div>
         <div className="auth-loading-spinner"></div>
       </div>
     );
@@ -38,7 +38,7 @@ const ProtectedRoute = ({
     if (requiredRole && !user.roles?.includes(requiredRole)) {
       return fallback || (
         <div className="auth-error auth-error-fullscreen">
-          <h2 className="auth-error-title">🚫 Access Denied</h2>
+          <h2 className="auth-error-title">Access Denied</h2>
           <p className="auth-error-message">You don't have the required role: {requiredRole}</p>
           <p className="auth-error-message">Your roles: {user.roles?.join(', ') || 'None'}</p>
         </div>
@@ -51,7 +51,7 @@ const ProtectedRoute = ({
       if (user.globalRole !== 'admin') {
         return fallback || (
           <div className="auth-error auth-error-fullscreen">
-            <h2 className="auth-error-title">🚫 Access Denied</h2>
+            <h2 className="auth-error-title">Access Denied</h2>
             <p className="auth-error-message">You don't have the required global role: {requiredGlobalRole}</p>
             <p className="auth-error-message">Your global role: {user.globalRole}</p>
           </div>

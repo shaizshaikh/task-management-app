@@ -30,7 +30,7 @@ class EmailService {
 
       // If no SMTP configuration, use a test account or disable emails
       if (!emailConfig.host || !emailConfig.auth.user) {
-        console.log('⚠️  Email service: No SMTP configuration found. Email notifications will be logged only.');
+        console.log('Email service: No SMTP configuration found. Email notifications will be logged only.');
         this.isConfigured = false;
         return;
       }
@@ -38,9 +38,9 @@ class EmailService {
       this.transporter = nodemailer.createTransport(emailConfig);
       this.isConfigured = true;
 
-      console.log('✅ Email service initialized successfully');
+      console.log('Email service initialized successfully');
     } catch (error) {
-      console.error('❌ Failed to initialize email service:', error.message);
+      console.error('Failed to initialize email service:', error.message);
       this.isConfigured = false;
     }
   }
@@ -212,7 +212,7 @@ class EmailService {
     try {
       if (!this.isConfigured) {
         // Log email instead of sending
-        console.log('📧 Email would be sent:');
+        console.log('Email would be sent:');
         console.log(`   To: ${to}`);
         console.log(`   Subject: ${subject}`);
         console.log(`   Content: ${text || 'HTML content'}`);
@@ -228,7 +228,7 @@ class EmailService {
       };
 
       const info = await this.transporter.sendMail(mailOptions);
-      console.log(`✅ Email sent successfully to ${to}: ${info.messageId}`);
+      console.log(`Email sent successfully to ${to}: ${info.messageId}`);
 
       return {
         success: true,
@@ -236,7 +236,7 @@ class EmailService {
         method: 'smtp'
       };
     } catch (error) {
-      console.error(`❌ Failed to send email to ${to}:`, error.message);
+      console.error(`Failed to send email to ${to}:`, error.message);
       return {
         success: false,
         error: error.message,
@@ -268,7 +268,7 @@ class EmailService {
 <body>
     <div class="container">
         <div class="header">
-            <h1>🎉 Welcome to Task Management System!</h1>
+            <h1>Welcome to Task Management System!</h1>
         </div>
         
         <div class="content">
@@ -279,21 +279,21 @@ class EmailService {
             <div class="credentials">
                 <strong>Username:</strong> ${username}<br>
                 <strong>Password:</strong> ${password}<br>
-                ${temporaryPassword ? '<em>⚠️ This is a temporary password. You will be required to change it on your first login.</em>' : ''}
+                ${temporaryPassword ? '<em>Note: This is a temporary password. You will be required to change it on your first login.</em>' : ''}
             </div>
             
             <p>Click the button below to access the system:</p>
             
             <p style="text-align: center;">
-                <a href="${loginUrl}" class="button">🚀 Login to Task Management</a>
+                <a href="${loginUrl}" class="button">Login to Task Management</a>
             </p>
             
             <h3>Getting Started:</h3>
             <ul>
-                <li>📋 View and manage your assigned tasks</li>
-                <li>👥 Collaborate with your team members</li>
-                <li>📊 Track your progress and productivity</li>
-                <li>💬 Comment and communicate on tasks</li>
+                <li>View and manage your assigned tasks</li>
+                <li>Collaborate with your team members</li>
+                <li>Track your progress and productivity</li>
+                <li>Comment and communicate on tasks</li>
             </ul>
             
             <p>If you have any questions or need assistance, please contact your system administrator.</p>
@@ -332,7 +332,7 @@ class EmailService {
 <body>
     <div class="container">
         <div class="header">
-            <h1>📥 User Import Completed</h1>
+            <h1>User Import Completed</h1>
         </div>
         
         <div class="content">
@@ -345,17 +345,17 @@ class EmailService {
                 </div>
                 <div class="stat">
                     <div class="stat-number" style="color: #4CAF50;">${successful}</div>
-                    <div>✅ Successful</div>
+                    <div>Successful</div>
                 </div>
                 <div class="stat">
                     <div class="stat-number" style="color: #f44336;">${failed.length}</div>
-                    <div>❌ Failed</div>
+                    <div>Failed</div>
                 </div>
             </div>
             
             ${failed.length > 0 ? `
             <div class="failed-list">
-                <h3>❌ Failed Imports:</h3>
+                <h3>Failed Imports:</h3>
                 <ul>
                     ${failedUsers.map(user => `
                         <li><strong>${user.username || user.email}</strong>: ${user.error}</li>
@@ -400,23 +400,23 @@ class EmailService {
 <body>
     <div class="container">
         <div class="header">
-            <h1>🚫 Account Deletion Notice</h1>
+            <h1>Account Deletion Notice</h1>
         </div>
         
         <div class="content">
             <h2>Hello ${full_name},</h2>
             
             <div class="warning">
-                <strong>⚠️ Important Notice:</strong> Your account has been deleted from the Task Management System.
+                <strong>Important Notice:</strong> Your account has been deleted from the Task Management System.
             </div>
             
             <p>Your account with username <strong>${username}</strong> has been removed from the system. This means:</p>
             
             <ul>
-                <li>🚫 You no longer have access to the Task Management System</li>
-                <li>📋 Your assigned tasks have been reassigned or unassigned</li>
-                <li>👥 You have been removed from all teams</li>
-                <li>💾 Your account data has been archived for compliance purposes</li>
+                <li>You no longer have access to the Task Management System</li>
+                <li>Your assigned tasks have been reassigned or unassigned</li>
+                <li>You have been removed from all teams</li>
+                <li>Your account data has been archived for compliance purposes</li>
             </ul>
             
             <p>If you believe this was done in error or if you have any questions, please contact your system administrator immediately.</p>
@@ -456,40 +456,40 @@ class EmailService {
 <body>
     <div class="container">
         <div class="header">
-            <h1>🎉 Welcome Back!</h1>
+            <h1>Welcome Back!</h1>
         </div>
         
         <div class="content">
             <h2>Hello ${full_name},</h2>
             
             <div class="success">
-                <strong>✅ Great News:</strong> Your account has been restored and you now have access to the Task Management System again!
+                <strong>Great News:</strong> Your account has been restored and you now have access to the Task Management System again!
             </div>
             
             <p>Your account with username <strong>${username}</strong> has been successfully restored.</p>
             
             ${password ? `
             <div class="credentials">
-                <h3>🔑 Your New Login Credentials:</h3>
+                <h3>Your New Login Credentials:</h3>
                 <strong>Username:</strong> ${username}<br>
                 <strong>Password:</strong> ${password}<br>
-                ${temporaryPassword ? '<em>⚠️ This is a temporary password. You will be required to change it on your first login for security.</em>' : ''}
+                ${temporaryPassword ? '<em>Note: This is a temporary password. You will be required to change it on your first login for security.</em>' : ''}
             </div>
             ` : ''}
             
             <p>You can now:</p>
             
             <ul>
-                <li>🔓 Access the Task Management System</li>
-                <li>📋 View and manage your tasks</li>
-                <li>👥 Collaborate with your team members</li>
-                <li>📊 Track your progress and productivity</li>
+                <li>Access the Task Management System</li>
+                <li>View and manage your tasks</li>
+                <li>Collaborate with your team members</li>
+                <li>Track your progress and productivity</li>
             </ul>
             
             <p>Click the button below to access the system:</p>
             
             <p style="text-align: center;">
-                <a href="${loginUrl}" class="button">🚀 Login to Task Management</a>
+                <a href="${loginUrl}" class="button">Login to Task Management</a>
             </p>
             
             <p>If you have any questions or need assistance, please contact your system administrator.</p>
@@ -535,7 +535,7 @@ class EmailService {
 <body>
     <div class="container">
         <div class="header">
-            <h1>📋 New Task Assignment</h1>
+            <h1>New Task Assignment</h1>
         </div>
         
         <div class="content">
@@ -551,16 +551,16 @@ class EmailService {
                     <span class="priority" style="background-color: ${priorityColors[priority] || '#666'};">
                         ${priority?.toUpperCase()} PRIORITY
                     </span>
-                    ${teamName ? `<span style="margin-left: 10px;">🏢 <strong>Team:</strong> ${teamName}</span>` : ''}
+                    ${teamName ? `<span style="margin-left: 10px;">Team: <strong>${teamName}</strong></span>` : ''}
                 </div>
                 
-                ${dueDate ? `<p>📅 <strong>Due Date:</strong> ${new Date(dueDate).toLocaleDateString()}</p>` : ''}
+                ${dueDate ? `<p>Due Date: <strong>${new Date(dueDate).toLocaleDateString()}</strong></p>` : ''}
             </div>
             
             <p>Click the button below to view the task and get started:</p>
             
             <p style="text-align: center;">
-                <a href="${loginUrl}" class="button">📋 View Task</a>
+                <a href="${loginUrl}" class="button">View Task</a>
             </p>
             
             <p>If you have any questions about this task, please reach out to your team leader or the person who assigned it.</p>
@@ -597,7 +597,7 @@ class EmailService {
 <body>
     <div class="container">
         <div class="header">
-            <h1>👥 Team ${changeType === 'added' ? 'Assignment' : 'Update'}</h1>
+            <h1>Team ${changeType === 'added' ? 'Assignment' : 'Update'}</h1>
         </div>
         
         <div class="content">
@@ -606,25 +606,25 @@ class EmailService {
             <p>Your team membership has been updated by <strong>${changedBy}</strong>:</p>
             
             <div class="team-info">
-                <h3>🏢 ${teamName}</h3>
+                <h3>${teamName}</h3>
                 <p><strong>Your Role:</strong> ${role?.charAt(0).toUpperCase() + role?.slice(1)}</p>
                 
                 ${changeType === 'added' ? `
-                <p>✅ You have been <strong>added</strong> to this team. You now have access to:</p>
+                <p>You have been <strong>added</strong> to this team. You now have access to:</p>
                 <ul>
-                    <li>📋 Team tasks and projects</li>
-                    <li>👥 Team member collaboration</li>
-                    <li>📊 Team performance metrics</li>
+                    <li>Team tasks and projects</li>
+                    <li>Team member collaboration</li>
+                    <li>Team performance metrics</li>
                 </ul>
                 ` : `
-                <p>🔄 Your team membership has been <strong>updated</strong>. Please review your new permissions and responsibilities.</p>
+                <p>Your team membership has been <strong>updated</strong>. Please review your new permissions and responsibilities.</p>
                 `}
             </div>
             
             <p>Click the button below to access your team dashboard:</p>
             
             <p style="text-align: center;">
-                <a href="${loginUrl}" class="button">👥 View Team</a>
+                <a href="${loginUrl}" class="button">View Team</a>
             </p>
             
             <p>If you have any questions about your team assignment or role, please contact your team leader.</p>
@@ -663,7 +663,7 @@ class EmailService {
 <body>
     <div class="container">
         <div class="header">
-            <h1>📊 Task Status Update</h1>
+            <h1>Task Status Update</h1>
         </div>
         
         <div class="content">
@@ -688,7 +688,7 @@ class EmailService {
             
             ${attachments && attachments.length > 0 ? `
             <div class="attachments">
-                <h4>📎 New Attachments (${attachments.length}):</h4>
+                <h4>New Attachments (${attachments.length}):</h4>
                 <ul>
                     ${attachments.map(attachment => `
                         <li>${attachment.original_name} (${(attachment.file_size / 1024).toFixed(1)} KB)</li>
@@ -700,7 +700,7 @@ class EmailService {
             <p>Click the button below to view the task details:</p>
             
             <p style="text-align: center;">
-                <a href="${loginUrl}" class="button">📋 View Task</a>
+                <a href="${loginUrl}" class="button">View Task</a>
             </p>
             
             <p>This notification is sent to all leaders of the <strong>${teamName}</strong> team.</p>

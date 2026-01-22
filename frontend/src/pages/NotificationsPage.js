@@ -59,7 +59,7 @@ const NotificationsPage = () => {
       {/* Header */}
       <header className="page-header">
         <div>
-          <h2 className="page-title">🔔 Notifications</h2>
+          <h2 className="page-title">Notifications</h2>
           <p className="page-subtitle">
             {unreadCount > 0 ? `${unreadCount} unread notifications` : 'All caught up!'}
           </p>
@@ -127,7 +127,7 @@ const NotificationsPage = () => {
           {filteredNotifications.length === 0 ? (
             <div className="text-center p-4">
               <div className="no-notifications-large">
-                <span className="no-notifications-icon">🔔</span>
+                <span className="no-notifications-icon">Bell</span>
                 <h3>No notifications found</h3>
                 <p className="text-secondary">
                   {notifications.length === 0 

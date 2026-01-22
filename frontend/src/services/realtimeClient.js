@@ -27,12 +27,12 @@ class RealtimeClient {
   connect(user, token) {
     // Prevent multiple connections
     if (this.isConnecting) {
-      console.log('🔌 Connection already in progress, skipping...');
+      console.log('Connection already in progress, skipping...');
       return this.socket;
     }
 
     if (this.socket && this.isConnected && this.user?.id === user?.id) {
-      console.log('🔌 Already connected for this user, skipping...');
+      console.log('Already connected for this user, skipping...');
       return this.socket;
     }
 
@@ -64,7 +64,7 @@ class RealtimeClient {
         }
       });
     } catch (error) {
-      console.error('🔌 Failed to create WebSocket connection:', error);
+      console.error('Failed to create WebSocket connection:', error);
       this.isConnecting = false;
       return null;
     }
@@ -75,14 +75,14 @@ class RealtimeClient {
         this.setupEventHandlers();
         this.eventListenersSetup = true;
       } catch (error) {
-        console.error('🔌 Failed to setup event handlers:', error);
+        console.error('Failed to setup event handlers:', error);
       }
     }
     
     // Authenticate after connection
     if (this.socket) {
       this.socket.on('connect', () => {
-        console.log('🔌 Connected to WebSocket server');
+        console.log('Connected to WebSocket server');
         this.socket.emit('authenticate', { token });
         this.isConnecting = false;
         this.connectionAttempts = 0; // Reset connection attempts on successful connection
@@ -90,7 +90,7 @@ class RealtimeClient {
       });
 
       this.socket.on('connect_error', (error) => {
-        console.warn('🔌 WebSocket connection failed (non-critical):', error.message);
+        console.warn('WebSocket connection failed (non-critical):', error.message);
         this.isConnecting = false;
         
         // Initialize connection attempts if not set
@@ -107,20 +107,20 @@ class RealtimeClient {
 
       // Add reconnection event handlers
       this.socket.on('reconnect', () => {
-        console.log('🔌 Reconnected to WebSocket server');
+        console.log('Reconnected to WebSocket server');
         this.hasAnnouncedDisconnection = false; // Reset flag on successful reconnection
       });
 
       this.socket.on('reconnect_attempt', () => {
-        console.log('🔌 Attempting to reconnect...');
+        console.log('Attempting to reconnect...');
       });
 
       this.socket.on('reconnect_error', (error) => {
-        console.warn('🔌 Reconnection failed:', error.message);
+        console.warn('Reconnection failed:', error.message);
       });
 
       this.socket.on('reconnect_failed', () => {
-        console.error('🔌 Failed to reconnect after maximum attempts');
+        console.error('Failed to reconnect after maximum attempts');
         if (!this.hasAnnouncedDisconnection) {
           this.notifyConnectionStatus('disconnected');
           this.hasAnnouncedDisconnection = true;
@@ -149,7 +149,7 @@ class RealtimeClient {
       // Clear processed events
       this.processedEvents.clear();
       
-      console.log('🔌 Disconnected from WebSocket server');
+      console.log('Disconnected from WebSocket server');
     }
   }
 
@@ -174,7 +174,7 @@ class RealtimeClient {
       this.isConnected = true;
       this.notificationScope = data.scope;
       this.hasAnnouncedDisconnection = false; // Reset disconnection flag
-      console.log('✅ Real-time notifications active:', data.scope);
+      console.log('Real-time notifications active:', data.scope);
       
       // Use accessible notification instead of toast
       const { announceConnectionStatus } = require('../utils/accessibleNotifications');
@@ -187,7 +187,7 @@ class RealtimeClient {
     // Connection lost - only notify on unexpected disconnections
     this.socket.on('disconnect', (reason) => {
       this.isConnected = false;
-      console.log('❌ Real-time connection lost:', reason);
+      console.log('Real-time connection lost:', reason);
       
       // Only notify users for unexpected disconnections, not during normal reconnection attempts
       // and not if we're already in the process of connecting
@@ -231,7 +231,7 @@ class RealtimeClient {
     
     // Debug: Test message listener
     this.socket.on('testMessage', (data) => {
-      console.log('🧪 [DEBUG] Test message received:', data);
+      console.log('[DEBUG] Test message received:', data);
     });
   }
 
@@ -241,7 +241,7 @@ class RealtimeClient {
   setupTaskEventHandlers() {
     // Task created
     this.socket.on('taskCreated', (notification) => {
-      console.log('📝 [REALTIME] Task created event received:', {
+      console.log('[REALTIME] Task created event received:', {
         taskId: notification.task?.id,
         taskTitle: notification.task?.title,
         eventId: notification.event_id,
@@ -256,7 +256,7 @@ class RealtimeClient {
 
     // Task updated
     this.socket.on('taskUpdated', (notification) => {
-      console.log('📝 [REALTIME] Task updated event received:', {
+      console.log('[REALTIME] Task updated event received:', {
         taskId: notification.task?.id,
         taskTitle: notification.task?.title,
         eventId: notification.event_id,
@@ -271,7 +271,7 @@ class RealtimeClient {
 
     // Task deleted
     this.socket.on('taskDeleted', (notification) => {
-      console.log('📝 [REALTIME] Task deleted event received:', {
+      console.log('[REALTIME] Task deleted event received:', {
         taskId: notification.task?.id,
         taskTitle: notification.task?.title,
         eventId: notification.event_id,
@@ -300,9 +300,9 @@ class RealtimeClient {
    */
   setupTeamEventHandlers() {
     this.socket.on('teamUpdated', (notification) => {
-      console.log('👥 Team updated:', notification);
+      console.log('Team updated:', notification);
       
-      let message = `👥 Team update: ${notification.updateType}`;
+      let message = `Team update: ${notification.updateType}`;
       if (notification.data?.team_name) {
         message += ` in ${notification.data.team_name}`;
       }
@@ -312,9 +312,9 @@ class RealtimeClient {
     });
 
     this.socket.on('team_membership_updated', (notification) => {
-      console.log('👥 Team membership updated:', notification);
+      console.log('Team membership updated:', notification);
       
-      const message = `👥 Team membership changed in your team`;
+      const message = `Team membership changed in your team`;
       this.showNotification(message, 'info', notification);
       
       this.triggerEvent('teamMembershipUpdated', notification);
@@ -343,12 +343,12 @@ class RealtimeClient {
    */
   setupSystemEventHandlers() {
     this.socket.on('system_notification', (notification) => {
-      console.log('🔔 System notification:', notification);
+      console.log('System notification:', notification);
       
       const level = notification.level === 'error' ? 'error' : 
                    notification.level === 'warning' ? 'warning' : 'info';
       
-      toast[level](`🔔 System: ${notification.message}`, {
+      toast[level](`System: ${notification.message}`, {
         position: 'top-center',
         autoClose: notification.level === 'error' ? false : 8000
       });
@@ -377,23 +377,23 @@ class RealtimeClient {
     // Customize message based on relevance
     switch (relevance) {
       case 'personal_assignment':
-        prefix = '🎯 ';
+        prefix = '[Personal] ';
         suffix = ' (assigned to you)';
         break;
       case 'team_management':
-        prefix = '👑 ';
+        prefix = '[Management] ';
         suffix = ' (in your managed team)';
         break;
       case 'team_collaboration':
-        prefix = '👥 ';
+        prefix = '[Team] ';
         suffix = ' (in your team)';
         break;
       case 'system_oversight':
-        prefix = '🔍 ';
+        prefix = '[System] ';
         suffix = ' (system-wide)';
         break;
       default:
-        prefix = '📝 ';
+        prefix = '[Task] ';
     }
     
     const actor = notification.creator || notification.updater || notification.deleter;
@@ -488,7 +488,7 @@ class RealtimeClient {
     // Skip deduplication for connection events
     if (!['connected', 'disconnected', 'healthUpdate'].includes(eventName)) {
       const eventId = this.generateEventId(eventName, data);
-      console.log(`📨 [${this.user?.username}] Received ${eventName}:`, {
+      console.log(`[${this.user?.username}] Received ${eventName}:`, {
         eventId,
         taskId: data?.task?.id,
         updater: data?.updater?.username,
@@ -496,11 +496,11 @@ class RealtimeClient {
       });
       
       if (this.isEventProcessed(eventId)) {
-        console.log(`🔄 Duplicate event ignored: ${eventName} (${eventId})`);
+        console.log(`Duplicate event ignored: ${eventName} (${eventId})`);
         return;
       }
       
-      console.log(`✅ [${this.user?.username}] Processing ${eventName}`);
+      console.log(`[${this.user?.username}] Processing ${eventName}`);
     }
 
     const handlers = this.eventHandlers.get(eventName);
@@ -548,10 +548,10 @@ class RealtimeClient {
    */
   testBroadcast() {
     if (this.socket && this.isConnected) {
-      console.log('🧪 [DEBUG] Sending test broadcast...');
+      console.log('[DEBUG] Sending test broadcast...');
       this.socket.emit('testBroadcast');
     } else {
-      console.log('❌ [DEBUG] Not connected, cannot send test broadcast');
+      console.log('[DEBUG] Not connected, cannot send test broadcast');
     }
   }
 }

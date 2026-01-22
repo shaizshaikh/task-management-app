@@ -57,18 +57,18 @@ const ManagerPanel = () => {
   const tabs = [
     {
       id: 'dashboard',
-      label: '📊 Dashboard',
-      icon: '📊'
+      label: 'Dashboard',
+      icon: 'Dashboard'
     },
     {
       id: 'teams',
-      label: '👥 My Teams',
-      icon: '👥'
+      label: 'My Teams',
+      icon: 'Teams'
     },
     {
       id: 'tasks',
-      label: '📋 Task Management',
-      icon: '📋'
+      label: 'Task Management',
+      icon: 'Tasks'
     }
   ];
 
@@ -84,32 +84,34 @@ const ManagerPanel = () => {
   }
 
   return (
-    <div className="manager-panel-container">
+    <div className="page-container">
       {/* Header */}
-      <div className="manager-panel-header">
-        <h2 className="manager-panel-title">
-          👔 Manager Panel
-          {isAdmin() && (
-            <span className="manager-admin-badge">
-              Admin View
-            </span>
-          )}
-        </h2>
-        <p className="manager-panel-subtitle">
-          {isAdmin() 
-            ? 'Manage all teams, tasks, and team members (Admin View)'
-            : 'Manage teams where you have team leader permissions'
-          }
-          {managerTeams.length > 0 && (
-            <span> • Managing {managerTeams.length} team{managerTeams.length !== 1 ? 's' : ''}</span>
-          )}
-        </p>
-      </div>
+      <header className="page-header">
+        <div>
+          <h2 className="page-title">
+            Manager Panel
+            {isAdmin() && (
+              <span className="manager-admin-badge">
+                Admin View
+              </span>
+            )}
+          </h2>
+          <p className="page-subtitle">
+            {isAdmin() 
+              ? 'Manage all teams, tasks, and team members (Admin View)'
+              : 'Manage teams where you have team leader permissions'
+            }
+            {managerTeams.length > 0 && (
+              <span> • Managing {managerTeams.length} team{managerTeams.length !== 1 ? 's' : ''}</span>
+            )}
+          </p>
+        </div>
+      </header>
 
       {/* No Teams Message */}
       {managerTeams.length === 0 && (
         <div className="manager-empty-state">
-          <div className="manager-empty-icon">👥</div>
+          <div className="manager-empty-icon">No Teams</div>
           <h3 className="manager-empty-title">No Teams to Manage</h3>
           <p className="manager-empty-description">
             {isAdmin() 
@@ -128,42 +130,94 @@ const ManagerPanel = () => {
       {/* Manager Interface */}
       {managerTeams.length > 0 && (
         <>
-          {/* Tab Navigation */}
-          <div className="tab-navigation-manager">
+          {/* Navigation Tabs */}
+          <nav className="tab-navigation" role="tablist" aria-label="Manager panel sections">
             {tabs.map(tab => (
               <button
                 key={tab.id}
+                className={`tab-button ${activeTab === tab.id ? 'active' : ''}`}
                 onClick={() => setActiveTab(tab.id)}
-                className={`tab-button-manager ${activeTab === tab.id ? 'active' : ''}`}
+                onKeyDown={(e) => {
+                  // Arrow key navigation for tabs
+                  const tabIds = tabs.map(t => t.id);
+                  const currentIndex = tabIds.indexOf(activeTab);
+                  
+                  if (e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    const nextIndex = (currentIndex + 1) % tabIds.length;
+                    setActiveTab(tabIds[nextIndex]);
+                    document.getElementById(`${tabIds[nextIndex]}-tab`)?.focus();
+                  } else if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    const prevIndex = (currentIndex - 1 + tabIds.length) % tabIds.length;
+                    setActiveTab(tabIds[prevIndex]);
+                    document.getElementById(`${tabIds[prevIndex]}-tab`)?.focus();
+                  } else if (e.key === 'Home') {
+                    e.preventDefault();
+                    setActiveTab(tabIds[0]);
+                    document.getElementById(`${tabIds[0]}-tab`)?.focus();
+                  } else if (e.key === 'End') {
+                    e.preventDefault();
+                    setActiveTab(tabIds[tabIds.length - 1]);
+                    document.getElementById(`${tabIds[tabIds.length - 1]}-tab`)?.focus();
+                  }
+                }}
+                role="tab"
+                aria-selected={activeTab === tab.id}
+                aria-controls={`${tab.id}-panel`}
+                id={`${tab.id}-tab`}
+                tabIndex={activeTab === tab.id ? 0 : -1}
               >
-                {tab.label}
+                <span className="tab-icon" aria-hidden="true">{tab.icon}</span>
+                <span className="tab-label">{tab.label}</span>
               </button>
             ))}
-          </div>
+          </nav>
 
           {/* Tab Content */}
-          <div>
+          <main className="tab-content">
             {activeTab === 'dashboard' && (
-              <ManagerDashboard 
-                teams={managerTeams}
-                onRefresh={loadManagerTeams}
-              />
+              <section 
+                id="dashboard-panel" 
+                role="tabpanel" 
+                aria-labelledby="dashboard-tab"
+                className="tab-panel"
+              >
+                <ManagerDashboard 
+                  teams={managerTeams}
+                  onRefresh={loadManagerTeams}
+                />
+              </section>
             )}
             
             {activeTab === 'teams' && (
-              <ManagerTeamView 
-                teams={managerTeams}
-                onRefresh={loadManagerTeams}
-              />
+              <section 
+                id="teams-panel" 
+                role="tabpanel" 
+                aria-labelledby="teams-tab"
+                className="tab-panel"
+              >
+                <ManagerTeamView 
+                  teams={managerTeams}
+                  onRefresh={loadManagerTeams}
+                />
+              </section>
             )}
             
             {activeTab === 'tasks' && (
-              <ManagerTaskManagement 
-                teams={managerTeams}
-                onRefresh={loadManagerTeams}
-              />
+              <section 
+                id="tasks-panel" 
+                role="tabpanel" 
+                aria-labelledby="tasks-tab"
+                className="tab-panel"
+              >
+                <ManagerTaskManagement 
+                  teams={managerTeams}
+                  onRefresh={loadManagerTeams}
+                />
+              </section>
             )}
-          </div>
+          </main>
         </>
       )}
     </div>

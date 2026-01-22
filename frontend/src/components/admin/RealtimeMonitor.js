@@ -19,7 +19,7 @@ const RealtimeMonitor = () => {
   return (
     <div className="card">
       <div className="card-header">
-        <h3 className="mb-0">🔄 Real-Time System Monitor</h3>
+        <h3 className="mb-0">Real-Time System Monitor</h3>
         <p className="text-sm text-secondary mt-1 mb-0">
           Live connection statistics and system status
         </p>
@@ -78,7 +78,7 @@ const RealtimeMonitor = () => {
             className="btn btn-secondary btn-sm"
             onClick={requestStats}
           >
-            🔄 Refresh
+            Refresh
           </button>
         </div>
 

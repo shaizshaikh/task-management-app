@@ -3,7 +3,7 @@
  * Handles user deletion with comprehensive confirmation and options
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
@@ -116,7 +116,7 @@ const UserDeleteConfirmation = ({ user, onClose, onConfirm }) => {
       <div className="modal-content modal-medium">
         {/* Header */}
         <div className="delete-dialog-header">
-          <span className="delete-dialog-icon">⚠️</span>
+          <span className="delete-dialog-icon">Warning</span>
           <h3 className="delete-dialog-title">
             Delete User Account
           </h3>
@@ -125,7 +125,7 @@ const UserDeleteConfirmation = ({ user, onClose, onConfirm }) => {
         {/* Warning Message */}
         <div className="delete-warning-box">
           <div className="delete-warning-title">
-            ⚠️ This action cannot be undone
+            This action cannot be undone
           </div>
           <div className="delete-warning-text">
             The user will be permanently removed from the system and all active sessions will be terminated.
@@ -257,7 +257,7 @@ const UserDeleteConfirmation = ({ user, onClose, onConfirm }) => {
             disabled={loading || !reason.trim() || confirmText !== user.username}
             className={`btn ${loading || !reason.trim() || confirmText !== user.username ? 'btn-disabled' : 'btn-danger'}`}
           >
-            {loading ? '🔄 Deleting...' : '🗑️ Delete User'}
+            {loading ? 'Deleting...' : 'Delete User'}
           </button>
         </div>
 
@@ -265,7 +265,7 @@ const UserDeleteConfirmation = ({ user, onClose, onConfirm }) => {
         {loading && (
           <div className="delete-loading-overlay">
             <div className="delete-loading-content">
-              <div className="delete-loading-icon">🔄</div>
+              <div className="delete-loading-icon">Loading</div>
               <div className="delete-loading-title">Deleting user...</div>
               <div className="delete-loading-subtitle">
                 This may take a few moments
@@ -276,17 +276,6 @@ const UserDeleteConfirmation = ({ user, onClose, onConfirm }) => {
       </div>
     </div>
   );
-};
-
-// Helper function to get role colors
-const getRoleColor = (role) => {
-  switch (role) {
-    case 'admin': return '#f44336';
-    case 'manager': return '#ff9800';
-    case 'member': return '#4caf50';
-    case 'viewer': return '#2196f3';
-    default: return '#666';
-  }
 };
 
 export default UserDeleteConfirmation;
