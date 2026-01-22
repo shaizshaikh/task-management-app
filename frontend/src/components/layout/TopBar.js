@@ -3,7 +3,7 @@
  * WCAG 2.2 Compliant with User Profile Menu
  */
 
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useRealtime } from '../../hooks/useRealtime';
@@ -109,12 +109,12 @@ const TopBar = ({ user, onToggleSidebar, sidebarCollapsed }) => {
           <button
             className="sidebar-toggle"
             onClick={onToggleSidebar}
-            aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            aria-label={sidebarCollapsed ? 'Open navigation menu' : 'Close navigation menu'}
             aria-expanded={!sidebarCollapsed}
             aria-controls="sidebar"
           >
             <span className="hamburger-icon" aria-hidden="true">
-              {sidebarCollapsed ? '☰' : '✕'}
+              ☰
             </span>
           </button>
 

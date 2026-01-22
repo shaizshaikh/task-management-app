@@ -1,0 +1,26 @@
+<svg width="192" height="192" viewBox="0 0 192 192" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle -->
+  <circle cx="96" cy="96" r="96" fill="#1f6feb"/>
+  
+  <!-- Task List Icon -->
+  <rect x="48" y="48" width="96" height="96" rx="12" fill="white" fill-opacity="0.1"/>
+  
+  <!-- Checkboxes and Lines -->
+  <!-- First Task -->
+  <rect x="60" y="68" width="16" height="16" rx="3" fill="white"/>
+  <path d="M65 76L68 79L75 72" stroke="#1f6feb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="84" y="70" width="48" height="4" rx="2" fill="white" fill-opacity="0.8"/>
+  
+  <!-- Second Task -->
+  <rect x="60" y="92" width="16" height="16" rx="3" fill="white"/>
+  <path d="M65 100L68 103L75 96" stroke="#1f6feb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="84" y="94" width="36" height="4" rx="2" fill="white" fill-opacity="0.8"/>
+  
+  <!-- Third Task -->
+  <rect x="60" y="116" width="16" height="16" rx="3" fill="white" fill-opacity="0.6"/>
+  <rect x="84" y="118" width="42" height="4" rx="2" fill="white" fill-opacity="0.6"/>
+  
+  <!-- Enterprise Badge -->
+  <circle cx="144" cy="60" r="20" fill="#28a745"/>
+  <text x="144" y="66" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="12" font-weight="bold">E</text>
+</svg>

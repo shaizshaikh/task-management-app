@@ -3,7 +3,7 @@
  * WCAG 2.2 Compliant with Full Keyboard Navigation
  */
 
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -137,7 +137,7 @@ const Sidebar = ({ collapsed, isMobile, onCollapse }) => {
   return (
     <nav
       ref={sidebarRef}
-      className={`sidebar ${collapsed ? 'collapsed' : ''} ${isMobile ? 'mobile' : ''}`}
+      className={`sidebar ${collapsed ? 'collapsed' : ''} ${isMobile ? 'mobile' : ''} ${isMobile && !collapsed ? 'show' : ''}`}
       role="navigation"
       aria-label="Main navigation"
       onKeyDown={handleKeyDown}
@@ -229,7 +229,7 @@ const Sidebar = ({ collapsed, isMobile, onCollapse }) => {
           box-shadow: var(--shadow-xl);
         }
 
-        .sidebar.mobile:not(.collapsed) {
+        .sidebar.mobile.show {
           transform: translateX(0);
         }
 

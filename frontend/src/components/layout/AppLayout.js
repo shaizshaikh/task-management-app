@@ -3,7 +3,7 @@
  * WCAG 2.2 Compliant Layout with Left Sidebar Navigation
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import Sidebar from './Sidebar';
 import TopBar from './TopBar';
@@ -20,7 +20,7 @@ const AppLayout = ({ children }) => {
       const mobile = window.innerWidth < 768;
       setIsMobile(mobile);
       
-      // Auto-collapse sidebar on mobile
+      // Auto-collapse sidebar on mobile initially
       if (mobile && !sidebarCollapsed) {
         setSidebarCollapsed(true);
       }
@@ -29,7 +29,7 @@ const AppLayout = ({ children }) => {
     handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [sidebarCollapsed]);
+  }, []);
 
   // Skip layout for login page
   if (!isAuthenticated) {

@@ -622,3 +622,95 @@
     padding-bottom: max(var(--spacing-md), env(safe-area-inset-bottom));
   }
 }
+/* Mobile Sidebar Fixes */
+@media (max-width: 768px) {
+  /* Ensure sidebar is properly positioned on mobile */
+  .sidebar.mobile {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    bottom: 0;
+    width: 280px;
+    z-index: 1000;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-in-out;
+    background-color: var(--nav-bg);
+    box-shadow: var(--shadow-xl);
+  }
+
+  .sidebar.mobile.show {
+    transform: translateX(0);
+  }
+
+  /* Ensure main content doesn't have left margin on mobile */
+  .main-content {
+    margin-left: 0 !important;
+  }
+
+  /* Mobile overlay for sidebar */
+  .mobile-overlay {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    backdrop-filter: blur(4px);
+  }
+
+  /* Hamburger menu button improvements */
+  .sidebar-toggle {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    min-width: 48px;
+    min-height: 48px;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    border-radius: var(--radius-md);
+    transition: all var(--animation-duration) ease-in-out;
+  }
+
+  .sidebar-toggle:hover {
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+  }
+
+  .sidebar-toggle:focus-visible {
+    outline: var(--focus-ring);
+    outline-offset: var(--focus-ring-offset);
+  }
+
+  .hamburger-icon {
+    font-size: 1.25rem;
+    font-weight: bold;
+  }
+}
+
+/* Ensure sidebar works on very small screens */
+@media (max-width: 480px) {
+  .sidebar.mobile {
+    width: 260px; /* Slightly smaller on very small screens */
+  }
+}
+
+/* High contrast mode for mobile sidebar */
+@media (prefers-contrast: high) and (max-width: 768px) {
+  .sidebar.mobile {
+    border-right: 2px solid var(--text-primary);
+  }
+
+  .mobile-overlay {
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+}
+
+/* Reduced motion for mobile sidebar */
+@media (prefers-reduced-motion: reduce) and (max-width: 768px) {
+  .sidebar.mobile {
+    transition: none;
+  }
+}
