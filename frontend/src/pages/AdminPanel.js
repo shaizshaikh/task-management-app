@@ -23,6 +23,12 @@ const AdminPanel = () => {
   const [auditStats, setAuditStats] = useState(null);
   const [activeTab, setActiveTab] = useState('overview');
 
+  // Handle tab change with minimal announcements
+  const handleTabChange = (newTab) => {
+    setActiveTab(newTab);
+    // No live region announcements - let ARIA handle it naturally
+  };
+
   // Real-time stats refresh function
   const refreshStats = useCallback(async () => {
     try {
@@ -153,35 +159,34 @@ const AdminPanel = () => {
           { id: 'overview', label: 'Overview', icon: 'Overview' },
           { id: 'users', label: 'Users', icon: 'Users' },
           { id: 'teams', label: 'Teams', icon: 'Teams' },
-          { id: 'audit', label: 'Audit', icon: 'Audit' },
-          { id: 'notifications', label: 'Notifications', icon: 'Notifications' }
+          { id: 'audit', label: 'Audit', icon: 'Audit' }
         ].map(tab => (
           <button
             key={tab.id}
             className={`tab-button ${activeTab === tab.id ? 'active' : ''}`}
-            onClick={() => setActiveTab(tab.id)}
+            onClick={() => handleTabChange(tab.id)}
             onKeyDown={(e) => {
               // Arrow key navigation for tabs
-              const tabs = ['overview', 'users', 'teams', 'audit', 'notifications'];
+              const tabs = ['overview', 'users', 'teams', 'audit'];
               const currentIndex = tabs.indexOf(activeTab);
               
               if (e.key === 'ArrowRight') {
                 e.preventDefault();
                 const nextIndex = (currentIndex + 1) % tabs.length;
-                setActiveTab(tabs[nextIndex]);
+                handleTabChange(tabs[nextIndex]);
                 document.getElementById(`${tabs[nextIndex]}-tab`)?.focus();
               } else if (e.key === 'ArrowLeft') {
                 e.preventDefault();
                 const prevIndex = (currentIndex - 1 + tabs.length) % tabs.length;
-                setActiveTab(tabs[prevIndex]);
+                handleTabChange(tabs[prevIndex]);
                 document.getElementById(`${tabs[prevIndex]}-tab`)?.focus();
               } else if (e.key === 'Home') {
                 e.preventDefault();
-                setActiveTab(tabs[0]);
+                handleTabChange(tabs[0]);
                 document.getElementById(`${tabs[0]}-tab`)?.focus();
               } else if (e.key === 'End') {
                 e.preventDefault();
-                setActiveTab(tabs[tabs.length - 1]);
+                handleTabChange(tabs[tabs.length - 1]);
                 document.getElementById(`${tabs[tabs.length - 1]}-tab`)?.focus();
               }
             }}
@@ -199,65 +204,55 @@ const AdminPanel = () => {
 
       {/* Tab Content */}
       <main className="tab-content">
-        {activeTab === 'overview' && (
-          <section 
-            id="overview-panel" 
-            role="tabpanel" 
-            aria-labelledby="overview-tab"
-            className="tab-panel"
-          >
-            <OverviewTab 
-              stats={stats} 
-              userStats={userStats} 
-              auditStats={auditStats}
-            />
-          </section>
-        )}
+        <section 
+          id="overview-panel" 
+          role="tabpanel" 
+          aria-labelledby="overview-tab"
+          className="tab-panel"
+          hidden={activeTab !== 'overview'}
+          aria-hidden={activeTab !== 'overview'}
+        >
+          <OverviewTab 
+            stats={stats} 
+            userStats={userStats} 
+            auditStats={auditStats}
+          />
+        </section>
         
-        {activeTab === 'users' && (
-          <section 
-            id="users-panel" 
-            role="tabpanel" 
-            aria-labelledby="users-tab"
-            className="tab-panel"
-          >
-            <UsersTab />
-          </section>
-        )}
+        <section 
+          id="users-panel" 
+          role="tabpanel" 
+          aria-labelledby="users-tab"
+          className="tab-panel"
+          hidden={activeTab !== 'users'}
+          aria-hidden={activeTab !== 'users'}
+        >
+          <UsersTab />
+        </section>
         
-        {activeTab === 'teams' && (
-          <section 
-            id="teams-panel" 
-            role="tabpanel" 
-            aria-labelledby="teams-tab"
-            className="tab-panel"
-          >
-            <TeamsTab />
-          </section>
-        )}
+        <section 
+          id="teams-panel" 
+          role="tabpanel" 
+          aria-labelledby="teams-tab"
+          className="tab-panel"
+          hidden={activeTab !== 'teams'}
+          aria-hidden={activeTab !== 'teams'}
+        >
+          <TeamsTab />
+        </section>
         
-        {activeTab === 'audit' && (
-          <section 
-            id="audit-panel" 
-            role="tabpanel" 
-            aria-labelledby="audit-tab"
-            className="tab-panel"
-          >
-            <AuditTab />
-          </section>
-        )}
-        
-        {activeTab === 'notifications' && (
-          <section 
-            id="notifications-panel" 
-            role="tabpanel" 
-            aria-labelledby="notifications-tab"
-            className="tab-panel"
-          >
-            <NotificationsTab />
-          </section>
-        )}
+        <section 
+          id="audit-panel" 
+          role="tabpanel" 
+          aria-labelledby="audit-tab"
+          className="tab-panel"
+          hidden={activeTab !== 'audit'}
+          aria-hidden={activeTab !== 'audit'}
+        >
+          <AuditTab />
+        </section>
       </main>
+
     </div>
   );
 };
@@ -393,48 +388,6 @@ const TeamsTab = () => {
 // Audit Tab Component
 const AuditTab = () => {
   return <AuditLogViewer />;
-};
-
-// Notifications Tab Component
-const NotificationsTab = () => {
-  return (
-    <div>
-      <h3 className="mb-4">Notification System</h3>
-      <div className="card">
-        <div className="card-body">
-          <div className="text-center py-4">
-            <div className="mb-3">
-              <span className="text-success" style={{ fontSize: '3rem' }}>Active</span>
-            </div>
-            <h4 className="mb-2">Notification System Active</h4>
-            <p className="text-muted mb-4">
-              The notification system is fully operational and integrated throughout the application.
-            </p>
-            <div className="notification-features">
-              <div className="feature-list">
-                <div className="feature-item">
-                  <span className="feature-icon">Bell</span>
-                  <span>Real-time notifications for task updates</span>
-                </div>
-                <div className="feature-item">
-                  <span className="feature-icon">Email</span>
-                  <span>Email notifications for assignments</span>
-                </div>
-                <div className="feature-item">
-                  <span className="feature-icon">♿</span>
-                  <span>Accessible notifications with screen reader support</span>
-                </div>
-                <div className="feature-item">
-                  <span className="feature-icon">Theme</span>
-                  <span>Consistent styling with dark theme</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
 };
 
 export default AdminPanel;

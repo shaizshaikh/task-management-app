@@ -168,8 +168,9 @@ const Sidebar = ({ collapsed, isMobile, onCollapse }) => {
                 onClick={() => handleNavigation(item.path, index)}
                 role="menuitem"
                 aria-current={isActive(item.path) ? 'page' : undefined}
-                aria-label={`${item.label} - ${item.description}`}
-                tabIndex={focusedIndex === index ? 0 : -1}
+                aria-label={collapsed ? item.label : `${item.label} - ${item.description}`}
+                tabIndex={collapsed ? -1 : (focusedIndex === index ? 0 : -1)}
+                aria-hidden={collapsed}
               >
                 <span className="nav-icon" aria-hidden="true">
                   {item.icon}
@@ -185,7 +186,7 @@ const Sidebar = ({ collapsed, isMobile, onCollapse }) => {
 
       {/* User Info Section */}
       {!collapsed && (
-        <div className="sidebar-footer">
+        <div className="sidebar-footer" aria-hidden={collapsed}>
           <div className="user-info">
             <div className="user-avatar" aria-hidden="true">
               {user?.name?.charAt(0)?.toUpperCase() || '?'}
@@ -220,6 +221,15 @@ const Sidebar = ({ collapsed, isMobile, onCollapse }) => {
 
         .sidebar.collapsed {
           width: 60px;
+        }
+
+        /* Hide collapsed sidebar content from screen readers */
+        .sidebar.collapsed .nav-item[aria-hidden="true"] {
+          pointer-events: none;
+        }
+
+        .sidebar.collapsed .nav-label {
+          display: none;
         }
 
         .sidebar.mobile {

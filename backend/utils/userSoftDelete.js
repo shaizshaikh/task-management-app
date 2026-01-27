@@ -33,13 +33,23 @@ class UserSoftDeleteService {
         [deletedByUserId, userId]
       );
       
-      // Create deletion log entry
-      await connection.execute(
-        `INSERT INTO user_deletion_log 
-         (deleted_user_id, keycloak_user_id, admin_user_id, deletion_reason, deleted_at, deletion_status) 
-         VALUES (?, ?, ?, ?, NOW(), 'completed')`,
-        [userId, user.keycloak_user_id, deletedByUserId, reason]
+      // Create deletion log entry (check for existing entry first)
+      const [existingLog] = await connection.execute(
+        'SELECT id FROM user_deletion_log WHERE deleted_user_id = ? AND admin_user_id = ?',
+        [userId, deletedByUserId]
       );
+      
+      if (existingLog.length === 0) {
+        // Only insert if no existing log entry
+        await connection.execute(
+          `INSERT INTO user_deletion_log 
+           (deleted_user_id, deleted_username, deleted_email, deleted_full_name, deleted_global_role, keycloak_user_id, admin_user_id, deletion_reason, tasks_reassigned_count, tasks_unassigned_count, team_memberships_removed, keycloak_deletion_success, sessions_revoked_count, deletion_status, deleted_at) 
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, 0, 0, FALSE, 0, 'completed', NOW())`,
+          [userId, user.username, user.email, user.full_name, user.global_role, user.keycloak_user_id, deletedByUserId, reason]
+        );
+      } else {
+        console.log(`Deletion log entry already exists for user ${userId}, skipping insertion`);
+      }
       
       await connection.commit();
       
@@ -170,9 +180,9 @@ class UserSoftDeleteService {
       const limitInt = parseInt(limit) || 50;
       const offsetInt = parseInt(offset) || 0;
       
-      // Use string interpolation instead of prepared statements for LIMIT/OFFSET
+      // Get unique deleted users with their latest deletion log entry
       const [users] = await pool.execute(
-        `SELECT 
+        `SELECT DISTINCT
            u.id,
            u.username,
            u.email,
@@ -181,20 +191,24 @@ class UserSoftDeleteService {
            u.deleted_at,
            deleter.username as deleted_by_username,
            deleter.full_name as deleted_by_name,
-           udl.deletion_reason,
-           udl.tasks_reassigned_count,
-           udl.tasks_unassigned_count,
-           udl.team_memberships_removed
+           latest_log.deletion_reason,
+           latest_log.tasks_reassigned_count,
+           latest_log.tasks_unassigned_count,
+           latest_log.team_memberships_removed
          FROM users u
          LEFT JOIN users deleter ON u.deleted_by = deleter.id
-         LEFT JOIN user_deletion_log udl ON u.id = udl.deleted_user_id
+         LEFT JOIN (
+           SELECT udl.*,
+                  ROW_NUMBER() OVER (PARTITION BY deleted_user_id ORDER BY deleted_at DESC) as rn
+           FROM user_deletion_log udl
+         ) latest_log ON u.id = latest_log.deleted_user_id AND latest_log.rn = 1
          WHERE u.deleted_at IS NOT NULL
          ORDER BY u.deleted_at DESC
          LIMIT ${limitInt} OFFSET ${offsetInt}`
       );
       
       const [countResult] = await pool.execute(
-        'SELECT COUNT(*) as total FROM users WHERE deleted_at IS NOT NULL'
+        'SELECT COUNT(DISTINCT id) as total FROM users WHERE deleted_at IS NOT NULL'
       );
       
       return {

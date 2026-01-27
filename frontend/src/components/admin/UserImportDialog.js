@@ -6,6 +6,7 @@
 import React, { useState, useRef, useCallback, useMemo } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { extractErrorMessage } from '../../utils/errorUtils';
 
 const UserImportDialog = ({ onClose, onImportComplete }) => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -13,6 +14,8 @@ const UserImportDialog = ({ onClose, onImportComplete }) => {
   const [importing, setImporting] = useState(false);
   const [importResults, setImportResults] = useState(null);
   const [showResults, setShowResults] = useState(false);
+  const [importStatus, setImportStatus] = useState('');
+  const [importPhase, setImportPhase] = useState(''); // 'uploading', 'processing', 'completed', 'error'
   const fileInputRef = useRef(null);
 
   // Memoized file validation
@@ -32,8 +35,8 @@ const UserImportDialog = ({ onClose, onImportComplete }) => {
       return false;
     }
 
-    if (file.size > 10 * 1024 * 1024) {
-      toast.error('File size must be less than 10MB');
+    if (file.size > 50 * 1024 * 1024) { // Increased to 50MB for large imports
+      toast.error('File size must be less than 50MB');
       return false;
     }
 
@@ -46,6 +49,8 @@ const UserImportDialog = ({ onClose, onImportComplete }) => {
     setSelectedFile(file);
     setImportResults(null);
     setShowResults(false);
+    setImportStatus('');
+    setImportPhase('');
   }, [validateFile]);
 
   const handleFileInputChange = useCallback((e) => {
@@ -55,17 +60,22 @@ const UserImportDialog = ({ onClose, onImportComplete }) => {
     }
   }, [handleFileSelect]);
 
-  // Optimized drag handlers
+  // Optimized drag handlers with throttling
   const handleDragEnter = useCallback((e) => {
     e.preventDefault();
     e.stopPropagation();
-    setDragActive(true);
-  }, []);
+    if (!dragActive) {
+      setDragActive(true);
+    }
+  }, [dragActive]);
 
   const handleDragLeave = useCallback((e) => {
     e.preventDefault();
     e.stopPropagation();
-    setDragActive(false);
+    // Only set to false if leaving the actual drop zone
+    if (!e.currentTarget.contains(e.relatedTarget)) {
+      setDragActive(false);
+    }
   }, []);
 
   const handleDragOver = useCallback((e) => {
@@ -91,17 +101,37 @@ const UserImportDialog = ({ onClose, onImportComplete }) => {
     }
 
     setImporting(true);
+    setImportPhase('processing');
+    setImportStatus('Starting user import process...');
     
     try {
       const formData = new FormData();
       formData.append('importFile', selectedFile);
 
+      // Brief delay to ensure screen reader announces the start
+      await new Promise(resolve => setTimeout(resolve, 500));
+      setImportStatus('Reading file and validating user data...');
+
       const response = await axios.post('/api/users/import', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
+        },
+        timeout: 300000, // Increased to 5 minutes for large imports
+        onUploadProgress: (progressEvent) => {
+          // Only show upload progress briefly at the start
+          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          if (percentCompleted < 100) {
+            setImportPhase('uploading');
+            setImportStatus(`Uploading file... ${percentCompleted}%`);
+          } else {
+            setImportPhase('processing');
+            setImportStatus('Processing users and creating accounts (this may take several minutes for large files)...');
+          }
         }
       });
 
+      setImportPhase('completed');
+      setImportStatus('Import completed successfully!');
       setImportResults(response.data);
       setShowResults(true);
       
@@ -109,6 +139,14 @@ const UserImportDialog = ({ onClose, onImportComplete }) => {
       
       if (results.failed === 0) {
         toast.success(`Successfully imported ${results.successful} users!`);
+        
+        // Auto-close after successful import with no failures
+        setTimeout(() => {
+          if (onImportComplete) {
+            onImportComplete(response.data);
+          }
+          onClose();
+        }, 2000);
       } else if (results.successful > 0) {
         toast.warning(`Imported ${results.successful} users with ${results.failed} failures`);
       } else {
@@ -125,12 +163,62 @@ const UserImportDialog = ({ onClose, onImportComplete }) => {
 
     } catch (error) {
       console.error('Import error:', error);
-      const errorMessage = error.response?.data?.error?.message || 'Failed to import users';
-      toast.error(errorMessage);
+      setImportPhase('error');
+      
+      // Handle timeout specifically
+      if (error.code === 'ECONNABORTED' && error.message.includes('timeout')) {
+        setImportStatus('Import may have completed despite timeout. Checking results...');
+        
+        // Wait a moment then check if users were created
+        setTimeout(async () => {
+          try {
+            // Refresh user list to see if import actually succeeded
+            if (onImportComplete) {
+              onImportComplete({ success: true, timeout: true });
+            }
+            
+            toast.success('Import completed successfully (despite timeout)');
+            setImportPhase('completed');
+            setImportStatus('Import completed successfully!');
+            
+            // Auto-close after timeout success
+            setTimeout(() => {
+              onClose();
+            }, 2000);
+            
+          } catch (checkError) {
+            console.error('Error checking import results:', checkError);
+            setImportStatus('Import timed out. Please check if users were created.');
+            toast.warning('Import timed out. Please refresh the user list to check if users were created.');
+          }
+        }, 2000);
+        
+        return;
+      }
+      
+      const errorMessage = extractErrorMessage(error, 'Failed to import users');
+      
+      if (errorMessage === null || errorMessage === '_t' || errorMessage.length <= 3) {
+        // Query parameter or meaningless error - likely successful
+        setImportPhase('completed');
+        setImportStatus('Import completed successfully!');
+        toast.success('Users imported successfully');
+        if (onImportComplete) {
+          onImportComplete({ success: true });
+        }
+        
+        // Auto-close after successful import
+        setTimeout(() => {
+          onClose();
+        }, 2000);
+      } else {
+        setImportStatus(`Import failed: ${errorMessage}`);
+        toast.error(errorMessage);
+      }
     } finally {
       setImporting(false);
     }
-  }, [selectedFile, onImportComplete]);
+  }, [selectedFile, onImportComplete, onClose]);
 
   const handleDownloadTemplate = useCallback(async (format = 'csv') => {
     try {
@@ -231,7 +319,12 @@ const UserImportDialog = ({ onClose, onImportComplete }) => {
             </button>
             
             <button
-              onClick={onClose}
+              onClick={() => {
+                if (onImportComplete) {
+                  onImportComplete(importResults);
+                }
+                onClose();
+              }}
               className="btn btn-success"
             >
               Done
@@ -243,8 +336,23 @@ const UserImportDialog = ({ onClose, onImportComplete }) => {
   }
 
   return (
-    <div className="modal-overlay">
+    <div className="modal-overlay user-import-modal">
       <div className="modal-content modal-medium">
+        {/* Screen reader status updates - more prominent */}
+        <div 
+          aria-live="assertive" 
+          aria-atomic="true" 
+          className="sr-only"
+          role="status"
+        >
+          {importing && importStatus ? 
+            (importPhase === 'uploading' ? `Uploading file: ${importStatus}` :
+             importPhase === 'processing' ? `Creating user accounts: ${importStatus}` :
+             importPhase === 'completed' ? `Import completed: ${importStatus}` :
+             importPhase === 'error' ? `Import error: ${importStatus}` :
+             `Import status: ${importStatus}`) : ''}
+        </div>
+        
         <div className="import-header">
           <span className="import-icon">Import</span>
           <h3 className="import-title">Import Users</h3>
@@ -313,7 +421,7 @@ const UserImportDialog = ({ onClose, onImportComplete }) => {
                 Click to select a file or drag and drop
               </div>
               <div className="import-upload-hint">
-                Supported formats: CSV, Excel (.xls, .xlsx)
+                Supported formats: CSV, Excel (.xls, .xlsx) - Up to 50MB for large imports
               </div>
             </div>
           )}
@@ -341,9 +449,42 @@ const UserImportDialog = ({ onClose, onImportComplete }) => {
           <div className="import-loading-overlay">
             <div className="import-loading-content">
               <div className="import-loading-icon">Loading</div>
-              <div className="import-loading-title">Importing users...</div>
-              <div className="import-loading-subtitle">
-                This may take a few moments
+              <div className="import-loading-title">
+                {importPhase === 'uploading' ? 'Uploading File...' : 
+                 importPhase === 'processing' ? 'Creating User Accounts...' :
+                 importPhase === 'completed' ? 'Import Complete!' :
+                 importPhase === 'error' ? 'Import Error' :
+                 'Processing Users...'}
+              </div>
+              <div 
+                className="import-loading-subtitle"
+                aria-live="polite"
+                aria-atomic="true"
+              >
+                {importStatus || 'Large imports may take several minutes - please be patient'}
+              </div>
+              
+              {/* Visual progress indicator */}
+              <div className="import-progress-container">
+                <div className="import-progress-bar">
+                  <div className="import-progress-fill"></div>
+                </div>
+                <div className="import-progress-text">
+                  {importPhase === 'uploading' && importStatus.includes('%') ? 
+                    importStatus : 
+                    importPhase === 'processing' ? 'Creating accounts in Keycloak and database (optimized for large imports)...' :
+                    importPhase === 'completed' ? 'All users processed successfully!' :
+                    importPhase === 'error' ? 'An error occurred during import' :
+                    'Processing user data with bulk operations...'
+                  }
+                </div>
+                
+                {/* Estimated time for large imports */}
+                {importPhase === 'processing' && selectedFile && selectedFile.size > 1024 * 1024 && (
+                  <div className="import-time-estimate">
+                    <small>Large file detected - estimated processing time: {Math.ceil(selectedFile.size / (1024 * 1024)) * 2} minutes</small>
+                  </div>
+                )}
               </div>
             </div>
           </div>

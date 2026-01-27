@@ -39,6 +39,11 @@ app.get('/', (req, res) => {
 // Create HTTP server
 const server = http.createServer(app);
 
+// Configure server timeouts for long-running operations (like user imports)
+server.timeout = 600000; // 10 minutes
+server.keepAliveTimeout = 65000; // 65 seconds (slightly higher than nginx)
+server.headersTimeout = 66000; // 66 seconds
+
 // Setup Socket.io
 const io = new Server(server, {
   cors: {

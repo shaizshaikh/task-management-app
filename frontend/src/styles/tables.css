@@ -612,3 +612,298 @@
     transition: none;
   }
 }
+
+/* ===== PAGINATION STYLES ===== */
+
+.pagination-container {
+  margin-top: var(--spacing-lg);
+  padding: var(--spacing-lg);
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.pagination-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.page-size-selector {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.page-size-select {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  min-width: 120px;
+}
+
+.page-size-select:focus {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+  border-color: var(--accent-primary);
+}
+
+.pagination-nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  align-items: center;
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.pagination-pages {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  flex-wrap: wrap;
+}
+
+.pagination-btn {
+  min-width: 40px;
+  min-height: 40px;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background-color: var(--bg-tertiary);
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+  transform: translateY(-1px);
+}
+
+.pagination-btn:focus {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+  border-color: var(--accent-primary);
+}
+
+.pagination-btn:active:not(:disabled) {
+  transform: translateY(0);
+  background-color: var(--accent-primary);
+  color: var(--bg-primary);
+}
+
+.pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: var(--bg-secondary);
+  color: var(--text-disabled);
+  border-color: var(--border-secondary);
+}
+
+.pagination-btn-current {
+  background-color: var(--accent-primary);
+  color: var(--bg-primary);
+  border-color: var(--accent-primary);
+  font-weight: 600;
+}
+
+.pagination-btn-current:hover {
+  background-color: var(--accent-primary);
+  color: var(--bg-primary);
+  transform: none;
+}
+
+.pagination-btn-first,
+.pagination-btn-last {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.pagination-btn-prev,
+.pagination-btn-next {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.pagination-ellipsis {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  color: var(--text-secondary);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  min-height: 40px;
+}
+
+.pagination-summary {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  text-align: center;
+}
+
+/* Mobile Responsive Pagination */
+@media (max-width: 768px) {
+  .pagination-container {
+    padding: var(--spacing-md);
+  }
+  
+  .pagination-info {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+  
+  .page-size-selector {
+    justify-content: center;
+  }
+  
+  .pagination-controls {
+    gap: var(--spacing-xs);
+  }
+  
+  .pagination-btn {
+    min-width: 36px;
+    min-height: 36px;
+    padding: var(--spacing-xs);
+    font-size: 0.8125rem;
+  }
+  
+  .pagination-pages {
+    gap: 2px;
+  }
+  
+  /* Hide some page numbers on very small screens */
+  @media (max-width: 480px) {
+    .pagination-pages button:not(.pagination-btn-current):nth-child(n+6) {
+      display: none;
+    }
+  }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  .pagination-btn {
+    border-width: 2px;
+  }
+  
+  .pagination-btn-current {
+    border-width: 3px;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .pagination-btn {
+    transition: none;
+  }
+  
+  .pagination-btn:hover:not(:disabled) {
+    transform: none;
+  }
+  
+  .pagination-btn:active:not(:disabled) {
+    transform: none;
+  }
+}
+
+/* Focus Visible Support */
+.pagination-btn:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
+/* Loading State for Pagination */
+.pagination-container.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.pagination-container.loading .pagination-btn {
+  cursor: wait;
+}
+/* Table Loading Overlay */
+.table-container {
+  position: relative;
+}
+
+.table-loading {
+  pointer-events: none;
+}
+
+.table-loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(2px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  border-radius: var(--radius-lg);
+}
+
+.table-loading-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--border-secondary);
+  border-top: 3px solid var(--accent-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: var(--spacing-sm);
+}
+
+.table-loading-text {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* Dark mode support for loading overlay */
+@media (prefers-color-scheme: dark) {
+  .table-loading-overlay {
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .table-loading-spinner {
+    animation: none;
+    border-top-color: var(--accent-primary);
+  }
+  
+  .table-loading-overlay {
+    backdrop-filter: none;
+  }
+}

@@ -22,7 +22,7 @@ class KeycloakAdminService {
   }
 
   /**
-   * Make HTTP request using Node.js built-in modules
+   * Make HTTP request using Node.js built-in modules with timeout handling
    */
   async makeHttpRequest(url, options = {}) {
     return new Promise((resolve, reject) => {
@@ -35,7 +35,8 @@ class KeycloakAdminService {
         port: urlObj.port || (isHttps ? 443 : 80),
         path: urlObj.pathname + urlObj.search,
         method: options.method || 'GET',
-        headers: options.headers || {}
+        headers: options.headers || {},
+        timeout: options.timeout || 120000 // 2 minutes default timeout
       };
 
       const req = client.request(requestOptions, (res) => {
@@ -74,6 +75,11 @@ class KeycloakAdminService {
 
       req.on('error', (error) => {
         reject(error);
+      });
+
+      req.on('timeout', () => {
+        req.destroy();
+        reject(new Error('Request timeout'));
       });
 
       if (options.body) {
@@ -132,9 +138,9 @@ class KeycloakAdminService {
   }
 
   /**
-   * Make authenticated request to Keycloak Admin API
+   * Make authenticated request to Keycloak Admin API with configurable timeout
    */
-  async makeAdminRequest(method, endpoint, data = null) {
+  async makeAdminRequest(method, endpoint, data = null, options = {}) {
     try {
       const token = await this.getAdminToken();
       
@@ -143,7 +149,8 @@ class KeycloakAdminService {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
-        }
+        },
+        timeout: options.timeout || 60000 // Default 1 minute, configurable
       };
 
       if (data) {
@@ -168,9 +175,9 @@ class KeycloakAdminService {
   }
 
   /**
-   * Create user in Keycloak
+   * Create user in Keycloak with configurable timeout
    */
-  async createUser(userInfo) {
+  async createUser(userInfo, options = {}) {
     try {
       const userData = {
         username: userInfo.username,
@@ -188,11 +195,11 @@ class KeycloakAdminService {
 
       console.log(`Creating user in Keycloak: ${userInfo.username}`);
       
-      // Create user
-      await this.makeAdminRequest('POST', '/users', userData);
+      // Create user with extended timeout if specified
+      await this.makeAdminRequest('POST', '/users', userData, options);
       
       // Get the created user to get their ID
-      const users = await this.makeAdminRequest('GET', `/users?username=${userInfo.username}`);
+      const users = await this.makeAdminRequest('GET', `/users?username=${userInfo.username}`, null, options);
       if (users.length === 0) {
         throw new Error('User created but not found');
       }
@@ -537,7 +544,7 @@ class KeycloakAdminService {
   }
 
   /**
-   * Bulk create users in Keycloak
+   * Bulk create users in Keycloak with extended timeout
    */
   async createUsers(usersArray) {
     const results = {
@@ -558,8 +565,8 @@ class KeycloakAdminService {
           userInfo.temporaryPassword = true;
         }
 
-        // Create user in Keycloak
-        const keycloakUser = await this.createUser(userInfo);
+        // Create user in Keycloak with extended timeout for bulk operations
+        const keycloakUser = await this.createUser(userInfo, { timeout: 300000 }); // 5 minutes per user
         
         results.successful.push({
           index: i + 1,

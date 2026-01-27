@@ -17,28 +17,8 @@ const TopBar = ({ user, onToggleSidebar, sidebarCollapsed }) => {
   const navigate = useNavigate();
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
-  const [previousUnreadCount, setPreviousUnreadCount] = useState(0);
-  const [notificationAnnouncement, setNotificationAnnouncement] = useState('');
   const profileMenuRef = useRef(null);
   const notificationsRef = useRef(null);
-
-  // Announce notification count changes for screen readers
-  useEffect(() => {
-    if (unreadCount !== previousUnreadCount) {
-      if (unreadCount > previousUnreadCount && unreadCount > 0) {
-        // New notification(s) arrived
-        const newCount = unreadCount - previousUnreadCount;
-        const announcement = newCount === 1 
-          ? 'New notification received' 
-          : `${newCount} new notifications received`;
-        setNotificationAnnouncement(announcement);
-        
-        // Clear announcement after screen reader has time to read it
-        setTimeout(() => setNotificationAnnouncement(''), 3000);
-      }
-      setPreviousUnreadCount(unreadCount);
-    }
-  }, [unreadCount, previousUnreadCount]);
 
   // Close menus when clicking outside
   useEffect(() => {
@@ -143,7 +123,7 @@ const TopBar = ({ user, onToggleSidebar, sidebarCollapsed }) => {
               className={`notifications-button ${!isConnected ? 'disconnected' : ''}`}
               onClick={() => setNotificationsOpen(!notificationsOpen)}
               onKeyDown={(e) => handleMenuKeyDown(e, 'notifications')}
-              aria-label={unreadCount > 0 ? `Notifications, ${unreadCount} unread` : 'Notifications'}
+              aria-label={unreadCount > 0 ? `${unreadCount} unread notifications` : 'Notifications'}
               aria-expanded={notificationsOpen}
               aria-haspopup="true"
               title={unreadCount > 0 ? `${unreadCount} unread notifications` : 'No unread notifications'}
@@ -613,7 +593,50 @@ const TopBar = ({ user, onToggleSidebar, sidebarCollapsed }) => {
           color: white;
         }
 
+        /* Enhanced Notifications Styles */
+        .notifications-header-content {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+
+        .mark-all-read-btn {
+          background: none;
+          border: none;
+          color: var(--color-primary);
+          font-size: 0.75rem;
+          cursor: pointer;
+          padding: var(--spacing-xs);
+          border-radius: var(--radius-sm);
+          transition: all var(--animation-duration) ease-in-out;
+        }
+
+        .mark-all-read-btn:hover {
+          background-color: var(--bg-quaternary);
+        }
+
+        .no-notifications {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          padding: var(--spacing-xl);
+          color: var(--text-secondary);
+        }
+
+        .no-notifications-icon {
+          font-size: 2rem;
+          margin-bottom: var(--spacing-sm);
+          opacity: 0.5;
+        }
+
+        .no-notifications p {
+          margin: 0;
+          font-size: 0.875rem;
+        }
+
         .notification-item {
+          display: flex;
+          gap: var(--spacing-md);
           padding: var(--spacing-md) var(--spacing-lg);
           border-bottom: 1px solid var(--border-secondary);
           cursor: pointer;
@@ -624,27 +647,69 @@ const TopBar = ({ user, onToggleSidebar, sidebarCollapsed }) => {
           background-color: var(--bg-quaternary);
         }
 
-        .notification-item:last-child {
-          border-bottom: none;
+        .notification-item.unread {
+          background-color: rgba(31, 111, 235, 0.05);
+          border-left: 3px solid var(--color-primary);
+        }
+
+        .notification-icon-wrapper {
+          position: relative;
+          flex-shrink: 0;
+        }
+
+        .notification-type-icon {
+          font-size: 1.25rem;
+          display: block;
+        }
+
+        .unread-dot {
+          position: absolute;
+          top: -2px;
+          right: -2px;
+          width: 8px;
+          height: 8px;
+          background-color: var(--color-primary);
+          border-radius: 50%;
+          border: 2px solid var(--bg-secondary);
         }
 
         .notification-content {
-          display: flex;
-          flex-direction: column;
-          gap: var(--spacing-xs);
+          flex: 1;
+          min-width: 0;
         }
 
         .notification-title {
           font-size: 0.875rem;
           font-weight: 500;
           color: var(--text-primary);
-          margin: 0;
+          margin: 0 0 var(--spacing-xs) 0;
+          line-height: 1.3;
         }
 
-        .notification-time {
+        .notification-message {
           font-size: 0.75rem;
           color: var(--text-secondary);
-          margin: 0;
+          margin: 0 0 var(--spacing-xs) 0;
+          line-height: 1.4;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+        }
+
+        .menu-footer {
+          display: flex;
+          gap: var(--spacing-sm);
+          padding: var(--spacing-lg);
+          border-top: 1px solid var(--border-primary);
+          background-color: var(--bg-tertiary);
+        }
+
+        .menu-footer .btn {
+          flex: 1;
+          font-size: 0.75rem;
+          padding: var(--spacing-xs) var(--spacing-sm);
         }
 
         /* Enhanced Notifications Styles */
@@ -850,16 +915,6 @@ const TopBar = ({ user, onToggleSidebar, sidebarCollapsed }) => {
           }
         }
       `}</style>
-
-      {/* Live region for screen reader announcements */}
-      <div 
-        aria-live="polite" 
-        aria-atomic="true"
-        className="sr-only"
-        role="status"
-      >
-        {notificationAnnouncement}
-      </div>
     </header>
   );
 };

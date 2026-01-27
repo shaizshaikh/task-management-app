@@ -1,0 +1,347 @@
+/**
+ * Performance Optimizations
+ * CSS optimizations to prevent lag and improve performance
+ */
+
+/* GPU Acceleration for Modals */
+.modal-overlay,
+.modal-content,
+.modal-container {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Disable expensive effects on desktop */
+@media (min-width: 769px) {
+  /* Remove backdrop filters that cause lag */
+  .modal-overlay {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  
+  /* Optimize modal animations */
+  .modal-overlay {
+    animation-duration: 0.1s !important;
+  }
+  
+  .modal-container {
+    animation-duration: 0.1s !important;
+  }
+  
+  /* Disable transform animations on hover for desktop */
+  .btn:hover,
+  .card:hover,
+  .task-card:hover,
+  .team-card:hover {
+    transform: none !important;
+  }
+  
+  /* Optimize transitions */
+  .btn,
+  .card,
+  .task-card,
+  .team-card {
+    transition: background-color 0.1s ease, border-color 0.1s ease, box-shadow 0.1s ease !important;
+  }
+}
+
+/* Optimize form inputs */
+.form-input,
+.form-select,
+.form-textarea {
+  will-change: border-color, box-shadow;
+  transform: translateZ(0);
+}
+
+/* Optimize table rendering */
+.data-table {
+  contain: layout style paint;
+  will-change: scroll-position;
+}
+
+/* Optimize scrollable areas */
+.modal-body,
+.table-container {
+  contain: layout style paint;
+  will-change: scroll-position;
+}
+
+/* Reduce repaints for badges and status indicators */
+.badge,
+.status-badge,
+.priority-badge,
+.role-badge {
+  contain: layout style paint;
+  will-change: auto;
+}
+
+/* Optimize tab navigation */
+.tab-navigation {
+  contain: layout style paint;
+}
+
+.tab-button {
+  will-change: background-color, color;
+  transform: translateZ(0);
+}
+
+/* Optimize loading states */
+.loading,
+.loading-spinner {
+  contain: layout style paint;
+  will-change: transform;
+}
+
+/* Optimize animations */
+@keyframes optimizedFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes optimizedSlideIn {
+  from { transform: translateY(5px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* Use optimized animations for modals */
+.modal-overlay {
+  animation: optimizedFadeIn 0.1s ease-out forwards;
+}
+
+.modal-container {
+  animation: optimizedSlideIn 0.1s ease-out forwards;
+}
+
+/* Prevent layout thrashing */
+.modal-overlay * {
+  box-sizing: border-box;
+}
+
+/* Optimize text rendering */
+.modal-title,
+.form-label,
+.tab-label {
+  text-rendering: optimizeSpeed;
+}
+
+/* Reduce composite layers */
+.modal-content {
+  isolation: isolate;
+}
+
+/* Optimize for 60fps */
+@media (min-width: 769px) {
+  * {
+    animation-duration: 0.1s !important;
+    transition-duration: 0.1s !important;
+  }
+  
+  /* Disable expensive CSS properties on desktop */
+  .modal-overlay {
+    backdrop-filter: none !important;
+    filter: none !important;
+  }
+  
+  /* Optimize shadows */
+  .card,
+  .modal-container,
+  .btn {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+  }
+  
+  .card:hover,
+  .modal-container:hover,
+  .btn:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15) !important;
+  }
+}
+
+/* Screen reader only content */
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* Force hardware acceleration for smooth scrolling */
+.modal-body::-webkit-scrollbar-thumb {
+  will-change: background-color;
+  transform: translateZ(0);
+}
+
+/* Optimize for mobile performance */
+@media (max-width: 768px) {
+  /* Keep mobile optimizations */
+  .modal-overlay {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  
+  /* Reduce animation complexity on mobile */
+  * {
+    animation-duration: 0.15s !important;
+    transition-duration: 0.15s !important;
+  }
+}
+
+/* Critical performance fixes for specific components */
+.user-management-modal,
+.import-history-modal,
+.deleted-users-modal,
+.user-import-modal,
+.user-export-modal {
+  contain: layout style paint;
+  will-change: transform, opacity;
+  transform: translateZ(0);
+}
+
+/* Specific optimizations for UserImportDialog */
+.import-upload-area {
+  contain: layout style paint;
+  will-change: border-color, background-color;
+  transform: translateZ(0);
+  transition: border-color 0.1s ease, background-color 0.1s ease !important;
+}
+
+.import-upload-area.drag-active {
+  will-change: border-color, background-color;
+  transform: translateZ(0);
+}
+
+.import-file-preview {
+  contain: layout style paint;
+  will-change: auto;
+}
+
+.import-template-button {
+  will-change: background-color, transform;
+  transform: translateZ(0);
+  transition: background-color 0.1s ease !important;
+}
+
+.import-template-button:hover {
+  transform: translateZ(0) !important;
+}
+
+.import-loading-overlay {
+  contain: layout style paint;
+  will-change: opacity;
+  transform: translateZ(0);
+}
+
+.import-results-summary {
+  contain: layout style paint;
+}
+
+.import-results-stat {
+  contain: layout style paint;
+  will-change: auto;
+}
+
+/* Optimize drag and drop performance */
+.import-upload-area * {
+  pointer-events: none;
+}
+
+.import-upload-area {
+  pointer-events: all;
+}
+
+/* Reduce repaints during file operations */
+.import-file-icon,
+.import-upload-icon {
+  contain: layout style paint;
+  will-change: auto;
+}
+
+/* Optimize modal transitions for import dialog */
+.user-import-modal .modal-overlay {
+  animation: optimizedFadeIn 0.08s ease-out forwards;
+}
+
+.user-import-modal .modal-content {
+  animation: optimizedSlideIn 0.08s ease-out forwards;
+}
+
+/* Import progress indicator */
+.import-progress-container {
+  margin-top: 20px;
+  width: 100%;
+}
+
+.import-progress-bar {
+  width: 100%;
+  height: 8px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.import-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4CAF50, #2196F3);
+  border-radius: 4px;
+  animation: progressPulse 2s ease-in-out infinite;
+  width: 100%;
+}
+
+.import-progress-text {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+  text-align: center;
+}
+
+@keyframes progressPulse {
+  0%, 100% { opacity: 0.7; transform: scaleX(0.8); }
+  50% { opacity: 1; transform: scaleX(1); }
+}
+
+/* Time estimate styling */
+.import-time-estimate {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.import-time-estimate small {
+  color: rgba(255, 255, 255, 0.7);
+  font-style: italic;
+}
+
+/* Optimize table performance */
+.data-table tbody tr {
+  contain: layout style paint;
+}
+
+.data-table td {
+  contain: layout style;
+}
+
+/* Prevent reflow during modal operations */
+.modal-overlay {
+  contain: layout style paint;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+/* Optimize form performance */
+.form-group-modal {
+  contain: layout style;
+}
+
+.form-input-modal,
+.form-select-modal {
+  will-change: border-color, background-color;
+  transform: translateZ(0);
+}

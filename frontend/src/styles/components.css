@@ -25,7 +25,7 @@
 .task-card:hover {
   border-color: var(--border-hover);
   box-shadow: var(--shadow-md);
-  transform: translateY(-2px);
+  /* Removed transform for performance */
 }
 
 .task-card.overdue {
@@ -321,7 +321,7 @@
 .team-card:hover {
   border-color: var(--border-hover);
   box-shadow: var(--shadow-md);
-  transform: translateY(-2px);
+  /* Removed transform for performance */
 }
 
 .team-card-header {
@@ -1609,7 +1609,7 @@
 
 .manager-team-card:hover {
   box-shadow: var(--shadow-md);
-  transform: translateY(-2px);
+  /* Removed transform for performance */
 }
 
 .manager-team-header {
@@ -1928,7 +1928,7 @@
 
 .manager-task-card:hover {
   box-shadow: var(--shadow-md);
-  transform: translateY(-2px);
+  /* Removed transform for performance */
 }
 
 .manager-task-header {
@@ -4426,7 +4426,7 @@
 }
 
 .team-card:hover {
-  transform: translateY(-2px);
+  /* Removed transform for performance */
   box-shadow: var(--shadow-lg);
 }
 
@@ -5429,5 +5429,12 @@
   }
   50% {
     opacity: 0.3;
+  }
+}
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .loading-spinner-small {
+    animation: none;
+    border-top-color: var(--accent-primary);
   }
 }

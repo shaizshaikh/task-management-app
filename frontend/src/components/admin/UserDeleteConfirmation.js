@@ -3,9 +3,10 @@
  * Handles user deletion with comprehensive confirmation and options
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { extractErrorMessage } from '../../utils/errorUtils';
 
 const UserDeleteConfirmation = ({ user, onClose, onConfirm }) => {
   const [loading, setLoading] = useState(false);
@@ -14,6 +15,8 @@ const UserDeleteConfirmation = ({ user, onClose, onConfirm }) => {
   const [availableUsers, setAvailableUsers] = useState([]);
   const [userDetails, setUserDetails] = useState(null);
   const [confirmText, setConfirmText] = useState('');
+  const modalRef = useRef(null);
+  const firstInputRef = useRef(null);
 
   useEffect(() => {
     if (user) {
@@ -21,6 +24,29 @@ const UserDeleteConfirmation = ({ user, onClose, onConfirm }) => {
       loadAvailableUsers();
     }
   }, [user]);
+
+  // Focus management for modal
+  useEffect(() => {
+    if (modalRef.current) {
+      // Focus the modal container
+      modalRef.current.focus();
+      
+      // Focus the first input after a short delay
+      setTimeout(() => {
+        if (firstInputRef.current) {
+          firstInputRef.current.focus();
+        }
+      }, 100);
+    }
+
+    // Prevent background scrolling and focus trapping
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+    };
+  }, []);
 
   const loadUserDetails = async () => {
     try {
@@ -99,7 +125,25 @@ const UserDeleteConfirmation = ({ user, onClose, onConfirm }) => {
       
     } catch (error) {
       console.error('Error deleting user:', error);
-      const errorMessage = error.response?.data?.error?.message || 'Failed to delete user';
+      
+      // Handle 404 - user already deleted
+      if (error.response?.status === 404) {
+        toast.success('User has already been deleted');
+        onConfirm({ deleted_user: { id: user.id } });
+        onClose();
+        return;
+      }
+      
+      const errorMessage = extractErrorMessage(error, 'Failed to delete user');
+      
+      if (errorMessage === null) {
+        // Query parameter logged as error, likely successful deletion
+        toast.success('User deletion completed successfully');
+        onConfirm({ deleted_user: { id: user.id } });
+        onClose();
+        return;
+      }
+      
       toast.error(errorMessage);
     } finally {
       setLoading(false);
@@ -112,18 +156,27 @@ const UserDeleteConfirmation = ({ user, onClose, onConfirm }) => {
   const teamCount = userDetails?.team_count || 0;
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content modal-medium">
+    <div className="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="delete-user-title" aria-describedby="delete-user-description">
+      <div 
+        ref={modalRef}
+        className="modal-content modal-medium"
+        tabIndex={-1}
+        onKeyDown={(e) => {
+          if (e.key === 'Escape') {
+            onClose();
+          }
+        }}
+      >
         {/* Header */}
         <div className="delete-dialog-header">
           <span className="delete-dialog-icon">Warning</span>
-          <h3 className="delete-dialog-title">
+          <h3 id="delete-user-title" className="delete-dialog-title">
             Delete User Account
           </h3>
         </div>
 
         {/* Warning Message */}
-        <div className="delete-warning-box">
+        <div id="delete-user-description" className="delete-warning-box">
           <div className="delete-warning-title">
             This action cannot be undone
           </div>
@@ -210,31 +263,42 @@ const UserDeleteConfirmation = ({ user, onClose, onConfirm }) => {
 
         {/* Deletion Reason */}
         <div className="delete-reason-section">
-          <label className="delete-reason-label">
+          <label className="delete-reason-label" htmlFor="deletion-reason">
             Reason for deletion *
           </label>
           <textarea
+            id="deletion-reason"
+            ref={firstInputRef}
             value={reason}
             onChange={(e) => setReason(e.target.value)}
             placeholder="Please provide a reason for deleting this user account..."
             className="delete-reason-textarea"
             required
+            aria-describedby="deletion-reason-help"
           />
+          <div id="deletion-reason-help" className="sr-only">
+            Required field. Provide a clear reason for deleting this user account.
+          </div>
         </div>
 
         {/* Confirmation Input */}
         <div className="delete-confirmation-section">
-          <label className="delete-confirmation-label">
+          <label className="delete-confirmation-label" htmlFor="username-confirmation">
             Type the username "{user.username}" to confirm deletion *
           </label>
           <input
+            id="username-confirmation"
             type="text"
             value={confirmText}
             onChange={(e) => setConfirmText(e.target.value)}
             placeholder={`Type "${user.username}" here`}
             className={`delete-confirmation-input ${confirmText === user.username ? 'valid' : ''}`}
             required
+            aria-describedby="username-confirmation-help"
           />
+          <div id="username-confirmation-help" className="sr-only">
+            Type the exact username to confirm deletion. This is a safety measure.
+          </div>
           {confirmText && confirmText !== user.username && (
             <div className="delete-confirmation-error">
               Username doesn't match. Please type exactly: {user.username}

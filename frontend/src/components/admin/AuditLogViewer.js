@@ -160,87 +160,129 @@ const AuditLogViewer = () => {
       </header>
 
       {/* Filters */}
-      <div className="card mb-4">
+      <section className="card mb-4" aria-labelledby="audit-filters-heading">
         <div className="card-header">
-          <h3 className="mb-0">Filters</h3>
+          <h3 id="audit-filters-heading" className="mb-0">Filters</h3>
         </div>
         <div className="card-body">
           <div className="dashboard-grid mb-3">
-            <select
-              className="form-input"
-              value={filters.log_type}
-              onChange={(e) => handleFilterChange('log_type', e.target.value)}
-              aria-label="Filter by log type"
-            >
-              <option value="">All Log Types</option>
-              <option value="operation">Operations</option>
-              <option value="authentication">Authentication</option>
-              <option value="system">System Events</option>
-            </select>
+            <div>
+              <label htmlFor="log-type-filter" className="form-label sr-only">
+                Filter by log type
+              </label>
+              <select
+                id="log-type-filter"
+                className="form-input"
+                value={filters.log_type}
+                onChange={(e) => handleFilterChange('log_type', e.target.value)}
+                aria-label="Filter by log type"
+              >
+                <option value="">All Log Types</option>
+                <option value="operation">Operations</option>
+                <option value="authentication">Authentication</option>
+                <option value="system">System Events</option>
+              </select>
+            </div>
 
-            <input
-              type="text"
-              className="form-input"
-              placeholder="Username"
-              value={filters.username}
-              onChange={(e) => handleFilterChange('username', e.target.value)}
-              aria-label="Filter by username"
-            />
+            <div>
+              <label htmlFor="username-filter" className="form-label sr-only">
+                Filter by username
+              </label>
+              <input
+                id="username-filter"
+                type="text"
+                className="form-input"
+                placeholder="Username"
+                value={filters.username}
+                onChange={(e) => handleFilterChange('username', e.target.value)}
+                aria-label="Filter by username"
+              />
+            </div>
 
-            <input
-              type="text"
-              className="form-input"
-              placeholder="Action"
-              value={filters.action}
-              onChange={(e) => handleFilterChange('action', e.target.value)}
-              aria-label="Filter by action"
-            />
+            <div>
+              <label htmlFor="action-filter" className="form-label sr-only">
+                Filter by action
+              </label>
+              <input
+                id="action-filter"
+                type="text"
+                className="form-input"
+                placeholder="Action"
+                value={filters.action}
+                onChange={(e) => handleFilterChange('action', e.target.value)}
+                aria-label="Filter by action"
+              />
+            </div>
 
-            <select
-              className="form-input"
-              value={filters.resource_type}
-              onChange={(e) => handleFilterChange('resource_type', e.target.value)}
-              aria-label="Filter by resource type"
-            >
-              <option value="">All Resources</option>
-              <option value="task">Tasks</option>
-              <option value="team">Teams</option>
-              <option value="user">Users</option>
-              <option value="comment">Comments</option>
-              <option value="attachment">Attachments</option>
-            </select>
+            <div>
+              <label htmlFor="resource-type-filter" className="form-label sr-only">
+                Filter by resource type
+              </label>
+              <select
+                id="resource-type-filter"
+                className="form-input"
+                value={filters.resource_type}
+                onChange={(e) => handleFilterChange('resource_type', e.target.value)}
+                aria-label="Filter by resource type"
+              >
+                <option value="">All Resources</option>
+                <option value="task">Tasks</option>
+                <option value="team">Teams</option>
+                <option value="user">Users</option>
+                <option value="comment">Comments</option>
+                <option value="attachment">Attachments</option>
+              </select>
+            </div>
           </div>
 
           <div className="dashboard-grid">
-            <input
-              type="date"
-              className="form-input"
-              value={filters.start_date}
-              onChange={(e) => handleFilterChange('start_date', e.target.value)}
-              aria-label="Start date filter"
-            />
+            <div>
+              <label htmlFor="start-date-filter" className="form-label sr-only">
+                Start date filter
+              </label>
+              <input
+                id="start-date-filter"
+                type="date"
+                className="form-input"
+                value={filters.start_date}
+                onChange={(e) => handleFilterChange('start_date', e.target.value)}
+                aria-label="Start date filter"
+              />
+            </div>
 
-            <input
-              type="date"
-              className="form-input"
-              value={filters.end_date}
-              onChange={(e) => handleFilterChange('end_date', e.target.value)}
-              aria-label="End date filter"
-            />
+            <div>
+              <label htmlFor="end-date-filter" className="form-label sr-only">
+                End date filter
+              </label>
+              <input
+                id="end-date-filter"
+                type="date"
+                className="form-input"
+                value={filters.end_date}
+                onChange={(e) => handleFilterChange('end_date', e.target.value)}
+                aria-label="End date filter"
+              />
+            </div>
 
-            <select
-              className="form-input"
-              value={filters.limit}
-              onChange={(e) => handleFilterChange('limit', parseInt(e.target.value))}
-              aria-label="Results per page"
-            >
-              <option value={25}>25 per page</option>
-              <option value={50}>50 per page</option>
-              <option value={100}>100 per page</option>
-            </select>
+            <div>
+              <label htmlFor="results-per-page" className="form-label sr-only">
+                Results per page
+              </label>
+              <select
+                id="results-per-page"
+                className="form-input"
+                value={filters.limit}
+                onChange={(e) => handleFilterChange('limit', parseInt(e.target.value))}
+                aria-label="Results per page"
+              >
+                <option value={25}>25 per page</option>
+                <option value={50}>50 per page</option>
+                <option value={100}>100 per page</option>
+              </select>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Results Info */}
       <div className="flex justify-between items-center mb-4">
@@ -274,50 +316,72 @@ const AuditLogViewer = () => {
       {loading ? (
         <div className="card">
           <div className="card-body text-center">
-            <div className="loading"></div>
+            <div className="loading" aria-hidden="true"></div>
             <p className="mt-2">Loading audit logs...</p>
           </div>
         </div>
       ) : (
-        <div className="card">
+        <section className="card" aria-labelledby="audit-logs-heading">
+          <div className="card-header">
+            <h3 id="audit-logs-heading" className="sr-only">Audit Log Entries</h3>
+          </div>
           <div className="card-body p-0">
             {logs.map((log, index) => (
               <article 
                 key={index} 
                 className={`audit-log-item ${index < logs.length - 1 ? 'border-bottom' : ''}`}
+                aria-labelledby={`audit-log-${index}-summary`}
+                aria-describedby={`audit-log-${index}-details`}
               >
                 <header className="audit-log-header">
-                  <div className="audit-badges">
+                  <div className="audit-badges" role="group" aria-label="Log classification">
                     <span 
                       className="badge"
                       style={{ backgroundColor: getLogTypeColor(log.log_type) }}
+                      aria-label={`Log type: ${log.log_type}`}
                     >
+                      <span className="sr-only">Log type: </span>
                       {log.log_type}
                     </span>
                     
                     <span 
                       className="badge"
                       style={{ backgroundColor: getActionColor(log.action) }}
+                      aria-label={`Action: ${log.action}`}
                     >
+                      <span className="sr-only">Action: </span>
                       {log.action}
                     </span>
 
                     {log.resource_type && (
-                      <span className="badge badge-secondary">
+                      <span 
+                        className="badge badge-secondary"
+                        aria-label={`Resource: ${log.resource_type} ID ${log.resource_id}`}
+                      >
+                        <span className="sr-only">Resource: </span>
                         {log.resource_type}:{log.resource_id}
                       </span>
                     )}
                   </div>
 
-                  <time className="audit-timestamp text-sm text-secondary">
+                  <time 
+                    className="audit-timestamp text-sm text-secondary"
+                    dateTime={log.timestamp}
+                    aria-label={`Occurred at ${formatTimestamp(log.timestamp)}`}
+                  >
+                    <span className="sr-only">Occurred at: </span>
                     {formatTimestamp(log.timestamp)}
                   </time>
                 </header>
 
-                <div className="audit-user mb-2">
-                  <strong>{log.full_name || log.username || 'System'}</strong>
+                <div id={`audit-log-${index}-summary`} className="audit-user mb-2">
+                  <strong aria-label={`Performed by: ${log.full_name || log.username || 'System'}`}>
+                    <span className="sr-only">Performed by: </span>
+                    {log.full_name || log.username || 'System'}
+                  </strong>
                   {log.ip_address && (
-                    <span className="text-sm text-secondary ml-2">
+                    <span className="text-sm text-secondary ml-2" aria-label={`From IP address: ${log.ip_address}`}>
+                      <span className="sr-only">from IP address: </span>
                       from {log.ip_address}
                     </span>
                   )}
@@ -325,14 +389,14 @@ const AuditLogViewer = () => {
 
                 {(log.old_values || log.new_values || log.error_message) && (
                   <details className="audit-details">
-                    <summary className="audit-summary">
+                    <summary className="audit-summary" aria-label="View detailed information about this audit log entry">
                       View Details
                     </summary>
-                    <div className="audit-details-content">
+                    <div id={`audit-log-${index}-details`} className="audit-details-content">
                       {log.old_values && (
                         <div className="mb-3">
-                          <h4 className="text-sm font-semibold mb-1">Old Values:</h4>
-                          <pre className="audit-json">
+                          <h4 className="text-sm font-semibold mb-1">Previous Values:</h4>
+                          <pre className="audit-json" aria-label="Previous values data">
                             {formatJsonData(log.old_values)}
                           </pre>
                         </div>
@@ -341,7 +405,7 @@ const AuditLogViewer = () => {
                       {log.new_values && (
                         <div className="mb-3">
                           <h4 className="text-sm font-semibold mb-1">New Values:</h4>
-                          <pre className="audit-json">
+                          <pre className="audit-json" aria-label="New values data">
                             {formatJsonData(log.new_values)}
                           </pre>
                         </div>
@@ -349,8 +413,9 @@ const AuditLogViewer = () => {
 
                       {log.error_message && (
                         <div>
-                          <h4 className="text-sm font-semibold mb-1">Error:</h4>
-                          <div className="audit-error">
+                          <h4 className="text-sm font-semibold mb-1">Error Details:</h4>
+                          <div className="audit-error" role="alert" aria-label={`Error: ${log.error_message}`}>
+                            <span className="sr-only">Error: </span>
                             {log.error_message}
                           </div>
                         </div>
@@ -362,14 +427,14 @@ const AuditLogViewer = () => {
             ))}
 
             {logs.length === 0 && (
-              <div className="text-center p-4">
+              <div className="text-center p-4" role="status">
                 <p className="text-secondary">
                   No audit logs found matching your filters.
                 </p>
               </div>
             )}
           </div>
-        </div>
+        </section>
       )}
     </div>
   );

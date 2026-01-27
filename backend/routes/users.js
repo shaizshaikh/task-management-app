@@ -46,9 +46,35 @@ router.get('/', authenticateJWT, async (req, res) => {
     `;
     const params = [];
     
-    console.log('=== USERS QUERY DEBUG ===');
-    console.log('Query:', query);
-    console.log('Params:', params);
+    // Build base query for counting total users (without pagination)
+    let countQuery = `
+      SELECT COUNT(*) as total
+      FROM users u
+      WHERE u.is_active = TRUE AND u.deleted_at IS NULL
+    `;
+    const countParams = [];
+
+    // For now, admins can see all users, others see limited users
+    if (req.user.global_role !== 'admin') {
+      countQuery += ' AND u.id = ?';
+      countParams.push(req.user.id);
+    }
+
+    // Apply filters to count query
+    if (filters.global_role) {
+      countQuery += ' AND u.global_role = ?';
+      countParams.push(filters.global_role);
+    }
+
+    if (filters.search) {
+      countQuery += ' AND (u.username LIKE ? OR u.full_name LIKE ? OR u.email LIKE ?)';
+      const searchTerm = `%${filters.search}%`;
+      countParams.push(searchTerm, searchTerm, searchTerm);
+    }
+
+    // Get total count
+    const [countResult] = await pool.execute(countQuery, countParams);
+    const totalUsers = countResult[0].total;
 
     // For now, admins can see all users, others see limited users
     // TODO: Implement proper team-based filtering when teams are set up
@@ -100,7 +126,13 @@ router.get('/', authenticateJWT, async (req, res) => {
 
     res.json({
       users: usersWithTeams,
-      total: usersWithTeams.length,
+      total: totalUsers,
+      pagination: {
+        current_page: Math.floor((parseInt(filters.offset) || 0) / (parseInt(filters.limit) || 50)) + 1,
+        page_size: parseInt(filters.limit) || 50,
+        total_pages: Math.ceil(totalUsers / (parseInt(filters.limit) || 50)),
+        has_more: (parseInt(filters.offset) || 0) + usersWithTeams.length < totalUsers
+      },
       user_role: req.user.global_role,
       filters_applied: Object.keys(filters).filter(key => filters[key] !== undefined),
       filtered: req.user.global_role !== 'admin'
@@ -788,10 +820,25 @@ router.post('/', authenticateJWT, requireGlobalPermission('MANAGE_GLOBAL_USERS')
     }
   } catch (error) {
     console.error('Error creating user:', error);
+    
+    // Provide more specific error messages
+    let errorMessage = 'Failed to create user';
+    let errorCode = 'USER_CREATE_ERROR';
+    
+    if (error.message) {
+      errorMessage = error.message;
+    }
+    
+    // Handle specific database errors
+    if (error.code === 'ER_DUP_ENTRY') {
+      errorCode = 'USER_EXISTS';
+      errorMessage = 'User with this username or email already exists';
+    }
+    
     res.status(500).json({
       error: {
-        code: 'USER_CREATE_ERROR',
-        message: 'Failed to create user',
+        code: errorCode,
+        message: errorMessage,
         timestamp: new Date().toISOString()
       }
     });
@@ -1317,21 +1364,30 @@ router.post('/import', authenticateJWT, requireGlobalPermission('MANAGE_GLOBAL_U
             throw new Error('No valid users found in the uploaded file');
           }
 
-          // Step 2: Check for existing users
-          console.log('Step 2: Checking for existing users...');
+          // Step 2: Check for existing users (OPTIMIZED - single query)
+          console.log('Step 2: Checking for existing users in bulk...');
+          const usernames = parseResult.users.map(u => u.username);
+          const emails = parseResult.users.map(u => u.email);
+          
+          // Single query to check all users at once
+          const [existingRows] = await pool.execute(
+            `SELECT username, email FROM users 
+             WHERE username IN (${usernames.map(() => '?').join(',')}) 
+             OR email IN (${emails.map(() => '?').join(',')})`,
+            [...usernames, ...emails]
+          );
+
+          const existingUsernames = new Set(existingRows.map(row => row.username));
+          const existingEmails = new Set(existingRows.map(row => row.email));
+
           const existingUsers = [];
           const newUsers = [];
 
           for (const user of parseResult.users) {
-            const [existing] = await pool.execute(
-              'SELECT id, username, email FROM users WHERE username = ? OR email = ?',
-              [user.username, user.email]
-            );
-
-            if (existing.length > 0) {
+            if (existingUsernames.has(user.username) || existingEmails.has(user.email)) {
               existingUsers.push({
                 ...user,
-                existingUser: existing[0]
+                reason: 'User already exists'
               });
             } else {
               newUsers.push(user);
@@ -1349,47 +1405,98 @@ router.post('/import', authenticateJWT, requireGlobalPermission('MANAGE_GLOBAL_U
           };
 
           if (newUsers.length > 0) {
-            // Use Keycloak bulk creation
+            // Use Keycloak bulk creation (already optimized)
             const keycloakResults = await keycloakAdmin.createUsers(newUsers);
             
-            // Sync successful Keycloak users to local database
-            const userSyncService = require('../services/userSync');
-            
-            for (const successfulUser of keycloakResults.successful) {
+            // OPTIMIZED: Bulk sync successful Keycloak users to local database
+            if (keycloakResults.successful.length > 0) {
               try {
-                const localUser = await userSyncService.createUser({
-                  keycloak_user_id: successfulUser.keycloakUserId,
-                  username: successfulUser.username,
-                  email: successfulUser.email,
-                  full_name: newUsers.find(u => u.username === successfulUser.username)?.firstName + ' ' + 
-                           newUsers.find(u => u.username === successfulUser.username)?.lastName || successfulUser.username,
-                  global_role: newUsers.find(u => u.username === successfulUser.username)?.role || 'member'
+                // Prepare bulk insert data
+                const insertData = keycloakResults.successful.map(kcUser => {
+                  const originalUser = newUsers.find(u => u.username === kcUser.username);
+                  return [
+                    kcUser.keycloakUserId,
+                    kcUser.username,
+                    kcUser.email,
+                    originalUser?.firstName && originalUser?.lastName ? 
+                      `${originalUser.firstName} ${originalUser.lastName}` : kcUser.username,
+                    originalUser?.role || 'member',
+                    true, // is_active
+                    new Date(),
+                    new Date()
+                  ];
                 });
 
-                creationResults.successful.push({
-                  ...successfulUser,
-                  localUserId: localUser.id,
-                  fullName: localUser.full_name,
-                  role: localUser.global_role
+                // Bulk insert with ON DUPLICATE KEY UPDATE
+                const placeholders = insertData.map(() => '(?, ?, ?, ?, ?, ?, ?, ?)').join(',');
+                const flatData = insertData.flat();
+
+                await pool.execute(`
+                  INSERT INTO users (keycloak_user_id, username, email, full_name, global_role, is_active, created_at, updated_at)
+                  VALUES ${placeholders}
+                  ON DUPLICATE KEY UPDATE
+                    email = VALUES(email),
+                    full_name = VALUES(full_name),
+                    updated_at = VALUES(updated_at)
+                `, flatData);
+
+                // All successful if no error thrown
+                creationResults.successful = keycloakResults.successful.map(kcUser => {
+                  const originalUser = newUsers.find(u => u.username === kcUser.username);
+                  return {
+                    ...kcUser,
+                    fullName: originalUser?.firstName && originalUser?.lastName ? 
+                      `${originalUser.firstName} ${originalUser.lastName}` : kcUser.username,
+                    role: originalUser?.role || 'member'
+                  };
                 });
 
-                console.log(`User created: ${successfulUser.username} (Local ID: ${localUser.id})`);
-              } catch (syncError) {
-                console.error(`Failed to sync user ${successfulUser.username} to local DB:`, syncError.message);
+                console.log(`✅ Bulk database sync successful: ${keycloakResults.successful.length} users`);
+
+              } catch (bulkSyncError) {
+                console.error('❌ Bulk database sync failed, falling back to individual inserts:', bulkSyncError.message);
                 
-                // Try to cleanup Keycloak user
-                try {
-                  await keycloakAdmin.deleteUser(successfulUser.keycloakUserId);
-                  console.log(`Cleaned up Keycloak user: ${successfulUser.username}`);
-                } catch (cleanupError) {
-                  console.error(`Failed to cleanup Keycloak user:`, cleanupError.message);
-                }
+                // Fall back to individual inserts
+                const userSyncService = require('../services/userSync');
+                
+                for (const successfulUser of keycloakResults.successful) {
+                  try {
+                    const originalUser = newUsers.find(u => u.username === successfulUser.username);
+                    const localUser = await userSyncService.createUser({
+                      keycloak_user_id: successfulUser.keycloakUserId,
+                      username: successfulUser.username,
+                      email: successfulUser.email,
+                      full_name: originalUser?.firstName && originalUser?.lastName ? 
+                        `${originalUser.firstName} ${originalUser.lastName}` : successfulUser.username,
+                      global_role: originalUser?.role || 'member'
+                    });
 
-                creationResults.failed.push({
-                  username: successfulUser.username,
-                  email: successfulUser.email,
-                  error: `Database sync failed: ${syncError.message}`
-                });
+                    creationResults.successful.push({
+                      ...successfulUser,
+                      localUserId: localUser.id,
+                      fullName: localUser.full_name,
+                      role: localUser.global_role
+                    });
+
+                    console.log(`User created: ${successfulUser.username} (Local ID: ${localUser.id})`);
+                  } catch (syncError) {
+                    console.error(`Failed to sync user ${successfulUser.username} to local DB:`, syncError.message);
+                    
+                    // Try to cleanup Keycloak user
+                    try {
+                      await keycloakAdmin.deleteUser(successfulUser.keycloakUserId);
+                      console.log(`Cleaned up Keycloak user: ${successfulUser.username}`);
+                    } catch (cleanupError) {
+                      console.error(`Failed to cleanup Keycloak user:`, cleanupError.message);
+                    }
+
+                    creationResults.failed.push({
+                      username: successfulUser.username,
+                      email: successfulUser.email,
+                      error: `Database sync failed: ${syncError.message}`
+                    });
+                  }
+                }
               }
             }
 
@@ -1450,6 +1557,12 @@ router.post('/import', authenticateJWT, requireGlobalPermission('MANAGE_GLOBAL_U
                 emailsFailed++;
                 console.warn(`Failed to send welcome email to: ${successfulUser.email} - ${emailResult.error}`);
               }
+              
+              // Add small delay to prevent overwhelming SMTP server (for large imports)
+              if (creationResults.successful.length > 50) {
+                await new Promise(resolve => setTimeout(resolve, 100)); // 100ms delay
+              }
+              
             } catch (emailError) {
               emailsFailed++;
               console.error(`Email error for ${successfulUser.email}:`, emailError.message);
@@ -1460,14 +1573,35 @@ router.post('/import', authenticateJWT, requireGlobalPermission('MANAGE_GLOBAL_U
 
           // Step 6: Send import completion notification to admin
           try {
-            await emailService.sendImportCompletionEmail(req.user.email, {
-              successful: creationResults.successful,
-              failed: creationResults.failed,
-              total: totalProcessed
-            });
-            console.log(`Import completion email sent to admin: ${req.user.email}`);
+            // Get admin user email from database
+            const [adminRows] = await pool.execute(
+              'SELECT email, username, full_name FROM users WHERE id = ?',
+              [req.user.id]
+            );
+            
+            const adminUser = adminRows[0];
+            console.log(`Admin user lookup result:`, adminUser);
+            
+            if (adminUser && adminUser.email) {
+              console.log(`Sending completion email to admin: ${adminUser.email}`);
+              const emailResult = await emailService.sendImportCompletionEmail(adminUser.email, {
+                successful: creationResults.successful.length,
+                failed: creationResults.failed.length,
+                total: totalProcessed,
+                failedUsers: creationResults.failed
+              });
+              
+              if (emailResult.success) {
+                console.log(`✅ Import completion email sent successfully to admin: ${adminUser.email}`);
+              } else {
+                console.warn(`❌ Failed to send completion email to admin: ${emailResult.error}`);
+              }
+            } else {
+              console.warn(`❌ Admin user email not found for user ID: ${req.user.id}`);
+              console.warn(`Available user data:`, req.user);
+            }
           } catch (adminEmailError) {
-            console.warn(`Failed to send completion email to admin:`, adminEmailError.message);
+            console.error(`❌ Error sending completion email to admin:`, adminEmailError.message);
           }
 
           console.log(`=== BULK USER IMPORT COMPLETED ===`);

@@ -28,8 +28,12 @@ const AttachmentCountBadge = ({ taskId }) => {
   if (count === 0) return null;
 
   return (
-    <span className="attachment-badge">
+    <span 
+      className="attachment-badge"
+      aria-label={`${count} attachment${count !== 1 ? 's' : ''}`}
+    >
       <span aria-hidden="true">Files</span>
+      <span className="sr-only">{count} attachment{count !== 1 ? 's' : ''}</span>
       {count} file{count !== 1 ? 's' : ''}
     </span>
   );
@@ -300,34 +304,46 @@ const TaskCard = ({ task, onUpdate, onDelete }) => {
           </div>
         
         {/* Description - Read-only for members */}
-        <div className="form-group">
+        <div className="mb-3">
+          <label className="form-label" htmlFor={`task-description-${task.id}`}>
+            Task Description
+          </label>
           <textarea
+            id={`task-description-${task.id}`}
             value={editedTask.description}
             onChange={canEditContent ? (e) => setEditedTask({...editedTask, description: e.target.value}) : undefined}
             readOnly={!canEditContent}
             rows="3"
             className={`form-textarea ${!canEditContent ? 'form-textarea-readonly' : ''}`}
             placeholder="Task description"
+            aria-describedby={!canEditContent ? `task-description-help-${task.id}` : undefined}
           />
           {!canEditContent && (
-            <div className="form-help">
+            <small id={`task-description-help-${task.id}`} className="form-help">
               Note: Description can only be edited by managers and admins
-            </div>
+            </small>
           )}
         </div>
 
         {/* Status - Editable by all roles */}
-        <div className="form-group">
-          <label className="form-label">Status:</label>
+        <div className="mb-3">
+          <label className="form-label" htmlFor={`task-status-${task.id}`}>
+            Task Status
+          </label>
           <select
+            id={`task-status-${task.id}`}
             value={editedTask.status}
             onChange={(e) => setEditedTask({...editedTask, status: e.target.value})}
-            className="task-status-select"
+            className="form-select"
+            aria-describedby={`task-status-help-${task.id}`}
           >
             <option value="todo">To Do</option>
             <option value="in-progress">In Progress</option>
             <option value="done">Done</option>
           </select>
+          <small id={`task-status-help-${task.id}`} className="form-help">
+            You can update the task status
+          </small>
         </div>
 
         {/* Admin/Manager only fields */}
@@ -344,13 +360,18 @@ const TaskCard = ({ task, onUpdate, onDelete }) => {
             
             <div className="task-edit-grid">
               {/* Team Selection */}
-              <div>
-                <label className="task-form-label-small">Team:</label>
+              <div className="mb-3">
+                <label className="form-label required" htmlFor={`task-team-${task.id}`}>
+                  Team
+                </label>
                 <select
+                  id={`task-team-${task.id}`}
                   value={editedTask.team_id || ''}
                   onChange={(e) => handleTeamChange(e.target.value)}
                   className="form-select"
                   disabled={loadingTeams}
+                  aria-describedby={`task-team-help-${task.id}`}
+                  required
                 >
                   <option value="">Select Team *</option>
                   {teams.map(team => {
@@ -365,16 +386,23 @@ const TaskCard = ({ task, onUpdate, onDelete }) => {
                     );
                   })}
                 </select>
+                <small id={`task-team-help-${task.id}`} className="form-help">
+                  Select which team this task belongs to
+                </small>
               </div>
 
               {/* Assignment - Only show if team is selected */}
-              <div>
-                <label className="task-form-label-small">Assign to:</label>
+              <div className="mb-3">
+                <label className="form-label" htmlFor={`task-assignee-${task.id}`}>
+                  Assign to
+                </label>
                 <select
+                  id={`task-assignee-${task.id}`}
                   value={editedTask.assigned_to || ''}
                   onChange={(e) => setEditedTask({...editedTask, assigned_to: e.target.value ? parseInt(e.target.value) : null})}
                   className="form-select"
                   disabled={!editedTask.team_id || loadingUsers}
+                  aria-describedby={`task-assignee-help-${task.id}`}
                 >
                   <option value="">Unassigned</option>
                   {users.map(user => (
@@ -383,34 +411,51 @@ const TaskCard = ({ task, onUpdate, onDelete }) => {
                     </option>
                   ))}
                 </select>
+                <small id={`task-assignee-help-${task.id}`} className="form-help">
+                  {!editedTask.team_id ? 'Select a team first to see available members' : 'Choose a team member to assign this task to'}
+                </small>
                 {editedTask.assigned_to && !users.find(u => u.id === editedTask.assigned_to) && (
-                  <small className="task-form-warning">
+                  <div className="form-warning" role="alert">
                     Warning: Currently assigned user is not in this team
-                  </small>
+                  </div>
                 )}
               </div>
               
-              <div className="form-group">
-                <label className="task-form-label-small">Priority:</label>
+              <div className="mb-3">
+                <label className="form-label" htmlFor={`task-priority-${task.id}`}>
+                  Priority Level
+                </label>
                 <select
+                  id={`task-priority-${task.id}`}
                   value={editedTask.priority}
                   onChange={(e) => setEditedTask({...editedTask, priority: e.target.value})}
                   className="form-select"
+                  aria-describedby={`task-priority-help-${task.id}`}
                 >
                   <option value="low">Low Priority</option>
                   <option value="medium">Medium Priority</option>
                   <option value="high">High Priority</option>
                 </select>
+                <small id={`task-priority-help-${task.id}`} className="form-help">
+                  Set the importance level of this task
+                </small>
               </div>
 
-              <div className="form-group">
-                <label className="task-form-label-small">Due Date:</label>
+              <div className="mb-3">
+                <label className="form-label" htmlFor={`task-due-date-${task.id}`}>
+                  Due Date
+                </label>
                 <input
+                  id={`task-due-date-${task.id}`}
                   type="date"
                   value={editedTask.due_date || ''}
                   onChange={(e) => setEditedTask({...editedTask, due_date: e.target.value})}
                   className="form-input"
+                  aria-describedby={`task-due-date-help-${task.id}`}
                 />
+                <small id={`task-due-date-help-${task.id}`} className="form-help">
+                  Optional: Set when this task should be completed
+                </small>
               </div>
             </div>
           </div>
@@ -467,21 +512,30 @@ const TaskCard = ({ task, onUpdate, onDelete }) => {
   }
 
   return (
-    <div className={`task-card ${isOverdue ? 'overdue' : ''}`}>
+    <article 
+      className={`task-card ${isOverdue ? 'overdue' : ''}`}
+      role="article"
+      aria-labelledby={`task-title-${task.id}`}
+      aria-describedby={`task-description-${task.id} task-meta-${task.id}`}
+    >
       {isOverdue && (
-        <div className="overdue-badge">
+        <div className="overdue-badge" role="alert" aria-live="polite">
+          <span className="sr-only">Alert: This task is </span>
           OVERDUE
         </div>
       )}
 
-      <div className="task-card-header">
-        <h3 className="task-card-title">{task.title}</h3>
-        <div className="task-card-actions">
+      <header className="task-card-header">
+        <h3 id={`task-title-${task.id}`} className="task-card-title">
+          {task.title}
+        </h3>
+        <div className="task-card-actions" role="group" aria-label="Task actions">
           {canEditTask && (
             <button
               onClick={startEditing}
               className="btn btn-accent btn-sm"
               title={canFullEdit ? 'Edit task (full access)' : 'Edit task (limited access)'}
+              aria-label={`Edit task: ${task.title}`}
             >
               {canFullEdit ? 'Edit' : 'Update'}
             </button>
@@ -490,49 +544,70 @@ const TaskCard = ({ task, onUpdate, onDelete }) => {
             <button
               onClick={handleDelete}
               className="btn btn-danger btn-sm"
+              aria-label={`Delete task: ${task.title}`}
             >
               Delete
             </button>
           )}
         </div>
-      </div>
+      </header>
 
-      <p className="task-card-description">{task.description}</p>
+      <div id={`task-description-${task.id}`} className="task-card-description">
+        {task.description}
+      </div>
       
-      <div className="task-card-badges">
+      <div className="task-card-badges" role="group" aria-label="Task information">
         {/* Team Badge */}
         {task.team_name && (
           <span 
             className="team-badge team-badge-dynamic"
             style={{ '--team-color': task.team_color }}
+            aria-label={`Team: ${task.team_name}`}
           >
             <span className="team-badge-icon" aria-hidden="true">Team</span>
+            <span className="sr-only">Team: </span>
             {task.team_name}
           </span>
         )}
 
         {/* Status Badge */}
-        <span className={`status-badge ${task.status}`}>
+        <span 
+          className={`status-badge ${task.status}`}
+          aria-label={`Status: ${task.status.replace('-', ' ')}`}
+        >
+          <span className="sr-only">Status: </span>
           {task.status.toUpperCase().replace('-', ' ')}
         </span>
         
         {/* Priority Badge */}
-        <span className={`priority-badge ${task.priority}`}>
+        <span 
+          className={`priority-badge ${task.priority}`}
+          aria-label={`Priority: ${task.priority}`}
+        >
+          <span className="sr-only">Priority: </span>
           {task.priority.toUpperCase()} PRIORITY
         </span>
 
         {/* Assignee Badge */}
         {(task.assigned_to_username || task.assigned_to_name) && (
-          <span className="assignee-badge">
+          <span 
+            className="assignee-badge"
+            aria-label={`Assigned to: ${task.assigned_to_name || task.assigned_to_username}`}
+          >
             <span aria-hidden="true">👤</span>
+            <span className="sr-only">Assigned to: </span>
             {task.assigned_to_name || task.assigned_to_username}
           </span>
         )}
 
         {/* Due Date Badge */}
         {task.due_date && (
-          <span className={`due-date-badge ${isOverdue ? 'overdue' : 'normal'}`}>
+          <span 
+            className={`due-date-badge ${isOverdue ? 'overdue' : 'normal'}`}
+            aria-label={`Due date: ${new Date(task.due_date).toLocaleDateString()}${isOverdue ? ' (overdue)' : ''}`}
+          >
             <span aria-hidden="true">Due</span>
+            <span className="sr-only">Due date: </span>
             {new Date(task.due_date).toLocaleDateString()}
           </span>
         )}
@@ -541,19 +616,24 @@ const TaskCard = ({ task, onUpdate, onDelete }) => {
         <AttachmentCountBadge taskId={task.id} />
       </div>
       
-      <p className="task-card-meta">
+      <footer id={`task-meta-${task.id}`} className="task-card-meta">
+        <span className="sr-only">Task metadata: </span>
         Created: {new Date(task.created_at).toLocaleDateString()}
         {task.updated_at !== task.created_at && (
           <span> • Updated: {new Date(task.updated_at).toLocaleDateString()}</span>
         )}
-      </p>
+      </footer>
 
       {/* Attachments Section */}
-      <TaskAttachments taskId={task.id} isEditing={false} />
+      <section aria-label={`Attachments for task: ${task.title}`}>
+        <TaskAttachments taskId={task.id} isEditing={false} />
+      </section>
 
       {/* Comments Section */}
-      <TaskComments taskId={task.id} />
-    </div>
+      <section aria-label={`Comments for task: ${task.title}`}>
+        <TaskComments taskId={task.id} />
+      </section>
+    </article>
   );
 };
 

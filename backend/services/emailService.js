@@ -71,14 +71,14 @@ class EmailService {
    * Send bulk import completion notification
    */
   async sendImportCompletionEmail(adminEmail, importResults) {
-    const { successful, failed, total } = importResults;
+    const { successful, failed, total, failedUsers = [] } = importResults;
 
     const subject = `User Import Completed - ${successful}/${total} users imported`;
     const htmlContent = this.generateImportCompletionTemplate({
       successful,
-      failed,
+      failed: typeof failed === 'number' ? failed : (failedUsers?.length || 0),
       total,
-      failedUsers: failed.slice(0, 10) // Show first 10 failed users
+      failedUsers: Array.isArray(failedUsers) ? failedUsers.slice(0, 10) : []
     });
 
     return await this.sendEmail({
@@ -310,7 +310,11 @@ class EmailService {
   /**
    * Generate import completion email template
    */
-  generateImportCompletionTemplate({ successful, failed, total, failedUsers }) {
+  generateImportCompletionTemplate({ successful, failed, total, failedUsers = [] }) {
+    // Ensure failedUsers is an array
+    const failedUsersArray = Array.isArray(failedUsers) ? failedUsers : [];
+    const failedCount = typeof failed === 'number' ? failed : failedUsersArray.length;
+    
     return `
 <!DOCTYPE html>
 <html>
@@ -348,26 +352,26 @@ class EmailService {
                     <div>Successful</div>
                 </div>
                 <div class="stat">
-                    <div class="stat-number" style="color: #f44336;">${failed.length}</div>
+                    <div class="stat-number" style="color: #f44336;">${failedCount}</div>
                     <div>Failed</div>
                 </div>
             </div>
             
-            ${failed.length > 0 ? `
+            ${failedCount > 0 && failedUsersArray.length > 0 ? `
             <div class="failed-list">
                 <h3>Failed Imports:</h3>
                 <ul>
-                    ${failedUsers.map(user => `
-                        <li><strong>${user.username || user.email}</strong>: ${user.error}</li>
+                    ${failedUsersArray.map(user => `
+                        <li><strong>${user.username || user.email || 'Unknown User'}</strong>: ${user.error || 'Unknown error'}</li>
                     `).join('')}
-                    ${failed.length > 10 ? `<li><em>... and ${failed.length - 10} more</em></li>` : ''}
+                    ${failedCount > 10 ? `<li><em>... and ${failedCount - 10} more</em></li>` : ''}
                 </ul>
             </div>
             ` : ''}
             
             <p>The user import process has been completed. ${successful > 0 ? `${successful} users have been successfully created and welcome emails have been sent.` : ''}</p>
             
-            ${failed.length > 0 ? '<p>Please review the failed imports and correct any issues before re-importing those users.</p>' : ''}
+            ${failedCount > 0 ? '<p>Please review the failed imports and correct any issues before re-importing those users.</p>' : ''}
         </div>
         
         <div class="footer">

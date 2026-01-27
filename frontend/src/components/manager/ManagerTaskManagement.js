@@ -332,6 +332,7 @@ const ManagerTaskManagement = ({ teams, onRefresh }) => {
                   <span 
                     className="manager-task-priority-badge"
                     style={{ backgroundColor: getPriorityColor(task.priority) }}
+                    aria-label={`Priority: ${task.priority}`}
                   >
                     {task.priority}
                   </span>

@@ -256,6 +256,13 @@ router.get('/stats', authenticateJWT, async (req, res) => {
       // Task statistics
       total_tasks: taskStats[0].total_tasks,
       completed_tasks: taskStats[0].completed_tasks,
+      done_count: taskStats[0].completed_tasks, // Add alias for frontend compatibility
+      in_progress_count: taskStats[0].in_progress_tasks, // Add alias for frontend compatibility
+      todo_count: taskStats[0].todo_tasks, // Add alias for frontend compatibility
+      overdue_count: taskStats[0].overdue_tasks, // Add alias for frontend compatibility
+      high_priority_count: taskStats[0].high_priority_tasks, // Add alias for frontend compatibility
+      
+      // Legacy field names for backward compatibility
       in_progress_tasks: taskStats[0].in_progress_tasks,
       todo_tasks: taskStats[0].todo_tasks,
       overdue_tasks: taskStats[0].overdue_tasks,
