@@ -140,6 +140,8 @@ const Sidebar = ({ collapsed, isMobile, onCollapse }) => {
       className={`sidebar ${collapsed ? 'collapsed' : ''} ${isMobile ? 'mobile' : ''} ${isMobile && !collapsed ? 'show' : ''}`}
       role="navigation"
       aria-label="Main navigation"
+      aria-hidden={collapsed}
+      inert={collapsed ? '' : undefined}
       onKeyDown={handleKeyDown}
     >
       {/* Sidebar Header */}
@@ -159,7 +161,7 @@ const Sidebar = ({ collapsed, isMobile, onCollapse }) => {
 
       {/* Navigation Items */}
       <div className="nav-section">
-        <ul className="nav-list" role="menubar">
+        <ul className="nav-list" role="menubar" aria-hidden={collapsed}>
           {navigationItems.map((item, index) => (
             <li key={item.id} role="none">
               <button
@@ -168,9 +170,8 @@ const Sidebar = ({ collapsed, isMobile, onCollapse }) => {
                 onClick={() => handleNavigation(item.path, index)}
                 role="menuitem"
                 aria-current={isActive(item.path) ? 'page' : undefined}
-                aria-label={collapsed ? item.label : `${item.label} - ${item.description}`}
-                tabIndex={collapsed ? -1 : (focusedIndex === index ? 0 : -1)}
-                aria-hidden={collapsed}
+                aria-label={`${item.label} - ${item.description}`}
+                tabIndex={collapsed ? -1 : (index === 0 ? 0 : -1)}
               >
                 <span className="nav-icon" aria-hidden="true">
                   {item.icon}
@@ -221,11 +222,13 @@ const Sidebar = ({ collapsed, isMobile, onCollapse }) => {
 
         .sidebar.collapsed {
           width: 60px;
+          pointer-events: none;
         }
 
-        /* Hide collapsed sidebar content from screen readers */
-        .sidebar.collapsed .nav-item[aria-hidden="true"] {
-          pointer-events: none;
+        /* Hide collapsed sidebar content from screen readers and keyboard */
+        .sidebar.collapsed .nav-list,
+        .sidebar.collapsed .nav-item {
+          visibility: hidden;
         }
 
         .sidebar.collapsed .nav-label {

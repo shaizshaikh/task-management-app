@@ -8,6 +8,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useAuth } from '../../contexts/AuthContext';
 import { useRealtime } from '../../hooks/useRealtime';
+import FocusTrapModal from '../FocusTrapModal';
 
 const TeamManagement = () => {
   const { user, isAdmin, isManager } = useAuth();
@@ -291,29 +292,37 @@ const TeamManagement = () => {
 
       {/* Create Team Modal */}
       {showCreateModal && (
-        <div className="modal-overlay performance-optimized">
+        <FocusTrapModal
+          isOpen={showCreateModal}
+          onClose={() => setShowCreateModal(false)}
+          className="modal-overlay performance-optimized"
+          ariaLabelledBy="create-team-title"
+        >
           <div className="modal-content modal-medium performance-optimized">
-            <h3 className="team-create-modal-title">Create New Team</h3>
+            <h3 id="create-team-title" className="team-create-modal-title">Create New Team</h3>
             
             <form onSubmit={handleCreateTeam}>
               <div className="team-form-group">
-                <label className="team-form-label">
+                <label className="team-form-label" htmlFor="team-name-input">
                   Team Name *
                 </label>
                 <input
+                  id="team-name-input"
                   type="text"
                   value={newTeam.name}
                   onChange={(e) => setNewTeam({ ...newTeam, name: e.target.value })}
                   className="team-form-input"
                   required
+                  aria-required="true"
                 />
               </div>
 
               <div className="team-form-group">
-                <label className="team-form-label">
+                <label className="team-form-label" htmlFor="team-description-input">
                   Description
                 </label>
                 <textarea
+                  id="team-description-input"
                   value={newTeam.description}
                   onChange={(e) => setNewTeam({ ...newTeam, description: e.target.value })}
                   rows="3"
@@ -322,16 +331,34 @@ const TeamManagement = () => {
               </div>
 
               <div className="team-form-group">
-                <label className="team-form-label">
+                <label className="team-form-label" htmlFor="team-color-input">
                   Team Color
+                  <span className="sr-only">
+                    Current color: {newTeam.color}. Use arrow keys or click to select a color.
+                  </span>
                 </label>
-                <input
-                  type="color"
-                  value={newTeam.color}
-                  onChange={(e) => setNewTeam({ ...newTeam, color: e.target.value })}
-                  className="team-form-input"
-                  style={{ width: '60px', height: '40px' }}
-                />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <input
+                    id="team-color-input"
+                    type="color"
+                    value={newTeam.color}
+                    onChange={(e) => setNewTeam({ ...newTeam, color: e.target.value })}
+                    className="team-form-input"
+                    style={{ width: '60px', height: '40px' }}
+                    aria-label={`Team color picker, current color ${newTeam.color}`}
+                  />
+                  <span 
+                    className="color-preview-text"
+                    aria-live="polite"
+                    style={{ 
+                      fontSize: '0.875rem', 
+                      color: 'var(--text-secondary)',
+                      fontWeight: 500
+                    }}
+                  >
+                    {newTeam.color}
+                  </span>
+                </div>
               </div>
 
               <div className="modal-actions">
@@ -351,20 +378,27 @@ const TeamManagement = () => {
               </div>
             </form>
           </div>
-        </div>
+        </FocusTrapModal>
       )}
 
       {/* Team Members Modal */}
       {showMembersModal && selectedTeam && (
-        <div className="modal-overlay performance-optimized">
+        <FocusTrapModal
+          isOpen={showMembersModal}
+          onClose={() => setShowMembersModal(false)}
+          className="modal-overlay performance-optimized"
+          ariaLabelledBy="team-members-title"
+        >
           <div className="modal-content team-members-modal performance-optimized">
             <div className="team-members-header">
-              <h3 className="team-members-title">
+              <h3 id="team-members-title" className="team-members-title">
                 {selectedTeam.name} Members ({teamMembers.length})
               </h3>
               <button
                 onClick={() => setShowMembersModal(false)}
                 className="team-members-close-button"
+                aria-label={`Close ${selectedTeam.name} members dialog`}
+                title="Close dialog"
               >
                 ✕
               </button>
@@ -375,11 +409,12 @@ const TeamManagement = () => {
               <div className="team-add-member-section">
                 <h4 className="team-add-member-title">Add New Member</h4>
                 <div className="team-add-member-buttons">
-                  {getAvailableUsers().slice(0, 5).map(user => (
+                  {getAvailableUsers().map(user => (
                     <button
                       key={user.id}
                       onClick={() => handleAddMember(user.id)}
                       className="team-add-member-button"
+                      aria-label={`Add ${user.full_name || user.username} to team`}
                     >
                       + {user.full_name || user.username}
                     </button>
@@ -434,7 +469,7 @@ const TeamManagement = () => {
               )}
             </div>
           </div>
-        </div>
+        </FocusTrapModal>
       )}
     </div>
   );

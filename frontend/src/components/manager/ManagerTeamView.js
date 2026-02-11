@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import FocusTrapModal from '../FocusTrapModal';
 
 const ManagerTeamView = ({ teams, onRefresh }) => {
   const { user, isAdmin } = useAuth();
@@ -224,9 +225,17 @@ const ManagerTeamView = ({ teams, onRefresh }) => {
 
       {/* Add Member Modal */}
       {showAddMemberModal && (
-        <div className="manager-modal-overlay">
+        <FocusTrapModal
+          isOpen={showAddMemberModal}
+          onClose={() => {
+            setShowAddMemberModal(false);
+            setNewMember({ userId: '', role: 'member' });
+          }}
+          className="manager-modal-overlay"
+          ariaLabelledby="add-member-title"
+        >
           <div className="manager-modal-content">
-            <h3 className="manager-modal-title">
+            <h3 id="add-member-title" className="manager-modal-title">
               Add Team Member to {selectedTeam?.name}
             </h3>
 
@@ -286,7 +295,7 @@ const ManagerTeamView = ({ teams, onRefresh }) => {
               </button>
             </div>
           </div>
-        </div>
+        </FocusTrapModal>
       )}
     </div>
   );

@@ -12,6 +12,7 @@ import DeletedUsersView from './DeletedUsersView';
 import UserImportDialog from './UserImportDialog';
 import ImportHistoryView from './ImportHistoryView';
 import UserExportDialog from './UserExportDialog';
+import FocusTrapModal from '../FocusTrapModal';
 
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
@@ -671,9 +672,17 @@ const UserManagement = () => {
 
       {/* Role Change Modal */}
       {showRoleModal && editingUser && (
-        <div className="modal-overlay">
+        <FocusTrapModal
+          isOpen={showRoleModal}
+          onClose={() => {
+            setShowRoleModal(false);
+            setEditingUser(null);
+          }}
+          className="modal-overlay"
+          ariaLabelledBy="role-change-title"
+        >
           <div className="modal-content">
-            <h3 className="modal-title">
+            <h3 id="role-change-title" className="modal-title">
               Change Role for {editingUser.full_name || editingUser.username}
             </h3>
             
@@ -709,14 +718,19 @@ const UserManagement = () => {
               </button>
             </div>
           </div>
-        </div>
+        </FocusTrapModal>
       )}
 
       {/* Create User Modal */}
       {showCreateModal && (
-        <div className="modal-overlay">
+        <FocusTrapModal
+          isOpen={showCreateModal}
+          onClose={() => setShowCreateModal(false)}
+          className="modal-overlay"
+          ariaLabelledBy="create-user-title"
+        >
           <div className="modal-content">
-            <h3 className="modal-title">Create New User</h3>
+            <h3 id="create-user-title" className="modal-title">Create New User</h3>
             
             <form onSubmit={handleCreateUser}>
               <div className="form-group-modal">
@@ -828,7 +842,7 @@ const UserManagement = () => {
               </div>
             </form>
           </div>
-        </div>
+        </FocusTrapModal>
       )}
 
       {/* User Delete Confirmation Modal */}

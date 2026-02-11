@@ -8,7 +8,6 @@ import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
 import TaskCard from '../TaskCard';
 import { showError, showValidationWarning, announceSuccess } from '../utils/accessibleNotifications';
-import MemberDashboard from '../components/MemberDashboard';
 import { useTaskRealtime, useRealtime } from '../hooks/useRealtime';
 
 const TasksPage = () => {
@@ -283,9 +282,6 @@ const TasksPage = () => {
 
   return (
     <div className="page-container">
-      {/* Show dashboard for members and viewers */}
-      {!isAdmin() && !isManager() && <MemberDashboard />}
-      
       <div className="page-header">
         <h2 className="page-title">
           Tasks ({tasks.length})

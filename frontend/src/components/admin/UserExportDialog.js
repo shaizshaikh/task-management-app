@@ -3,14 +3,35 @@
  * Handles user data export to CSV/Excel formats
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import useFocusTrap from '../../hooks/useFocusTrap';
 
 const UserExportDialog = ({ onClose }) => {
   const [exportFormat, setExportFormat] = useState('csv');
   const [includeDeleted, setIncludeDeleted] = useState(false);
   const [exporting, setExporting] = useState(false);
+
+  // Use focus trap hook
+  const modalRef = useFocusTrap(true);
+
+  useEffect(() => {
+    // Handle escape key
+    const handleEscape = (e) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = '';
+    };
+  }, [onClose]);
 
   const handleExport = async () => {
     setExporting(true);
@@ -85,11 +106,11 @@ const UserExportDialog = ({ onClose }) => {
 
   return (
     <div className="modal-overlay">
-      <div className="modal-content modal-medium">
+      <div ref={modalRef} className="modal-content modal-medium" tabIndex={-1} role="dialog" aria-modal="true" aria-labelledby="export-users-title">
         {/* Header */}
         <div className="export-header">
           <span className="export-icon">Export</span>
-          <h3 className="export-title">
+          <h3 id="export-users-title" className="export-title">
             Export Users
           </h3>
         </div>

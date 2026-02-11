@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useAuth } from './contexts/AuthContext';
+import MemberDashboard from './components/MemberDashboard';
 
 const Dashboard = () => {
+  const { user, isAdmin, isManager } = useAuth();
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -20,6 +23,24 @@ const Dashboard = () => {
     }
   };
 
+  // Members and viewers should see their team dashboard
+  if (!isAdmin() && !isManager()) {
+    return (
+      <div className="page-container">
+        <header className="page-header">
+          <div>
+            <h2 className="page-title">Dashboard</h2>
+            <p className="page-subtitle">
+              Your team overview and statistics
+            </p>
+          </div>
+        </header>
+        <MemberDashboard />
+      </div>
+    );
+  }
+
+  // Admin and Manager see the system dashboard
   if (loading) {
     return (
       <div className="page-container">
@@ -51,9 +72,9 @@ const Dashboard = () => {
       {/* Page Header */}
       <header className="page-header">
         <div>
-          <h2 className="page-title">Project Dashboard</h2>
+          <h2 className="page-title">System Dashboard</h2>
           <p className="page-subtitle">
-            Overview of tasks, progress, and team performance
+            Overview of all tasks, progress, and team performance
           </p>
         </div>
       </header>

@@ -1,9 +1,10 @@
 /**
- * Modern Dark Theme Modal Component - PERFORMANCE OPTIMIZED
- * Reduced DOM operations and improved focus management
+ * Modern Dark Theme Modal Component - WCAG 2.1 COMPLIANT
+ * Includes proper focus trap and accessibility features
  */
 
-import React, { useEffect, useRef, useCallback } from 'react';
+import React, { useEffect, useCallback } from 'react';
+import useFocusTrap from '../hooks/useFocusTrap';
 import './Modal.css';
 
 const Modal = ({ 
@@ -16,8 +17,8 @@ const Modal = ({
   closeOnOverlayClick = true,
   showCloseButton = true
 }) => {
-  const modalRef = useRef(null);
-  const previousActiveElement = useRef(null);
+  // Use focus trap hook for WCAG compliance
+  const modalRef = useFocusTrap(isOpen);
 
   // Memoized escape handler
   const handleEscape = useCallback((e) => {
@@ -35,34 +36,14 @@ const Modal = ({
 
   useEffect(() => {
     if (isOpen) {
-      // Store focus and prevent scroll
-      previousActiveElement.current = document.activeElement;
+      // Prevent scroll and add escape key listener
       document.addEventListener('keydown', handleEscape);
       document.body.style.overflow = 'hidden';
-      
-      // Optimized focus management - single RAF
-      requestAnimationFrame(() => {
-        if (modalRef.current) {
-          const firstFocusable = modalRef.current.querySelector(
-            'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"]):not([disabled])'
-          );
-          if (firstFocusable) {
-            firstFocusable.focus();
-          } else {
-            modalRef.current.focus();
-          }
-        }
-      });
     }
 
     return () => {
       document.removeEventListener('keydown', handleEscape);
       document.body.style.overflow = '';
-      
-      // Restore focus
-      if (previousActiveElement.current && !isOpen) {
-        previousActiveElement.current.focus();
-      }
     };
   }, [isOpen, handleEscape]);
 

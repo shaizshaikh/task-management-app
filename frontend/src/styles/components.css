@@ -2421,7 +2421,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 9999;
+  z-index: 10000;
   /* Removed backdrop-filter for performance */
   /* Performance optimizations */
   will-change: opacity;
@@ -2439,7 +2439,7 @@
   overflow-y: auto;
   box-shadow: var(--shadow-xl);
   position: relative;
-  z-index: 10000;
+  z-index: 10001;
   /* Performance optimizations */
   will-change: transform;
   contain: layout style paint;
@@ -2696,7 +2696,7 @@
   position: relative;
 }
 
-/* Ensure modals are above admin content */
+/* Ensure modals are above all navigation and content */
 .modal-overlay {
   z-index: 10000 !important;
 }

@@ -140,12 +140,7 @@
     padding: var(--spacing-md);
   }
 
-  /* Grid adjustments */
-  .dashboard-grid {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: var(--spacing-md);
-  }
-
+  /* Grid adjustments - Only apply on mobile, not desktop */
   .form-grid {
     grid-template-columns: 1fr;
     gap: var(--spacing-md);
@@ -173,12 +168,6 @@
   .card-header,
   .card-footer {
     padding: var(--spacing-sm);
-  }
-
-  /* Single column layout */
-  .dashboard-grid {
-    grid-template-columns: 1fr;
-    gap: var(--spacing-sm);
   }
 
   /* Stack form actions */
@@ -592,7 +581,7 @@
   }
 
   .dashboard-grid {
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .stat-card {

@@ -48,6 +48,46 @@ const TopBar = ({ user, onToggleSidebar, sidebarCollapsed }) => {
     }
   };
 
+  // Handle profile menu keyboard navigation with arrow keys
+  const handleProfileMenuKeyDown = (event) => {
+    const { key } = event;
+    const menuItems = event.currentTarget.querySelectorAll('.menu-item');
+    const currentIndex = Array.from(menuItems).findIndex(item => item === document.activeElement);
+
+    switch (key) {
+      case 'ArrowDown':
+        event.preventDefault();
+        if (currentIndex < menuItems.length - 1) {
+          menuItems[currentIndex + 1].focus();
+        } else {
+          menuItems[0].focus();
+        }
+        break;
+      case 'ArrowUp':
+        event.preventDefault();
+        if (currentIndex > 0) {
+          menuItems[currentIndex - 1].focus();
+        } else {
+          menuItems[menuItems.length - 1].focus();
+        }
+        break;
+      case 'Home':
+        event.preventDefault();
+        menuItems[0].focus();
+        break;
+      case 'End':
+        event.preventDefault();
+        menuItems[menuItems.length - 1].focus();
+        break;
+      case 'Escape':
+        event.preventDefault();
+        setProfileMenuOpen(false);
+        break;
+      default:
+        break;
+    }
+  };
+
   const handleLogout = () => {
     setProfileMenuOpen(false);
     clearOnLogout(); // Clear notifications cache on logout
@@ -97,26 +137,10 @@ const TopBar = ({ user, onToggleSidebar, sidebarCollapsed }) => {
               ☰
             </span>
           </button>
-
-          {/* Breadcrumb / Page Title */}
-          <div className="page-info">
-            <div className="page-title">Task Management System</div>
-            <p className="page-subtitle">Enterprise Edition</p>
-          </div>
         </div>
 
         {/* Right Section */}
         <div className="top-bar-right">
-          {/* Connection Status */}
-          <div className="connection-status" title={connectionStatus.label}>
-            <div
-              className="status-indicator"
-              style={{ backgroundColor: connectionStatus.color }}
-              aria-hidden="true"
-            />
-            <span className="sr-only">{connectionStatus.label}</span>
-          </div>
-
           {/* Notifications */}
           <div className="notifications-container" ref={notificationsRef}>
             <button
@@ -236,8 +260,9 @@ const TopBar = ({ user, onToggleSidebar, sidebarCollapsed }) => {
                 className="profile-menu"
                 role="menu"
                 aria-label="User profile menu"
+                onKeyDown={handleProfileMenuKeyDown}
               >
-                <div className="menu-header">
+                <div className="menu-header" role="presentation">
                   <div className="user-details">
                     <p className="user-name">{user?.name || 'Unknown User'}</p>
                     <p className="user-email">{user?.email || 'No email'}</p>
@@ -247,7 +272,7 @@ const TopBar = ({ user, onToggleSidebar, sidebarCollapsed }) => {
                   </div>
                 </div>
 
-                <div className="menu-divider" />
+                <div className="menu-divider" role="presentation" />
 
                 <div className="menu-content">
                   <button
@@ -257,9 +282,10 @@ const TopBar = ({ user, onToggleSidebar, sidebarCollapsed }) => {
                       setProfileMenuOpen(false);
                       navigate('/profile');
                     }}
+                    tabIndex={0}
                   >
                     <span className="menu-icon" aria-hidden="true">👤</span>
-                    Profile Settings
+                    <span>Profile Settings</span>
                   </button>
                   <button
                     className="menu-item"
@@ -268,22 +294,24 @@ const TopBar = ({ user, onToggleSidebar, sidebarCollapsed }) => {
                       setProfileMenuOpen(false);
                       toast.info('Help documentation is being prepared. Contact your admin for support.');
                     }}
+                    tabIndex={0}
                   >
                     <span className="menu-icon" aria-hidden="true">❓</span>
-                    Help & Support
+                    <span>Help & Support</span>
                   </button>
                 </div>
 
-                <div className="menu-divider" />
+                <div className="menu-divider" role="presentation" />
 
                 <div className="menu-footer">
                   <button
                     className="menu-item logout-item"
                     onClick={handleLogout}
                     role="menuitem"
+                    tabIndex={0}
                   >
                     <span className="menu-icon" aria-hidden="true">🚪</span>
-                    Sign Out
+                    <span>Sign Out</span>
                   </button>
                 </div>
               </div>
@@ -352,47 +380,6 @@ const TopBar = ({ user, onToggleSidebar, sidebarCollapsed }) => {
 
         .hamburger-icon {
           font-size: 1.25rem;
-        }
-
-        .page-info {
-          display: flex;
-          flex-direction: column;
-        }
-
-        .page-title {
-          font-size: 1.125rem;
-          font-weight: 600;
-          color: var(--text-primary);
-          margin: 0;
-          line-height: 1.2;
-        }
-
-        .page-subtitle {
-          font-size: 0.75rem;
-          color: var(--text-secondary);
-          margin: 0;
-          line-height: 1.2;
-        }
-
-        .connection-status {
-          display: flex;
-          align-items: center;
-          gap: var(--spacing-xs);
-          padding: var(--spacing-xs) var(--spacing-sm);
-          border-radius: var(--radius-md);
-          background-color: var(--bg-tertiary);
-        }
-
-        .status-indicator {
-          width: 8px;
-          height: 8px;
-          border-radius: 50%;
-          animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.5; }
         }
 
         .notifications-container,
@@ -853,10 +840,6 @@ const TopBar = ({ user, onToggleSidebar, sidebarCollapsed }) => {
             right: var(--spacing-sm);
             min-width: auto;
             max-width: calc(100vw - 2 * var(--spacing-sm));
-          }
-
-          .connection-status {
-            display: none;
           }
 
           .top-bar-right {

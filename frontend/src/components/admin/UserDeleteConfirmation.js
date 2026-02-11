@@ -3,10 +3,11 @@
  * Handles user deletion with comprehensive confirmation and options
  */
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { extractErrorMessage } from '../../utils/errorUtils';
+import useFocusTrap from '../../hooks/useFocusTrap';
 
 const UserDeleteConfirmation = ({ user, onClose, onConfirm }) => {
   const [loading, setLoading] = useState(false);
@@ -15,8 +16,9 @@ const UserDeleteConfirmation = ({ user, onClose, onConfirm }) => {
   const [availableUsers, setAvailableUsers] = useState([]);
   const [userDetails, setUserDetails] = useState(null);
   const [confirmText, setConfirmText] = useState('');
-  const modalRef = useRef(null);
-  const firstInputRef = useRef(null);
+  
+  // Use focus trap hook
+  const modalRef = useFocusTrap(true);
 
   useEffect(() => {
     if (user) {
@@ -25,28 +27,22 @@ const UserDeleteConfirmation = ({ user, onClose, onConfirm }) => {
     }
   }, [user]);
 
-  // Focus management for modal
+  // Handle escape key
   useEffect(() => {
-    if (modalRef.current) {
-      // Focus the modal container
-      modalRef.current.focus();
-      
-      // Focus the first input after a short delay
-      setTimeout(() => {
-        if (firstInputRef.current) {
-          firstInputRef.current.focus();
-        }
-      }, 100);
-    }
+    const handleEscape = (e) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
 
-    // Prevent background scrolling and focus trapping
-    const originalOverflow = document.body.style.overflow;
+    document.addEventListener('keydown', handleEscape);
     document.body.style.overflow = 'hidden';
 
     return () => {
-      document.body.style.overflow = originalOverflow;
+      document.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = '';
     };
-  }, []);
+  }, [onClose]);
 
   const loadUserDetails = async () => {
     try {
@@ -161,11 +157,6 @@ const UserDeleteConfirmation = ({ user, onClose, onConfirm }) => {
         ref={modalRef}
         className="modal-content modal-medium"
         tabIndex={-1}
-        onKeyDown={(e) => {
-          if (e.key === 'Escape') {
-            onClose();
-          }
-        }}
       >
         {/* Header */}
         <div className="delete-dialog-header">
@@ -268,7 +259,6 @@ const UserDeleteConfirmation = ({ user, onClose, onConfirm }) => {
           </label>
           <textarea
             id="deletion-reason"
-            ref={firstInputRef}
             value={reason}
             onChange={(e) => setReason(e.target.value)}
             placeholder="Please provide a reason for deleting this user account..."

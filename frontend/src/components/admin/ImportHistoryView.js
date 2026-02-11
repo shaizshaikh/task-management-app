@@ -6,6 +6,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import useFocusTrap from '../../hooks/useFocusTrap';
 
 const ImportHistoryView = ({ onClose }) => {
   const [importHistory, setImportHistory] = useState([]);
@@ -17,9 +18,27 @@ const ImportHistoryView = ({ onClose }) => {
     has_more: false
   });
 
+  // Use focus trap hook
+  const modalRef = useFocusTrap(true);
+
   useEffect(() => {
     loadImportHistory();
-  }, []);
+
+    // Handle escape key
+    const handleEscape = (e) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = '';
+    };
+  }, [onClose]);
 
   const loadImportHistory = async (offset = 0) => {
     try {
@@ -102,10 +121,10 @@ const ImportHistoryView = ({ onClose }) => {
 
   return (
     <div className="modal-overlay">
-      <div className="modal-content import-history-modal">
+      <div ref={modalRef} className="modal-content import-history-modal" tabIndex={-1} role="dialog" aria-modal="true" aria-labelledby="import-history-title">
         {/* Header */}
         <div className="modal-header">
-          <h2 className="modal-title">
+          <h2 id="import-history-title" className="modal-title">
             Import History ({pagination.total})
           </h2>
           <button

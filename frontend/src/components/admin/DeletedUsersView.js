@@ -6,6 +6,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import useFocusTrap from '../../hooks/useFocusTrap';
 
 const DeletedUsersView = ({ onClose }) => {
   const [deletedUsers, setDeletedUsers] = useState([]);
@@ -18,9 +19,27 @@ const DeletedUsersView = ({ onClose }) => {
     has_more: false
   });
 
+  // Use focus trap hook
+  const modalRef = useFocusTrap(true);
+
   useEffect(() => {
     loadDeletedUsers();
-  }, []);
+
+    // Handle escape key
+    const handleEscape = (e) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = '';
+    };
+  }, [onClose]);
 
   const loadDeletedUsers = async (offset = 0) => {
     try {
@@ -96,10 +115,10 @@ const DeletedUsersView = ({ onClose }) => {
 
   return (
     <div className="modal-overlay">
-      <div className="modal-content deleted-users-modal">
+      <div ref={modalRef} className="modal-content deleted-users-modal" tabIndex={-1} role="dialog" aria-modal="true" aria-labelledby="deleted-users-title">
         {/* Header */}
         <div className="modal-header">
-          <h2 className="modal-title">
+          <h2 id="deleted-users-title" className="modal-title">
             Deleted Users ({pagination.total})
           </h2>
           <button

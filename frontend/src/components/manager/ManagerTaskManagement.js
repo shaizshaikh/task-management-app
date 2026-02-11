@@ -7,6 +7,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import FocusTrapModal from '../FocusTrapModal';
 
 const ManagerTaskManagement = ({ teams, onRefresh }) => {
   const { user, isAdmin } = useAuth();
@@ -411,9 +412,24 @@ const ManagerTaskManagement = ({ teams, onRefresh }) => {
 
       {/* Create Task Modal */}
       {showCreateModal && (
-        <div className="manager-modal-overlay">
+        <FocusTrapModal
+          isOpen={showCreateModal}
+          onClose={() => {
+            setShowCreateModal(false);
+            setNewTask({
+              title: '',
+              description: '',
+              priority: 'medium',
+              team_id: '',
+              assigned_to: '',
+              due_date: ''
+            });
+          }}
+          className="manager-modal-overlay"
+          ariaLabelledby="create-task-title"
+        >
           <div className="manager-modal-content manager-modal-wide">
-            <h3 className="manager-modal-title">
+            <h3 id="create-task-title" className="manager-modal-title">
               Create New Task
             </h3>
 
@@ -534,7 +550,7 @@ const ManagerTaskManagement = ({ teams, onRefresh }) => {
               </button>
             </div>
           </div>
-        </div>
+        </FocusTrapModal>
       )}
     </div>
   );

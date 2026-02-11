@@ -7,12 +7,34 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import Sidebar from './Sidebar';
 import TopBar from './TopBar';
+import useModalDetector from '../../hooks/useModalDetector';
 import '../../styles/globals.css';
 
 const AppLayout = ({ children }) => {
   const { user, isAuthenticated } = useAuth();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [previousSidebarState, setPreviousSidebarState] = useState(null);
+  const [wasModalOpen, setWasModalOpen] = useState(false);
+  const isModalOpen = useModalDetector();
+
+  // Auto-collapse sidebar when modal opens, restore when modal closes
+  useEffect(() => {
+    // Modal just opened
+    if (isModalOpen && !wasModalOpen) {
+      setPreviousSidebarState(sidebarCollapsed);
+      setSidebarCollapsed(true);
+      setWasModalOpen(true);
+    }
+    // Modal just closed
+    else if (!isModalOpen && wasModalOpen) {
+      if (previousSidebarState !== null) {
+        setSidebarCollapsed(previousSidebarState);
+        setPreviousSidebarState(null);
+      }
+      setWasModalOpen(false);
+    }
+  }, [isModalOpen, wasModalOpen, sidebarCollapsed, previousSidebarState]);
 
   // Handle responsive behavior
   useEffect(() => {
@@ -104,6 +126,7 @@ const AppLayout = ({ children }) => {
           display: flex;
           flex-direction: column;
           margin-left: 280px;
+          margin-top: 60px;
           transition: margin-left var(--animation-duration) ease-in-out;
           min-height: calc(100vh - 60px);
           background-color: var(--bg-primary);

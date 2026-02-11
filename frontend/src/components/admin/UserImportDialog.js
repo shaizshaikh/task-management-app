@@ -3,10 +3,11 @@
  * Reduced re-renders and DOM operations for better typing performance
  */
 
-import React, { useState, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useRef, useCallback, useMemo, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { extractErrorMessage } from '../../utils/errorUtils';
+import useFocusTrap from '../../hooks/useFocusTrap';
 
 const UserImportDialog = ({ onClose, onImportComplete }) => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -17,6 +18,26 @@ const UserImportDialog = ({ onClose, onImportComplete }) => {
   const [importStatus, setImportStatus] = useState('');
   const [importPhase, setImportPhase] = useState(''); // 'uploading', 'processing', 'completed', 'error'
   const fileInputRef = useRef(null);
+
+  // Use focus trap hook
+  const modalRef = useFocusTrap(true);
+
+  useEffect(() => {
+    // Handle escape key
+    const handleEscape = (e) => {
+      if (e.key === 'Escape' && !importing) {
+        onClose();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = '';
+    };
+  }, [onClose, importing]);
 
   // Memoized file validation
   const validateFile = useCallback((file) => {
@@ -337,7 +358,7 @@ const UserImportDialog = ({ onClose, onImportComplete }) => {
 
   return (
     <div className="modal-overlay user-import-modal">
-      <div className="modal-content modal-medium">
+      <div ref={modalRef} className="modal-content modal-medium" tabIndex={-1} role="dialog" aria-modal="true" aria-labelledby="import-users-title">
         {/* Screen reader status updates - more prominent */}
         <div 
           aria-live="assertive" 
@@ -355,7 +376,7 @@ const UserImportDialog = ({ onClose, onImportComplete }) => {
         
         <div className="import-header">
           <span className="import-icon">Import</span>
-          <h3 className="import-title">Import Users</h3>
+          <h3 id="import-users-title" className="import-title">Import Users</h3>
         </div>
 
         <div className="import-template-section">

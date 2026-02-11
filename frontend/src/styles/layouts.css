@@ -413,6 +413,7 @@
   flex-direction: column;
   overflow: hidden;
   margin-left: 250px; /* Sidebar width */
+  margin-top: 60px; /* TopBar height - prevents content from hiding under fixed navbar */
   transition: margin-left 0.3s ease;
 }
 
@@ -435,6 +436,8 @@
   margin-bottom: var(--spacing-xl);
   padding-bottom: var(--spacing-md);
   border-bottom: 2px solid var(--border-primary);
+  position: relative;
+  z-index: 1;
 }
 
 .page-header h1,
