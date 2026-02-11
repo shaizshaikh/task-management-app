@@ -17,6 +17,7 @@ const ManagerTaskManagement = ({ teams, onRefresh }) => {
   const [selectedTeam, setSelectedTeam] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
   const [priorityFilter, setPriorityFilter] = useState('all');
+  const [teamMembers, setTeamMembers] = useState([]); // Store loaded team members
 
   // Status mapping between frontend display and backend values
   const statusMapping = {
@@ -96,6 +97,24 @@ const ManagerTaskManagement = ({ teams, onRefresh }) => {
     }
 
     setFilteredTasks(filtered);
+  };
+
+  // Load team members when team is selected (reused from TasksPage)
+  const loadTeamMembers = async (teamId) => {
+    if (!teamId) {
+      setTeamMembers([]);
+      return;
+    }
+    
+    try {
+      const response = await axios.get(`/api/teams/${teamId}/members`);
+      const members = response.data.members || [];
+      setTeamMembers(members);
+    } catch (error) {
+      console.error('Error loading team members:', error);
+      toast.error('Failed to load team members');
+      setTeamMembers([]);
+    }
   };
 
   const handleCreateTask = async () => {
@@ -204,8 +223,11 @@ const ManagerTaskManagement = ({ teams, onRefresh }) => {
   };
 
   const getTeamMembers = (teamId) => {
-    const team = teams.find(t => t.id === teamId);
-    return team ? team.members || [] : [];
+    // Use loaded team members from state instead of teams prop
+    if (parseInt(newTask.team_id) === teamId) {
+      return teamMembers;
+    }
+    return [];
   };
 
   const canManageTasksInTeam = (teamId) => {
@@ -465,7 +487,15 @@ const ManagerTaskManagement = ({ teams, onRefresh }) => {
                 </label>
                 <select
                   value={newTask.team_id}
-                  onChange={(e) => setNewTask({ ...newTask, team_id: e.target.value, assigned_to: '' })}
+                  onChange={(e) => {
+                    const teamId = e.target.value;
+                    setNewTask({ ...newTask, team_id: teamId, assigned_to: '' });
+                    if (teamId) {
+                      loadTeamMembers(teamId);
+                    } else {
+                      setTeamMembers([]);
+                    }
+                  }}
                   className="manager-modal-select"
                 >
                   <option value="">Select team...</option>

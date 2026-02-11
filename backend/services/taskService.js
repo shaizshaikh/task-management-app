@@ -94,8 +94,8 @@ class TaskService {
    */
   async canCreateTask(userId, globalRole, teamId) {
     try {
-      // Admin can create tasks in any team
-      if (globalRole === 'admin') {
+      // Admin and Manager can create tasks in any team
+      if (globalRole === 'admin' || globalRole === 'manager') {
         // Verify team exists
         const [teams] = await pool.execute(
           'SELECT id FROM teams WHERE id = ? AND is_active = TRUE',

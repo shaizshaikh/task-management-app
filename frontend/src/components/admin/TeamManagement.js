@@ -1,6 +1,7 @@
 /**
  * Team Management Component - PERFORMANCE OPTIMIZED
  * Reduced re-renders and improved modal performance
+ * Can be used standalone (Admin Panel) or with external data (Manager Panel)
  */
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
@@ -10,10 +11,15 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useRealtime } from '../../hooks/useRealtime';
 import FocusTrapModal from '../FocusTrapModal';
 
-const TeamManagement = () => {
+const TeamManagement = ({ 
+  externalTeams = null,  // Optional: teams passed from parent (Manager Panel)
+  onExternalRefresh = null,  // Optional: callback to refresh parent data
+  hideCreateButton = false,  // Optional: hide create team button (for managers)
+  hideDeleteButton = false   // Optional: hide delete team button (for managers)
+}) => {
   const { user, isAdmin, isManager } = useAuth();
   const { subscribe } = useRealtime();
-  const [teams, setTeams] = useState([]);
+  const [internalTeams, setInternalTeams] = useState([]);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -26,14 +32,19 @@ const TeamManagement = () => {
     color: '#2196F3'
   });
 
+  // Use external teams if provided, otherwise use internal state
+  const teams = externalTeams !== null ? externalTeams : internalTeams;
+  const isExternalMode = externalTeams !== null;
+
   // Memoized permission check
   const canCreateTeams = useMemo(() => {
+    if (hideCreateButton) return false;
     // Ensure functions are available before calling
     if (typeof isAdmin !== 'function' || typeof isManager !== 'function') {
       return false;
     }
     return isAdmin() || isManager();
-  }, [isAdmin, isManager]);
+  }, [isAdmin, isManager, hideCreateButton]);
 
   // Memoized visible teams
   const visibleTeams = useMemo(() => {
@@ -51,14 +62,22 @@ const TeamManagement = () => {
 
   // Memoized callbacks
   const loadTeams = useCallback(async () => {
+    if (isExternalMode) {
+      // In external mode, call parent refresh
+      if (onExternalRefresh) {
+        await onExternalRefresh();
+      }
+      return;
+    }
+    
     try {
       const response = await axios.get('/api/teams');
-      setTeams(response.data.teams || response.data);
+      setInternalTeams(response.data.teams || response.data);
     } catch (error) {
       console.error('Error loading teams:', error);
       toast.error('Failed to load teams');
     }
-  }, []);
+  }, [isExternalMode, onExternalRefresh]);
 
   const loadUsers = useCallback(async () => {
     try {
@@ -82,27 +101,31 @@ const TeamManagement = () => {
   }, []);
 
   useEffect(() => {
-    loadTeams();
+    if (!isExternalMode) {
+      loadTeams();
+    }
     loadUsers();
 
-    // Listen for real-time team updates
-    const handleTeamUpdate = (notification) => {
-      console.log('Team update received:', notification);
-      if (notification.updateType === 'deleted') {
-        // Remove deleted team from list
-        setTeams(prev => prev.filter(t => t.id !== notification.team_id));
-      } else {
-        // Reload teams for create/update
-        loadTeams();
-      }
-    };
+    // Listen for real-time team updates (only in internal mode)
+    if (!isExternalMode) {
+      const handleTeamUpdate = (notification) => {
+        console.log('Team update received:', notification);
+        if (notification.updateType === 'deleted') {
+          // Remove deleted team from list
+          setInternalTeams(prev => prev.filter(t => t.id !== notification.team_id));
+        } else {
+          // Reload teams for create/update
+          loadTeams();
+        }
+      };
 
-    const unsubscribe = subscribe('teamUpdated', handleTeamUpdate);
+      const unsubscribe = subscribe('teamUpdated', handleTeamUpdate);
 
-    return () => {
-      unsubscribe();
-    };
-  }, [subscribe]);
+      return () => {
+        unsubscribe();
+      };
+    }
+  }, [subscribe, isExternalMode, loadTeams]);
 
   const handleCreateTeam = useCallback(async (e) => {
     e.preventDefault();
@@ -265,12 +288,14 @@ const TeamManagement = () => {
                 >
                   Members
                 </button>
-                <button
-                  onClick={() => handleDeleteTeam(team.id, team.name)}
-                  className="team-action-button danger"
-                >
-                  Delete
-                </button>
+                {!hideDeleteButton && (
+                  <button
+                    onClick={() => handleDeleteTeam(team.id, team.name)}
+                    className="team-action-button danger"
+                  >
+                    Delete
+                  </button>
+                )}
               </div>
             </div>
           </div>

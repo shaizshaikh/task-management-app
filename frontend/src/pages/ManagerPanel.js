@@ -10,8 +10,10 @@ import { toast } from 'react-toastify';
 
 // Manager-specific components
 import ManagerDashboard from '../components/manager/ManagerDashboard';
-import ManagerTeamView from '../components/manager/ManagerTeamView';
 import ManagerTaskManagement from '../components/manager/ManagerTaskManagement';
+
+// Shared components
+import TeamManagement from '../components/admin/TeamManagement';
 
 const ManagerPanel = () => {
   const { user, isAdmin, isManager } = useAuth();
@@ -114,30 +116,10 @@ const ManagerPanel = () => {
         </div>
       </header>
 
-      {/* No Teams Message */}
-      {managerTeams.length === 0 && (
-        <div className="manager-empty-state">
-          <div className="manager-empty-icon">No Teams</div>
-          <h3 className="manager-empty-title">No Teams to Manage</h3>
-          <p className="manager-empty-description">
-            {isAdmin() 
-              ? 'No teams exist in the system yet.'
-              : 'You are not assigned as a team leader yet. Contact your administrator to be assigned as a team leader.'
-            }
-          </p>
-          {isAdmin() && (
-            <p className="manager-empty-admin-note">
-              Create teams from the Admin Panel to get started.
-            </p>
-          )}
-        </div>
-      )}
-
-      {/* Manager Interface */}
-      {managerTeams.length > 0 && (
-        <>
-          {/* Navigation Tabs */}
-          <nav className="tab-navigation" role="tablist" aria-label="Manager panel sections">
+      {/* Manager Interface - Always show, even with no teams */}
+      <>
+        {/* Navigation Tabs */}
+        <nav className="tab-navigation" role="tablist" aria-label="Manager panel sections">
             {tabs.map(tab => (
               <button
                 key={tab.id}
@@ -204,9 +186,11 @@ const ManagerPanel = () => {
               hidden={activeTab !== 'teams'}
               aria-hidden={activeTab !== 'teams'}
             >
-              <ManagerTeamView 
-                teams={managerTeams}
-                onRefresh={loadManagerTeams}
+              <TeamManagement 
+                externalTeams={managerTeams}
+                onExternalRefresh={loadManagerTeams}
+                hideCreateButton={!isAdmin()}
+                hideDeleteButton={!isAdmin()}
               />
             </section>
             
@@ -226,7 +210,6 @@ const ManagerPanel = () => {
           </main>
 
         </>
-      )}
     </div>
   );
 };
