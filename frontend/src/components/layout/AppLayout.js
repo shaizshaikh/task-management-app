@@ -12,11 +12,28 @@ import '../../styles/globals.css';
 
 const AppLayout = ({ children }) => {
   const { user, isAuthenticated } = useAuth();
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [previousSidebarState, setPreviousSidebarState] = useState(null);
   const [wasModalOpen, setWasModalOpen] = useState(false);
   const isModalOpen = useModalDetector();
+  
+  // Initialize sidebar state from localStorage, considering mobile
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    const isMobileView = window.innerWidth < 768;
+    if (isMobileView) {
+      return true; // Always collapsed on mobile
+    }
+    // On desktop, check localStorage
+    const saved = localStorage.getItem('sidebarCollapsed');
+    return saved === 'true'; // Default to expanded (false) if not set
+  });
+
+  // Persist sidebar state to localStorage (only on desktop)
+  useEffect(() => {
+    if (!isMobile) {
+      localStorage.setItem('sidebarCollapsed', sidebarCollapsed.toString());
+    }
+  }, [sidebarCollapsed, isMobile]);
 
   // Auto-collapse sidebar when modal opens, restore when modal closes
   useEffect(() => {
@@ -42,9 +59,13 @@ const AppLayout = ({ children }) => {
       const mobile = window.innerWidth < 768;
       setIsMobile(mobile);
       
-      // Auto-collapse sidebar on mobile initially
-      if (mobile && !sidebarCollapsed) {
+      // Auto-collapse sidebar on mobile
+      if (mobile) {
         setSidebarCollapsed(true);
+      } else {
+        // On desktop, restore from localStorage
+        const saved = localStorage.getItem('sidebarCollapsed');
+        setSidebarCollapsed(saved === 'true');
       }
     };
 

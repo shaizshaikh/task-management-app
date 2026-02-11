@@ -405,6 +405,15 @@ const UserImportDialog = ({ onClose, onImportComplete }) => {
           onDragOver={handleDragOver}
           onDrop={handleDrop}
           onClick={() => fileInputRef.current?.click()}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              fileInputRef.current?.click();
+            }
+          }}
+          role="button"
+          tabIndex={0}
+          aria-label={selectedFile ? `Selected file: ${selectedFile.name}. Press Enter or Space to change file` : 'Click or press Enter to select a file for import'}
         >
           <input
             ref={fileInputRef}
@@ -431,6 +440,7 @@ const UserImportDialog = ({ onClose, onImportComplete }) => {
                   setSelectedFile(null);
                 }}
                 className="import-file-remove"
+                aria-label="Remove selected file"
               >
                 Remove
               </button>

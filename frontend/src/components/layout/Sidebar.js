@@ -105,6 +105,23 @@ const Sidebar = ({ collapsed, isMobile, onCollapse }) => {
     }
   };
 
+  // Focus management - move focus away when sidebar collapses
+  useEffect(() => {
+    if (collapsed && document.activeElement) {
+      // Check if focus is inside the sidebar
+      const focusedElement = document.activeElement;
+      if (sidebarRef.current?.contains(focusedElement)) {
+        // Move focus to main content or body
+        const mainContent = document.getElementById('main-content');
+        if (mainContent) {
+          mainContent.focus();
+        } else {
+          focusedElement.blur();
+        }
+      }
+    }
+  }, [collapsed]);
+
   // Focus management
   useEffect(() => {
     if (focusedIndex >= 0 && sidebarRef.current) {
@@ -141,7 +158,6 @@ const Sidebar = ({ collapsed, isMobile, onCollapse }) => {
       role="navigation"
       aria-label="Main navigation"
       aria-hidden={collapsed}
-      inert={collapsed ? '' : undefined}
       onKeyDown={handleKeyDown}
     >
       {/* Sidebar Header */}
