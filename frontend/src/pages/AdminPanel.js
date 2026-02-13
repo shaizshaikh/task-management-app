@@ -156,10 +156,10 @@ const AdminPanel = () => {
       {/* Navigation Tabs */}
       <nav className="tab-navigation" role="tablist" aria-label="Admin panel sections">
         {[
-          { id: 'overview', label: 'Overview', icon: 'Overview' },
-          { id: 'users', label: 'Users', icon: 'Users' },
-          { id: 'teams', label: 'Teams', icon: 'Teams' },
-          { id: 'audit', label: 'Audit', icon: 'Audit' }
+          { id: 'overview', label: 'Overview', icon: '📊' },
+          { id: 'users', label: 'Users', icon: '👥' },
+          { id: 'teams', label: 'Teams', icon: '🏢' },
+          { id: 'audit', label: 'Audit', icon: '📝' }
         ].map(tab => (
           <button
             key={tab.id}

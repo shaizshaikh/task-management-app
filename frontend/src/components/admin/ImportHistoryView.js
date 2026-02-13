@@ -18,27 +18,17 @@ const ImportHistoryView = ({ onClose }) => {
     has_more: false
   });
 
-  // Use focus trap hook
-  const modalRef = useFocusTrap(true);
+  // Use focus trap hook with escape handler
+  const modalRef = useFocusTrap(true, onClose);
 
   useEffect(() => {
     loadImportHistory();
-
-    // Handle escape key
-    const handleEscape = (e) => {
-      if (e.key === 'Escape') {
-        onClose();
-      }
-    };
-
-    document.addEventListener('keydown', handleEscape);
     document.body.style.overflow = 'hidden';
 
     return () => {
-      document.removeEventListener('keydown', handleEscape);
       document.body.style.overflow = '';
     };
-  }, [onClose]);
+  }, []);
 
   const loadImportHistory = async (offset = 0) => {
     try {

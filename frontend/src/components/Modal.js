@@ -17,15 +17,8 @@ const Modal = ({
   closeOnOverlayClick = true,
   showCloseButton = true
 }) => {
-  // Use focus trap hook for WCAG compliance
-  const modalRef = useFocusTrap(isOpen);
-
-  // Memoized escape handler
-  const handleEscape = useCallback((e) => {
-    if (e.key === 'Escape' && isOpen) {
-      onClose();
-    }
-  }, [isOpen, onClose]);
+  // Use focus trap hook for WCAG compliance with escape handler
+  const modalRef = useFocusTrap(isOpen, onClose);
 
   // Memoized overlay click handler
   const handleOverlayClick = useCallback((e) => {
@@ -36,16 +29,14 @@ const Modal = ({
 
   useEffect(() => {
     if (isOpen) {
-      // Prevent scroll and add escape key listener
-      document.addEventListener('keydown', handleEscape);
+      // Prevent scroll
       document.body.style.overflow = 'hidden';
     }
 
     return () => {
-      document.removeEventListener('keydown', handleEscape);
       document.body.style.overflow = '';
     };
-  }, [isOpen, handleEscape]);
+  }, [isOpen]);
 
   if (!isOpen) return null;
 

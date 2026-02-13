@@ -62,24 +62,6 @@ const ManagerPanel = () => {
     }
   };
 
-  const tabs = [
-    {
-      id: 'dashboard',
-      label: 'Dashboard',
-      icon: 'Dashboard'
-    },
-    {
-      id: 'teams',
-      label: 'My Teams',
-      icon: 'Teams'
-    },
-    {
-      id: 'tasks',
-      label: 'Task Management',
-      icon: 'Tasks'
-    }
-  ];
-
   if (loading) {
     return (
       <div className="loading-layout">
@@ -92,7 +74,7 @@ const ManagerPanel = () => {
   }
 
   return (
-    <div className="page-container">
+    <div className="page-container manager-panel-container">
       {/* Header */}
       <header className="page-header">
         <div>
@@ -120,47 +102,51 @@ const ManagerPanel = () => {
       <>
         {/* Navigation Tabs */}
         <nav className="tab-navigation" role="tablist" aria-label="Manager panel sections">
-            {tabs.map(tab => (
-              <button
-                key={tab.id}
-                className={`tab-button ${activeTab === tab.id ? 'active' : ''}`}
-                onClick={() => handleTabChange(tab.id)}
-                onKeyDown={(e) => {
-                  // Arrow key navigation for tabs
-                  const tabIds = tabs.map(t => t.id);
-                  const currentIndex = tabIds.indexOf(activeTab);
-                  
-                  if (e.key === 'ArrowRight') {
-                    e.preventDefault();
-                    const nextIndex = (currentIndex + 1) % tabIds.length;
-                    handleTabChange(tabIds[nextIndex]);
-                    document.getElementById(`${tabIds[nextIndex]}-tab`)?.focus();
-                  } else if (e.key === 'ArrowLeft') {
-                    e.preventDefault();
-                    const prevIndex = (currentIndex - 1 + tabIds.length) % tabIds.length;
-                    handleTabChange(tabIds[prevIndex]);
-                    document.getElementById(`${tabIds[prevIndex]}-tab`)?.focus();
-                  } else if (e.key === 'Home') {
-                    e.preventDefault();
-                    handleTabChange(tabIds[0]);
-                    document.getElementById(`${tabIds[0]}-tab`)?.focus();
-                  } else if (e.key === 'End') {
-                    e.preventDefault();
-                    handleTabChange(tabIds[tabIds.length - 1]);
-                    document.getElementById(`${tabIds[tabIds.length - 1]}-tab`)?.focus();
-                  }
-                }}
-                role="tab"
-                aria-selected={activeTab === tab.id}
-                aria-controls={`${tab.id}-panel`}
-                id={`${tab.id}-tab`}
-                tabIndex={activeTab === tab.id ? 0 : -1}
-              >
-                <span className="tab-icon" aria-hidden="true">{tab.icon}</span>
-                <span className="tab-label">{tab.label}</span>
-              </button>
-            ))}
-          </nav>
+          {[
+            { id: 'dashboard', label: 'Dashboard', icon: '📊' },
+            { id: 'teams', label: 'My Teams', icon: '👥' },
+            { id: 'tasks', label: 'Task Management', icon: '📋' }
+          ].map(tab => (
+            <button
+              key={tab.id}
+              className={`tab-button ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => handleTabChange(tab.id)}
+              onKeyDown={(e) => {
+                // Arrow key navigation for tabs
+                const tabs = ['dashboard', 'teams', 'tasks'];
+                const currentIndex = tabs.indexOf(activeTab);
+                
+                if (e.key === 'ArrowRight') {
+                  e.preventDefault();
+                  const nextIndex = (currentIndex + 1) % tabs.length;
+                  handleTabChange(tabs[nextIndex]);
+                  document.getElementById(`${tabs[nextIndex]}-tab`)?.focus();
+                } else if (e.key === 'ArrowLeft') {
+                  e.preventDefault();
+                  const prevIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+                  handleTabChange(tabs[prevIndex]);
+                  document.getElementById(`${tabs[prevIndex]}-tab`)?.focus();
+                } else if (e.key === 'Home') {
+                  e.preventDefault();
+                  handleTabChange(tabs[0]);
+                  document.getElementById(`${tabs[0]}-tab`)?.focus();
+                } else if (e.key === 'End') {
+                  e.preventDefault();
+                  handleTabChange(tabs[tabs.length - 1]);
+                  document.getElementById(`${tabs[tabs.length - 1]}-tab`)?.focus();
+                }
+              }}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+              aria-controls={`${tab.id}-panel`}
+              id={`${tab.id}-tab`}
+              tabIndex={activeTab === tab.id ? 0 : -1}
+            >
+              <span className="tab-icon" aria-hidden="true">{tab.icon}</span>
+              <span className="tab-label">{tab.label}</span>
+            </button>
+          ))}
+        </nav>
 
           {/* Tab Content */}
           <main className="tab-content">
@@ -208,7 +194,7 @@ const ManagerPanel = () => {
               />
             </section>
           </main>
-
+            
         </>
     </div>
   );

@@ -1,6 +1,6 @@
 {
-  "short_name": "Task Management",
-  "name": "Task Management System - Enterprise Edition",
+  "short_name": "Prismex",
+  "name": "Prismex - Team & Workforce Management Platform",
   "icons": [
     {
       "src": "favicon.ico",
@@ -17,5 +17,5 @@
   "display": "standalone",
   "theme_color": "#1f6feb",
   "background_color": "#0d1117",
-  "description": "Enterprise task management system with team collaboration features"
+  "description": "Team and workforce management platform with collaboration features"
 }

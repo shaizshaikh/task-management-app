@@ -1,4 +1,4 @@
-/**
+  /**
  * Tasks Page Component
  * Main task management interface with RBAC
  */
@@ -444,6 +444,13 @@ const TasksPage = () => {
               </div>
               
               <div className="form-actions">
+                <button 
+                  type="button" 
+                  className="btn btn-secondary"
+                  onClick={() => setShowForm(false)}
+                >
+                  Cancel
+                </button>
                 <button type="submit" className="btn btn-primary">
                   Create Task
                 </button>

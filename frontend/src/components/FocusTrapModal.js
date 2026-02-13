@@ -24,14 +24,14 @@ const FocusTrapModal = ({
   ariaLabelledBy,
   ariaDescribedBy
 }) => {
-  const modalRef = useFocusTrap(isOpen);
-
-  // Handle escape key
+  // Use focus trap hook with conditional escape handler
   const handleEscape = useCallback((e) => {
-    if (closeOnEscape && e.key === 'Escape' && isOpen) {
+    if (closeOnEscape) {
       onClose();
     }
-  }, [closeOnEscape, isOpen, onClose]);
+  }, [closeOnEscape, onClose]);
+
+  const modalRef = useFocusTrap(isOpen, closeOnEscape ? handleEscape : null);
 
   // Handle overlay click
   const handleOverlayClick = useCallback((e) => {
@@ -42,15 +42,13 @@ const FocusTrapModal = ({
 
   useEffect(() => {
     if (isOpen) {
-      document.addEventListener('keydown', handleEscape);
       document.body.style.overflow = 'hidden';
     }
 
     return () => {
-      document.removeEventListener('keydown', handleEscape);
       document.body.style.overflow = '';
     };
-  }, [isOpen, handleEscape]);
+  }, [isOpen]);
 
   if (!isOpen) return null;
 

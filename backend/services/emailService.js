@@ -51,7 +51,7 @@ class EmailService {
   async sendWelcomeEmail(userInfo) {
     const { email, username, full_name, password, temporaryPassword } = userInfo;
 
-    const subject = 'Welcome to Task Management System';
+    const subject = 'Welcome to Prismex';
     const htmlContent = this.generateWelcomeEmailTemplate({
       username,
       full_name: full_name || username,
@@ -254,7 +254,7 @@ class EmailService {
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Welcome to Task Management System</title>
+    <title>Welcome to Prismex</title>
     <style>
         body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
         .container { max-width: 600px; margin: 0 auto; padding: 20px; }
@@ -268,13 +268,13 @@ class EmailService {
 <body>
     <div class="container">
         <div class="header">
-            <h1>Welcome to Task Management System!</h1>
+            <h1>Welcome to Prismex!</h1>
         </div>
         
         <div class="content">
             <h2>Hello ${full_name}!</h2>
             
-            <p>Your account has been created successfully. You can now access the Task Management System with the following credentials:</p>
+            <p>Your account has been created successfully. You can now access Prismex with the following credentials:</p>
             
             <div class="credentials">
                 <strong>Username:</strong> ${username}<br>
@@ -300,7 +300,7 @@ class EmailService {
         </div>
         
         <div class="footer">
-            <p>This email was sent automatically by the Task Management System.</p>
+            <p>This email was sent automatically by Prismex.</p>
         </div>
     </div>
 </body>
@@ -375,7 +375,7 @@ class EmailService {
         </div>
         
         <div class="footer">
-            <p>This email was sent automatically by the Task Management System.</p>
+            <p>This email was sent automatically by Prismex.</p>
         </div>
     </div>
 </body>
@@ -411,13 +411,13 @@ class EmailService {
             <h2>Hello ${full_name},</h2>
             
             <div class="warning">
-                <strong>Important Notice:</strong> Your account has been deleted from the Task Management System.
+                <strong>Important Notice:</strong> Your account has been deleted from Prismex.
             </div>
             
             <p>Your account with username <strong>${username}</strong> has been removed from the system. This means:</p>
             
             <ul>
-                <li>You no longer have access to the Task Management System</li>
+                <li>You no longer have access to Prismex</li>
                 <li>Your assigned tasks have been reassigned or unassigned</li>
                 <li>You have been removed from all teams</li>
                 <li>Your account data has been archived for compliance purposes</li>
@@ -425,11 +425,11 @@ class EmailService {
             
             <p>If you believe this was done in error or if you have any questions, please contact your system administrator immediately.</p>
             
-            <p>Thank you for your time with the Task Management System.</p>
+            <p>Thank you for your time with Prismex.</p>
         </div>
         
         <div class="footer">
-            <p>This email was sent automatically by the Task Management System.</p>
+            <p>This email was sent automatically by Prismex.</p>
         </div>
     </div>
 </body>
@@ -467,7 +467,7 @@ class EmailService {
             <h2>Hello ${full_name},</h2>
             
             <div class="success">
-                <strong>Great News:</strong> Your account has been restored and you now have access to the Task Management System again!
+                <strong>Great News:</strong> Your account has been restored and you now have access to Prismex again!
             </div>
             
             <p>Your account with username <strong>${username}</strong> has been successfully restored.</p>
@@ -484,7 +484,7 @@ class EmailService {
             <p>You can now:</p>
             
             <ul>
-                <li>Access the Task Management System</li>
+                <li>Access Prismex</li>
                 <li>View and manage your tasks</li>
                 <li>Collaborate with your team members</li>
                 <li>Track your progress and productivity</li>
@@ -493,7 +493,7 @@ class EmailService {
             <p>Click the button below to access the system:</p>
             
             <p style="text-align: center;">
-                <a href="${loginUrl}" class="button">Login to Task Management</a>
+                <a href="${loginUrl}" class="button">Login to Prismex</a>
             </p>
             
             <p>If you have any questions or need assistance, please contact your system administrator.</p>
@@ -502,7 +502,7 @@ class EmailService {
         </div>
         
         <div class="footer">
-            <p>This email was sent automatically by the Task Management System.</p>
+            <p>This email was sent automatically by Prismex.</p>
         </div>
     </div>
 </body>
@@ -571,7 +571,7 @@ class EmailService {
         </div>
         
         <div class="footer">
-            <p>This email was sent automatically by the Task Management System.</p>
+            <p>This email was sent automatically by Prismex.</p>
         </div>
     </div>
 </body>
@@ -635,7 +635,7 @@ class EmailService {
         </div>
         
         <div class="footer">
-            <p>This email was sent automatically by the Task Management System.</p>
+            <p>This email was sent automatically by Prismex.</p>
         </div>
     </div>
 </body>
@@ -711,7 +711,7 @@ class EmailService {
         </div>
         
         <div class="footer">
-            <p>This email was sent automatically by the Task Management System.</p>
+            <p>This email was sent automatically by Prismex.</p>
         </div>
     </div>
 </body>

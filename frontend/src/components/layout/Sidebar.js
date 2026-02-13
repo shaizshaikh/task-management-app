@@ -163,13 +163,15 @@ const Sidebar = ({ collapsed, isMobile, onCollapse }) => {
       {/* Sidebar Header */}
       <div className="sidebar-header">
         <div className="logo-container">
-          <div className="logo" aria-hidden="true">
-            📋
-          </div>
+          <img 
+            src="/logo.svg" 
+            alt="Prismex" 
+            className="logo"
+          />
           {!collapsed && (
             <div className="logo-text">
-              <h1 className="app-title">Task Management</h1>
-              <p className="app-subtitle">Enterprise Edition</p>
+              <h1 className="app-title">Prismex</h1>
+              <p className="app-subtitle">Team & Workforce Platform</p>
             </div>
           )}
         </div>
@@ -241,6 +243,11 @@ const Sidebar = ({ collapsed, isMobile, onCollapse }) => {
           pointer-events: none;
         }
 
+        .sidebar.collapsed .sidebar-header {
+          opacity: 0;
+          visibility: hidden;
+        }
+
         /* Hide collapsed sidebar content from screen readers and keyboard */
         .sidebar.collapsed .nav-list,
         .sidebar.collapsed .nav-item {
@@ -278,15 +285,12 @@ const Sidebar = ({ collapsed, isMobile, onCollapse }) => {
         }
 
         .logo {
-          font-size: 2rem;
           width: 40px;
           height: 40px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background-color: var(--color-primary);
-          border-radius: var(--radius-lg);
+          display: block;
           flex-shrink: 0;
+          border-radius: var(--radius-md);
+          object-fit: contain;
         }
 
         .logo-text {

@@ -4,8 +4,11 @@
  * Traps Tab/Shift+Tab navigation within a container element
  * 
  * Usage:
- * const modalRef = useFocusTrap(isOpen);
+ * const modalRef = useFocusTrap(isOpen, onEscape);
  * <div ref={modalRef} role="dialog" aria-modal="true">...</div>
+ * 
+ * @param {boolean} isActive - Whether the focus trap is active
+ * @param {function} onEscape - Optional callback when Escape key is pressed
  */
 
 import { useEffect, useRef } from 'react';
@@ -21,10 +24,11 @@ const FOCUSABLE_ELEMENTS = [
   'object',
   'embed',
   '[contenteditable]',
-  '[tabindex]:not([tabindex="-1"])'
+  '[tabindex]:not([tabindex="-1"])',
+  '[role="button"]:not([disabled])'
 ].join(',');
 
-const useFocusTrap = (isActive = true) => {
+const useFocusTrap = (isActive = true, onEscape = null) => {
   const containerRef = useRef(null);
   const previousActiveElement = useRef(null);
 
@@ -65,12 +69,16 @@ const useFocusTrap = (isActive = true) => {
     };
 
     // Focus first element after a brief delay to ensure DOM is ready
-    requestAnimationFrame(() => {
-      setTimeout(focusFirstElement, 50);
-    });
+    const timeoutId = setTimeout(focusFirstElement, 100);
 
     // Handle Tab and Shift+Tab to trap focus
     const handleKeyDown = (e) => {
+      // Handle Escape key
+      if (e.key === 'Escape' && onEscape) {
+        onEscape(e);
+        return;
+      }
+
       if (e.key !== 'Tab') return;
 
       const focusableElements = getFocusableElements();
@@ -96,6 +104,7 @@ const useFocusTrap = (isActive = true) => {
 
     // Cleanup function
     return () => {
+      clearTimeout(timeoutId);
       container.removeEventListener('keydown', handleKeyDown);
 
       // Remove aria-hidden from main content
@@ -112,7 +121,7 @@ const useFocusTrap = (isActive = true) => {
         }, 0);
       }
     };
-  }, [isActive]);
+  }, [isActive, onEscape]);
 
   return containerRef;
 };

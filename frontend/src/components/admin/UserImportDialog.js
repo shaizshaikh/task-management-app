@@ -19,25 +19,22 @@ const UserImportDialog = ({ onClose, onImportComplete }) => {
   const [importPhase, setImportPhase] = useState(''); // 'uploading', 'processing', 'completed', 'error'
   const fileInputRef = useRef(null);
 
-  // Use focus trap hook
-  const modalRef = useFocusTrap(true);
+  // Use focus trap hook with escape handler
+  const handleEscape = useCallback((e) => {
+    if (!importing) {
+      onClose();
+    }
+  }, [importing, onClose]);
+
+  const modalRef = useFocusTrap(true, handleEscape);
 
   useEffect(() => {
-    // Handle escape key
-    const handleEscape = (e) => {
-      if (e.key === 'Escape' && !importing) {
-        onClose();
-      }
-    };
-
-    document.addEventListener('keydown', handleEscape);
     document.body.style.overflow = 'hidden';
 
     return () => {
-      document.removeEventListener('keydown', handleEscape);
       document.body.style.overflow = '';
     };
-  }, [onClose, importing]);
+  }, []);
 
   // Memoized file validation
   const validateFile = useCallback((file) => {

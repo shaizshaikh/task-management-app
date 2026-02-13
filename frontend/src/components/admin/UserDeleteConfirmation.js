@@ -17,32 +17,20 @@ const UserDeleteConfirmation = ({ user, onClose, onConfirm }) => {
   const [userDetails, setUserDetails] = useState(null);
   const [confirmText, setConfirmText] = useState('');
   
-  // Use focus trap hook
-  const modalRef = useFocusTrap(true);
+  // Use focus trap hook with escape handler
+  const modalRef = useFocusTrap(true, onClose);
 
   useEffect(() => {
     if (user) {
       loadUserDetails();
       loadAvailableUsers();
     }
-  }, [user]);
-
-  // Handle escape key
-  useEffect(() => {
-    const handleEscape = (e) => {
-      if (e.key === 'Escape') {
-        onClose();
-      }
-    };
-
-    document.addEventListener('keydown', handleEscape);
     document.body.style.overflow = 'hidden';
 
     return () => {
-      document.removeEventListener('keydown', handleEscape);
       document.body.style.overflow = '';
     };
-  }, [onClose]);
+  }, [user]);
 
   const loadUserDetails = async () => {
     try {

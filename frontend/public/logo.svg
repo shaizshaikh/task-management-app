@@ -1,26 +1,45 @@
 <svg width="192" height="192" viewBox="0 0 192 192" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Background Circle -->
-  <circle cx="96" cy="96" r="96" fill="#1f6feb"/>
+  <!-- Background Circle with Gradient -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="prismGradient1" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="prismGradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="prismGradient3" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#f472b6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ec4899;stop-opacity:1" />
+    </linearGradient>
+  </defs>
   
-  <!-- Task List Icon -->
-  <rect x="48" y="48" width="96" height="96" rx="12" fill="white" fill-opacity="0.1"/>
+  <!-- Background -->
+  <circle cx="96" cy="96" r="96" fill="url(#bgGradient)"/>
   
-  <!-- Checkboxes and Lines -->
-  <!-- First Task -->
-  <rect x="60" y="68" width="16" height="16" rx="3" fill="white"/>
-  <path d="M65 76L68 79L75 72" stroke="#1f6feb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-  <rect x="84" y="70" width="48" height="4" rx="2" fill="white" fill-opacity="0.8"/>
+  <!-- Prism Shape - Three triangular facets representing different aspects -->
+  <!-- Left facet (Users/Teams) -->
+  <path d="M 96 40 L 50 96 L 96 96 Z" fill="url(#prismGradient1)" opacity="0.9"/>
   
-  <!-- Second Task -->
-  <rect x="60" y="92" width="16" height="16" rx="3" fill="white"/>
-  <path d="M65 100L68 103L75 96" stroke="#1f6feb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-  <rect x="84" y="94" width="36" height="4" rx="2" fill="white" fill-opacity="0.8"/>
+  <!-- Right facet (Tasks/Collaboration) -->
+  <path d="M 96 40 L 96 96 L 142 96 Z" fill="url(#prismGradient2)" opacity="0.9"/>
   
-  <!-- Third Task -->
-  <rect x="60" y="116" width="16" height="16" rx="3" fill="white" fill-opacity="0.6"/>
-  <rect x="84" y="118" width="42" height="4" rx="2" fill="white" fill-opacity="0.6"/>
+  <!-- Bottom facet (Security/Audit) -->
+  <path d="M 50 96 L 96 96 L 96 152 L 73 124 Z" fill="url(#prismGradient3)" opacity="0.85"/>
+  <path d="M 96 96 L 142 96 L 96 152 L 119 124 Z" fill="url(#prismGradient3)" opacity="0.75"/>
   
-  <!-- Enterprise Badge -->
-  <circle cx="144" cy="60" r="20" fill="#28a745"/>
-  <text x="144" y="66" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="12" font-weight="bold">E</text>
+  <!-- Center highlight - representing unified platform -->
+  <circle cx="96" cy="96" r="12" fill="white" opacity="0.95"/>
+  <circle cx="96" cy="96" r="8" fill="url(#bgGradient)" opacity="0.8"/>
+  
+  <!-- Subtle connecting lines -->
+  <line x1="96" y1="40" x2="96" y2="84" stroke="white" stroke-width="1.5" opacity="0.4"/>
+  <line x1="96" y1="108" x2="96" y2="152" stroke="white" stroke-width="1.5" opacity="0.4"/>
+  <line x1="50" y1="96" x2="84" y2="96" stroke="white" stroke-width="1.5" opacity="0.4"/>
+  <line x1="108" y1="96" x2="142" y2="96" stroke="white" stroke-width="1.5" opacity="0.4"/>
 </svg>

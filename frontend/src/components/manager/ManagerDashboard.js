@@ -86,14 +86,26 @@ const ManagerDashboard = ({ teams, onRefresh }) => {
       });
       
       // Use role-filtered stats from backend
+      // IMPORTANT: Convert to numbers to avoid string concatenation
+      const inProgressTasks = Number(stats.in_progress_tasks) || 0;
+      const todoTasks = Number(stats.todo_tasks) || 0;
+      
       setDashboardData({
-        totalTasks: stats.total_tasks,
-        completedTasks: stats.completed_tasks,
-        pendingTasks: stats.in_progress_tasks + stats.todo_tasks,
-        overdueTasks: stats.overdue_tasks,
+        totalTasks: Number(stats.total_tasks) || 0,
+        completedTasks: Number(stats.completed_tasks) || 0,
+        pendingTasks: inProgressTasks + todoTasks,
+        overdueTasks: Number(stats.overdue_tasks) || 0,
         totalTeamMembers,
         recentTasks,
         teamStats
+      });
+      
+      // Debug logging for the "01" issue
+      console.log('Dashboard Data Set:', {
+        pendingTasks: inProgressTasks + todoTasks,
+        in_progress_tasks: inProgressTasks,
+        todo_tasks: todoTasks,
+        type: typeof (inProgressTasks + todoTasks)
       });
       
     } catch (error) {

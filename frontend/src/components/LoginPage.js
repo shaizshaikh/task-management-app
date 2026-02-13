@@ -31,10 +31,10 @@ const LoginPage = () => {
       <div className="login-container">
         {/* Header Section */}
         <div className="login-header">
-          <div className="app-logo">TM</div>
-          <h2 className="app-title">Task ManagementV1</h2>
+          <img src="/logo.svg" alt="Prismex Logo" className="app-logo-img" />
+          <h2 className="app-title">Prismex</h2>
           <p className="app-description">
-            Secure RBAC-enabled task management system
+            Team & Workforce Management Platform
           </p>
         </div>
 
@@ -43,10 +43,10 @@ const LoginPage = () => {
           <div className="auth-header">
             <h2 className="auth-title">
               <span className="auth-icon" aria-hidden="true">Auth</span>
-              Authentication Required
+              Welcome Back
             </h2>
             <p className="auth-description">
-              Please log in with your Keycloak credentials to access the task management system.
+              Please log in to access your workspace.
               Your role will determine what features you can access.
             </p>
           </div>
@@ -54,10 +54,10 @@ const LoginPage = () => {
           <button
             onClick={login}
             className="btn btn-primary login-button"
-            aria-label="Login with Keycloak authentication"
+            aria-label="Login to your account"
           >
             <span className="login-icon" aria-hidden="true">Login</span>
-            Login with Keycloak
+            Login
           </button>
 
           {/* Role Information */}
@@ -87,7 +87,7 @@ const LoginPage = () => {
         {/* Footer */}
         <div className="login-footer">
           <p className="footer-text">
-            Enterprise Task Management System • Powered by Keycloak
+            Prismex © 2025
           </p>
         </div>
       </div>
@@ -150,6 +150,24 @@ const LoginPage = () => {
 
         .login-header {
           margin-bottom: var(--spacing-2xl);
+        }
+
+        .app-logo-img {
+          width: 120px;
+          height: 120px;
+          margin: 0 auto var(--spacing-lg);
+          display: block;
+          filter: drop-shadow(0 4px 12px rgba(102, 126, 234, 0.3));
+          animation: logoFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes logoFloat {
+          0%, 100% {
+            transform: translateY(0px);
+          }
+          50% {
+            transform: translateY(-10px);
+          }
         }
 
         .app-logo {
@@ -305,6 +323,11 @@ const LoginPage = () => {
             padding: var(--spacing-xl);
           }
 
+          .app-logo-img {
+            width: 90px;
+            height: 90px;
+          }
+
           .app-logo {
             font-size: 3rem;
           }
@@ -343,6 +366,10 @@ const LoginPage = () => {
         @media (prefers-reduced-motion: reduce) {
           .login-button {
             transition: none;
+          }
+
+          .app-logo-img {
+            animation: none;
           }
         }
 
