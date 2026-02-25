@@ -11,4 +11,3 @@ resources:
   - keycloak
   - configmap.yaml
   - secrets.yaml
-  - ingress.yaml
