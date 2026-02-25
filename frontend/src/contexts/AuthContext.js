@@ -9,9 +9,26 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import realtimeClient from '../services/realtimeClient';
 
-// Configure axios - no baseURL needed since nginx handles /api routing
-axios.defaults.timeout = 10000;
+// Configure axios with optimized settings
+axios.defaults.timeout = 30000; // Increased from 10s to 30s
 axios.defaults.headers.common['Content-Type'] = 'application/json';
+
+// Add request interceptor for better error handling
+axios.interceptors.request.use(
+  config => config,
+  error => Promise.reject(error)
+);
+
+// Add response interceptor for consistent error handling
+axios.interceptors.response.use(
+  response => response,
+  error => {
+    if (error.code === 'ECONNABORTED') {
+      console.error('Request timeout:', error.config.url);
+    }
+    return Promise.reject(error);
+  }
+);
 
 const AuthContext = createContext();
 

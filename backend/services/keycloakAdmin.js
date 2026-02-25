@@ -163,6 +163,14 @@ class KeycloakAdminService {
         throw new Error(`HTTP ${response.status}: ${response.data}`);
       }
 
+      // Return full response object for POST requests (to access Location header)
+      if (method === 'POST' && response.headers.location) {
+        return {
+          location: response.headers.location,
+          data: response.json
+        };
+      }
+
       // Some endpoints return empty responses (like DELETE)
       if (response.json) {
         return response.json;
@@ -196,15 +204,26 @@ class KeycloakAdminService {
       console.log(`Creating user in Keycloak: ${userInfo.username}`);
       
       // Create user with extended timeout if specified
-      await this.makeAdminRequest('POST', '/users', userData, options);
+      const response = await this.makeAdminRequest('POST', '/users', userData, options);
       
-      // Get the created user to get their ID
-      const users = await this.makeAdminRequest('GET', `/users?username=${userInfo.username}`, null, options);
-      if (users.length === 0) {
-        throw new Error('User created but not found');
+      // Extract user ID from Location header (e.g., .../users/abc-123-def)
+      let keycloakUserId = null;
+      if (response && response.location) {
+        const locationParts = response.location.split('/');
+        keycloakUserId = locationParts[locationParts.length - 1];
       }
       
-      const keycloakUser = users[0];
+      // Fallback: If no Location header, search for user (slower but reliable)
+      if (!keycloakUserId) {
+        console.log('No Location header, searching for user...');
+        const users = await this.makeAdminRequest('GET', `/users?username=${userInfo.username}`, null, options);
+        if (users.length === 0) {
+          throw new Error('User created but not found');
+        }
+        keycloakUserId = users[0].id;
+      }
+      
+      const keycloakUser = { id: keycloakUserId, username: userInfo.username };
       
       // Assign role if specified
       if (userInfo.global_role) {
@@ -243,17 +262,24 @@ class KeycloakAdminService {
   }
 
   /**
-   * Get user from Keycloak
+   * Get user from Keycloak by ID
    */
-  async getUser(keycloakUserId) {
+  async getUserById(keycloakUserId) {
     try {
       return await this.makeAdminRequest('GET', `/users/${keycloakUserId}`);
     } catch (error) {
-      if (error.response?.status === 404) {
+      if (error.message.includes('404')) {
         return null;
       }
       throw error;
     }
+  }
+
+  /**
+   * Get user from Keycloak
+   */
+  async getUser(keycloakUserId) {
+    return this.getUserById(keycloakUserId);
   }
 
   /**
@@ -269,21 +295,33 @@ class KeycloakAdminService {
   }
 
   /**
-   * Assign role to user in Keycloak
+   * Assign role to user in Keycloak (optimized)
    */
   async assignUserRole(keycloakUserId, roleName) {
     try {
-      // Get available realm roles
-      const realmRoles = await this.makeAdminRequest('GET', '/roles');
-      const role = realmRoles.find(r => r.name === roleName);
+      // Get available realm roles (cached in memory for performance)
+      if (!this.realmRolesCache || Date.now() - this.realmRolesCacheTime > 300000) {
+        this.realmRolesCache = await this.makeAdminRequest('GET', '/roles');
+        this.realmRolesCacheTime = Date.now();
+      }
+      
+      const role = this.realmRolesCache.find(r => r.name === roleName);
       
       if (!role) {
         console.warn(`Role '${roleName}' not found in Keycloak, skipping role assignment`);
         return false;
       }
 
-      // Remove existing roles first
+      // Get current roles and remove them if different
       const currentRoles = await this.makeAdminRequest('GET', `/users/${keycloakUserId}/role-mappings/realm`);
+      const hasRole = currentRoles.some(r => r.name === roleName);
+      
+      if (hasRole) {
+        console.log(`User ${keycloakUserId} already has role '${roleName}'`);
+        return true;
+      }
+      
+      // Remove existing roles only if they exist
       if (currentRoles.length > 0) {
         await this.makeAdminRequest('DELETE', `/users/${keycloakUserId}/role-mappings/realm`, currentRoles);
       }
@@ -294,7 +332,7 @@ class KeycloakAdminService {
       console.log(`Role '${roleName}' assigned to user ${keycloakUserId} in Keycloak`);
       return true;
     } catch (error) {
-      console.error('Error assigning role in Keycloak:', error.response?.data || error.message);
+      console.error('Error assigning role in Keycloak:', error.message);
       throw error;
     }
   }
@@ -544,7 +582,7 @@ class KeycloakAdminService {
   }
 
   /**
-   * Bulk create users in Keycloak with extended timeout
+   * Bulk create users in Keycloak with parallel processing
    */
   async createUsers(usersArray) {
     const results = {
@@ -555,41 +593,64 @@ class KeycloakAdminService {
 
     console.log(`Starting bulk user creation for ${usersArray.length} users`);
 
-    for (let i = 0; i < usersArray.length; i++) {
-      const userInfo = usersArray[i];
+    // Process users in batches of 5 for better performance
+    const batchSize = 5;
+    for (let i = 0; i < usersArray.length; i += batchSize) {
+      const batch = usersArray.slice(i, i + batchSize);
       
-      try {
-        // Generate password if not provided
-        if (!userInfo.password) {
-          userInfo.password = this.generateSecurePassword();
-          userInfo.temporaryPassword = true;
+      // Process batch in parallel
+      const batchPromises = batch.map(async (userInfo, batchIndex) => {
+        const globalIndex = i + batchIndex;
+        
+        try {
+          // Generate password if not provided
+          if (!userInfo.password) {
+            userInfo.password = this.generateSecurePassword();
+            userInfo.temporaryPassword = true;
+          }
+
+          // Create user in Keycloak with extended timeout for bulk operations
+          const keycloakUser = await this.createUser(userInfo, { timeout: 120000 }); // 2 minutes per user
+          
+          return {
+            success: true,
+            data: {
+              index: globalIndex + 1,
+              username: userInfo.username,
+              email: userInfo.email,
+              keycloakUserId: keycloakUser.id,
+              password: userInfo.password,
+              temporaryPassword: userInfo.temporaryPassword || false
+            }
+          };
+        } catch (error) {
+          console.error(`Failed to create user ${userInfo.username}:`, error.message);
+          
+          return {
+            success: false,
+            data: {
+              index: globalIndex + 1,
+              username: userInfo.username,
+              email: userInfo.email,
+              error: error.message,
+              details: userInfo
+            }
+          };
         }
+      });
 
-        // Create user in Keycloak with extended timeout for bulk operations
-        const keycloakUser = await this.createUser(userInfo, { timeout: 300000 }); // 5 minutes per user
-        
-        results.successful.push({
-          index: i + 1,
-          username: userInfo.username,
-          email: userInfo.email,
-          keycloakUserId: keycloakUser.id,
-          password: userInfo.password,
-          temporaryPassword: userInfo.temporaryPassword || false
-        });
-
-        console.log(`User created: ${userInfo.username} (${i + 1}/${usersArray.length})`);
-        
-      } catch (error) {
-        console.error(`Failed to create user ${userInfo.username}:`, error.message);
-        
-        results.failed.push({
-          index: i + 1,
-          username: userInfo.username,
-          email: userInfo.email,
-          error: error.message,
-          details: userInfo
-        });
-      }
+      // Wait for batch to complete
+      const batchResults = await Promise.all(batchPromises);
+      
+      // Categorize results
+      batchResults.forEach(result => {
+        if (result.success) {
+          results.successful.push(result.data);
+          console.log(`User created: ${result.data.username} (${result.data.index}/${usersArray.length})`);
+        } else {
+          results.failed.push(result.data);
+        }
+      });
     }
 
     console.log(`Bulk user creation completed: ${results.successful.length} successful, ${results.failed.length} failed`);
