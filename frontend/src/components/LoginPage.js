@@ -158,16 +158,6 @@ const LoginPage = () => {
           margin: 0 auto var(--spacing-lg);
           display: block;
           filter: drop-shadow(0 4px 12px rgba(102, 126, 234, 0.3));
-          animation: logoFloat 3s ease-in-out infinite;
-        }
-
-        @keyframes logoFloat {
-          0%, 100% {
-            transform: translateY(0px);
-          }
-          50% {
-            transform: translateY(-10px);
-          }
         }
 
         .app-logo {
@@ -366,10 +356,6 @@ const LoginPage = () => {
         @media (prefers-reduced-motion: reduce) {
           .login-button {
             transition: none;
-          }
-
-          .app-logo-img {
-            animation: none;
           }
         }
 

@@ -31,14 +31,26 @@ const FOCUSABLE_ELEMENTS = [
 const useFocusTrap = (isActive = true, onEscape = null) => {
   const containerRef = useRef(null);
   const previousActiveElement = useRef(null);
+  const hasInitializedFocus = useRef(false);
+  const onEscapeRef = useRef(onEscape);
+
+  // Update the escape callback ref without triggering re-render
+  useEffect(() => {
+    onEscapeRef.current = onEscape;
+  }, [onEscape]);
 
   useEffect(() => {
-    if (!isActive || !containerRef.current) return;
+    if (!isActive || !containerRef.current) {
+      hasInitializedFocus.current = false;
+      return;
+    }
 
     const container = containerRef.current;
 
-    // Store the element that had focus before modal opened
-    previousActiveElement.current = document.activeElement;
+    // Store the element that had focus before modal opened (only once)
+    if (!previousActiveElement.current) {
+      previousActiveElement.current = document.activeElement;
+    }
 
     // Set aria-hidden on main content
     const mainContent = document.getElementById('main-content');
@@ -58,14 +70,17 @@ const useFocusTrap = (isActive = true, onEscape = null) => {
         });
     };
 
-    // Focus first element or container
+    // Focus first element or container (only on initial mount)
     const focusFirstElement = () => {
+      if (hasInitializedFocus.current) return;
+      
       const focusableElements = getFocusableElements();
       if (focusableElements.length > 0) {
         focusableElements[0].focus();
       } else if (container.hasAttribute('tabindex')) {
         container.focus();
       }
+      hasInitializedFocus.current = true;
     };
 
     // Focus first element after a brief delay to ensure DOM is ready
@@ -73,9 +88,9 @@ const useFocusTrap = (isActive = true, onEscape = null) => {
 
     // Handle Tab and Shift+Tab to trap focus
     const handleKeyDown = (e) => {
-      // Handle Escape key
-      if (e.key === 'Escape' && onEscape) {
-        onEscape(e);
+      // Handle Escape key using the ref
+      if (e.key === 'Escape' && onEscapeRef.current) {
+        onEscapeRef.current(e);
         return;
       }
 
@@ -118,10 +133,14 @@ const useFocusTrap = (isActive = true, onEscape = null) => {
           if (previousActiveElement.current && previousActiveElement.current.focus) {
             previousActiveElement.current.focus();
           }
+          previousActiveElement.current = null;
         }, 0);
       }
+      
+      // Reset the flag when modal closes
+      hasInitializedFocus.current = false;
     };
-  }, [isActive, onEscape]);
+  }, [isActive]); // Only depend on isActive
 
   return containerRef;
 };
