@@ -1,9 +1,7 @@
 /**
- * Email Service
- * Handles sending emails for user notifications
- * Uses Mailjet HTTP API (port 443) as primary method to avoid SMTP port blocking in Kubernetes,
- * with nodemailer SMTP as fallback for local/non-K8s environments.
- */
+* Email Service
+* Handles sending emails for user notifications
+*/
 
 const nodemailer = require('nodemailer');
 
@@ -11,7 +9,6 @@ class EmailService {
   constructor() {
     this.transporter = null;
     this.isConfigured = false;
-    this.useMailjetApi = false;
     this.initializeTransporter();
   }
 
@@ -20,92 +17,32 @@ class EmailService {
    */
   initializeTransporter() {
     try {
-      const smtpHost = process.env.SMTP_HOST;
-      const smtpUser = process.env.SMTP_USER;
-      const smtpPass = process.env.SMTP_PASS;
+      // Check if email configuration is provided
+      const emailConfig = {
+        host: process.env.SMTP_HOST,
+        port: parseInt(process.env.SMTP_PORT) || 587,
+        secure: process.env.SMTP_SECURE === 'true', // true for 465, false for other ports
+        auth: {
+          user: process.env.SMTP_USER,
+          pass: process.env.SMTP_PASS
+        }
+      };
 
-      if (!smtpHost || !smtpUser) {
+      // If no SMTP configuration, use a test account or disable emails
+      if (!emailConfig.host || !emailConfig.auth.user) {
         console.log('Email service: No SMTP configuration found. Email notifications will be logged only.');
         this.isConfigured = false;
         return;
       }
 
-      // If using Mailjet, prefer HTTP API over SMTP to avoid port 587 being blocked in Kubernetes
-      if (smtpHost.includes('mailjet.com')) {
-        console.log('Email service: Mailjet detected — using HTTP API (port 443) to avoid SMTP port blocking.');
-        this.mailjetApiKey = smtpUser;
-        this.mailjetSecretKey = smtpPass;
-        this.useMailjetApi = true;
-        this.isConfigured = true;
-        console.log('Email service initialized successfully (Mailjet HTTP API)');
-        return;
-      }
-
-      // Non-Mailjet: use standard nodemailer SMTP
-      this.transporter = nodemailer.createTransport({
-        host: smtpHost,
-        port: parseInt(process.env.SMTP_PORT) || 587,
-        secure: process.env.SMTP_SECURE === 'true',
-        auth: {
-          user: smtpUser,
-          pass: smtpPass
-        }
-      });
-
+      this.transporter = nodemailer.createTransport(emailConfig);
       this.isConfigured = true;
-      console.log('Email service initialized successfully (SMTP)');
+
+      console.log('Email service initialized successfully');
     } catch (error) {
       console.error('Failed to initialize email service:', error.message);
       this.isConfigured = false;
     }
-  }
-
-  /**
-   * Send email via Mailjet HTTP API (avoids SMTP port blocking in Kubernetes)
-   */
-  async sendViaMailjetApi({ to, subject, html, text }) {
-    const payload = {
-      Messages: [
-        {
-          From: {
-            Email: process.env.SMTP_FROM || process.env.SMTP_USER,
-            Name: 'Prismex'
-          },
-          To: [
-            {
-              Email: to
-            }
-          ],
-          Subject: subject,
-          TextPart: text || this.stripHtml(html),
-          HTMLPart: html
-        }
-      ]
-    };
-
-    const credentials = Buffer.from(`${this.mailjetApiKey}:${this.mailjetSecretKey}`).toString('base64');
-
-    const response = await fetch('https://api.mailjet.com/v3.1/send', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Basic ${credentials}`
-      },
-      body: JSON.stringify(payload)
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(`Mailjet API error ${response.status}: ${JSON.stringify(data)}`);
-    }
-
-    const message = data.Messages?.[0];
-    if (message?.Status !== 'success') {
-      throw new Error(`Mailjet rejected message: ${JSON.stringify(message?.Errors)}`);
-    }
-
-    return data.Messages[0].To[0].MessageID || 'mailjet-api';
   }
 
   /**
@@ -269,11 +206,12 @@ class EmailService {
   }
 
   /**
-   * Send generic email — routes to Mailjet API or SMTP depending on configuration
+   * Send generic email
    */
   async sendEmail({ to, subject, html, text }) {
     try {
       if (!this.isConfigured) {
+        // Log email instead of sending
         console.log('Email would be sent:');
         console.log(`   To: ${to}`);
         console.log(`   Subject: ${subject}`);
@@ -281,36 +219,28 @@ class EmailService {
         return { success: true, messageId: 'logged-only', method: 'logged' };
       }
 
-      let messageId;
+      const mailOptions = {
+        from: process.env.SMTP_FROM || process.env.SMTP_USER,
+        to,
+        subject,
+        html,
+        text: text || this.stripHtml(html)
+      };
 
-      if (this.useMailjetApi) {
-        // Use Mailjet HTTP API — works in Kubernetes where port 587 is blocked
-        messageId = await this.sendViaMailjetApi({ to, subject, html, text });
-      } else {
-        // Use nodemailer SMTP
-        const mailOptions = {
-          from: process.env.SMTP_FROM || process.env.SMTP_USER,
-          to,
-          subject,
-          html,
-          text: text || this.stripHtml(html)
-        };
-        const info = await this.transporter.sendMail(mailOptions);
-        messageId = info.messageId;
-      }
+      const info = await this.transporter.sendMail(mailOptions);
+      console.log(`Email sent successfully to ${to}: ${info.messageId}`);
 
-      console.log(`Email sent successfully to ${to}: ${messageId}`);
       return {
         success: true,
-        messageId,
-        method: this.useMailjetApi ? 'mailjet-api' : 'smtp'
+        messageId: info.messageId,
+        method: 'smtp'
       };
     } catch (error) {
       console.error(`Failed to send email to ${to}:`, error.message);
       return {
         success: false,
         error: error.message,
-        method: this.useMailjetApi ? 'mailjet-api' : (this.isConfigured ? 'smtp' : 'logged')
+        method: this.isConfigured ? 'smtp' : 'logged'
       };
     }
   }
@@ -381,9 +311,10 @@ class EmailService {
    * Generate import completion email template
    */
   generateImportCompletionTemplate({ successful, failed, total, failedUsers = [] }) {
+    // Ensure failedUsers is an array
     const failedUsersArray = Array.isArray(failedUsers) ? failedUsers : [];
     const failedCount = typeof failed === 'number' ? failed : failedUsersArray.length;
-
+    
     return `
 <!DOCTYPE html>
 <html>
@@ -804,20 +735,6 @@ class EmailService {
           success: false,
           message: 'Email service not configured - SMTP settings missing'
         };
-      }
-
-      if (this.useMailjetApi) {
-        // Test Mailjet API connectivity with a lightweight request
-        const credentials = Buffer.from(`${this.mailjetApiKey}:${this.mailjetSecretKey}`).toString('base64');
-        const response = await fetch('https://api.mailjet.com/v3/REST/sender', {
-          headers: { 'Authorization': `Basic ${credentials}` }
-        });
-        if (response.ok) {
-          return { success: true, message: 'Mailjet HTTP API connection successful' };
-        } else {
-          const data = await response.json();
-          throw new Error(`HTTP ${response.status}: ${JSON.stringify(data)}`);
-        }
       }
 
       await this.transporter.verify();
