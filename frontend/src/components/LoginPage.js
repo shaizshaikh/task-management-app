@@ -32,7 +32,7 @@ const LoginPage = () => {
         {/* Header Section */}
         <div className="login-header">
           <img src="/logo.svg" alt="Prismex Logo" className="app-logo-img" />
-          <h2 className="app-title">Prismex</h2>
+          <h2 className="app-title">Prismexv1</h2>
           <p className="app-description">
             Team & Workforce Management Platform
           </p>
