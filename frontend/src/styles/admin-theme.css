@@ -1,0 +1,1320 @@
+/**
+ * Admin Panel Dark Theme Overrides
+ * Ensures all admin components follow the dark theme
+ */
+
+/* Admin Panel Specific Styles */
+.admin-panel {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* Admin Tables */
+.admin-table {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.admin-table-header {
+  background-color: var(--bg-tertiary);
+  border-bottom: 1px solid var(--border-primary);
+  padding: var(--spacing-lg);
+}
+
+.admin-table-row {
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-secondary);
+  transition: background-color var(--animation-duration) ease;
+}
+
+.admin-table-row:hover {
+  background-color: var(--bg-tertiary);
+}
+
+.admin-table-cell {
+  padding: var(--spacing-md) var(--spacing-lg);
+  color: var(--text-primary);
+}
+
+/* Admin Modals */
+.admin-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.admin-modal-content {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.admin-modal-header {
+  margin-bottom: var(--spacing-lg);
+  color: var(--text-primary);
+}
+
+.admin-modal-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+/* Admin Form Elements */
+.admin-form-group {
+  margin-bottom: var(--spacing-lg);
+}
+
+.admin-form-label {
+  display: block;
+  margin-bottom: var(--spacing-sm);
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.admin-form-input {
+  width: 100%;
+  padding: var(--spacing-md);
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-secondary);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  transition: all var(--animation-duration) ease;
+}
+
+.admin-form-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.admin-form-select {
+  width: 100%;
+  padding: var(--spacing-md);
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-secondary);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.admin-form-textarea {
+  width: 100%;
+  padding: var(--spacing-md);
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-secondary);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* Admin Buttons */
+.admin-btn {
+  padding: var(--spacing-md) var(--spacing-lg);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--animation-duration) ease;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.admin-btn-primary {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.admin-btn-primary:hover {
+  background-color: var(--color-primary-dark);
+  transform: translateY(-1px);
+}
+
+.admin-btn-secondary {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-secondary);
+}
+
+.admin-btn-secondary:hover {
+  background-color: var(--bg-quaternary);
+  border-color: var(--border-hover);
+}
+
+.admin-btn-danger {
+  background-color: var(--color-error);
+  color: white;
+}
+
+.admin-btn-danger:hover {
+  background-color: var(--color-error-dark);
+}
+
+.admin-btn-success {
+  background-color: var(--color-success);
+  color: white;
+}
+
+.admin-btn-success:hover {
+  background-color: var(--color-success-dark);
+}
+
+/* Admin Cards */
+.admin-card {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.admin-card-header {
+  background-color: var(--bg-tertiary);
+  border-bottom: 1px solid var(--border-primary);
+  padding: var(--spacing-lg);
+}
+
+.admin-card-body {
+  padding: var(--spacing-lg);
+}
+
+/* Admin Filters */
+.admin-filters {
+  display: flex;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+  flex-wrap: wrap;
+}
+
+.admin-filter-input {
+  flex: 1;
+  min-width: 200px;
+  padding: var(--spacing-md);
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-secondary);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+}
+
+/* Admin Actions */
+.admin-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  justify-content: flex-end;
+  margin-top: var(--spacing-lg);
+}
+
+/* Role Badges */
+.role-badge {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.role-badge-admin {
+  background-color: rgba(248, 81, 73, 0.2);
+  color: var(--color-error);
+  border: 1px solid rgba(248, 81, 73, 0.3);
+}
+
+.role-badge-manager {
+  background-color: rgba(210, 153, 34, 0.2);
+  color: var(--color-warning);
+  border: 1px solid rgba(210, 153, 34, 0.3);
+}
+
+.role-badge-member {
+  background-color: rgba(34, 197, 94, 0.2);
+  color: var(--color-success);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.role-badge-viewer {
+  background-color: rgba(59, 130, 246, 0.2);
+  color: var(--color-info);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+/* Admin Status Indicators */
+.status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  font-size: 0.875rem;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.status-active .status-dot {
+  background-color: var(--color-success);
+}
+
+.status-inactive .status-dot {
+  background-color: var(--color-error);
+}
+
+/* Admin Loading States */
+.admin-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--spacing-xl);
+  color: var(--text-secondary);
+}
+
+/* Admin Empty States */
+.admin-empty {
+  text-align: center;
+  padding: var(--spacing-xl);
+  color: var(--text-secondary);
+}
+
+.admin-empty-icon {
+  font-size: 3rem;
+  margin-bottom: var(--spacing-md);
+  opacity: 0.5;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .admin-filters {
+    flex-direction: column;
+  }
+  
+  .admin-filter-input {
+    min-width: auto;
+  }
+  
+  .admin-actions {
+    flex-direction: column;
+  }
+  
+  .admin-modal-content {
+    width: 95%;
+    padding: var(--spacing-lg);
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .admin-card {
+    border: 2px solid var(--text-primary);
+  }
+  
+  .admin-form-input:focus {
+    border: 2px solid var(--color-primary);
+  }
+}
+
+/* Profile Page Styles */
+.profile-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--spacing-xl);
+  padding: var(--spacing-lg);
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-secondary);
+  border-radius: var(--radius-lg);
+}
+
+.profile-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: white;
+  margin-right: var(--spacing-lg);
+  background-size: cover;
+  background-position: center;
+  border: 2px solid var(--border-primary);
+}
+
+.profile-info {
+  flex: 1;
+}
+
+.profile-name {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 var(--spacing-xs) 0;
+}
+
+.profile-email {
+  color: var(--text-secondary);
+  margin: 0 0 var(--spacing-xs) 0;
+}
+
+.profile-role {
+  display: inline-block;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background-color: var(--color-primary);
+  color: white;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.profile-form {
+  display: grid;
+  gap: var(--spacing-lg);
+}
+
+.profile-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-lg);
+}
+
+@media (max-width: 768px) {
+  .profile-header {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .profile-avatar {
+    margin-right: 0;
+    margin-bottom: var(--spacing-md);
+  }
+  
+  .profile-form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Task Comments Styles */
+.comments-section {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.comments-header {
+  background-color: var(--bg-tertiary);
+  border-bottom: 1px solid var(--border-primary);
+  padding: var(--spacing-lg);
+}
+
+.comments-list {
+  max-height: 400px;
+  overflow-y: auto;
+  padding: var(--spacing-md);
+}
+
+.comment-item {
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-secondary);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-sm);
+}
+
+.comment-author {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.comment-date {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.comment-content {
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+.comment-form {
+  padding: var(--spacing-lg);
+  border-top: 1px solid var(--border-primary);
+  background-color: var(--bg-tertiary);
+}
+
+.comment-textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: var(--spacing-md);
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-secondary);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  resize: vertical;
+  font-family: inherit;
+}
+
+.comment-textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+/* Manager Panel Styles */
+.manager-panel {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.manager-card {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.manager-card-header {
+  background-color: var(--bg-tertiary);
+  border-bottom: 1px solid var(--border-primary);
+  padding: var(--spacing-lg);
+}
+
+.manager-card-body {
+  padding: var(--spacing-lg);
+}
+
+/* Task Edit Modal Styles */
+.task-edit-modal {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+  color: var(--text-primary);
+}
+
+.task-edit-header {
+  background-color: var(--bg-tertiary);
+  border-bottom: 1px solid var(--border-primary);
+  padding: var(--spacing-lg);
+}
+
+.task-edit-body {
+  padding: var(--spacing-lg);
+}
+
+.task-form-group {
+  margin-bottom: var(--spacing-lg);
+}
+
+.task-form-label {
+  display: block;
+  margin-bottom: var(--spacing-sm);
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.task-form-input {
+  width: 100%;
+  padding: var(--spacing-md);
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-secondary);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+}
+
+.task-form-select {
+  width: 100%;
+  padding: var(--spacing-md);
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-secondary);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+}
+
+.task-form-textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: var(--spacing-md);
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-secondary);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  resize: vertical;
+}
+
+/* Role-specific Colors */
+.stat-value-admin { color: var(--color-error) !important; }
+.stat-value-manager { color: var(--color-warning) !important; }
+.stat-value-member { color: var(--color-success) !important; }
+.stat-value-viewer { color: var(--color-info) !important; }
+
+/* Common Inline Style Replacements */
+.inline-flex { display: flex; }
+.inline-flex-center { display: flex; align-items: center; }
+.inline-flex-between { display: flex; justify-content: space-between; align-items: center; }
+.inline-flex-col { display: flex; flex-direction: column; }
+.inline-text-center { text-align: center; }
+.inline-mb-sm { margin-bottom: var(--spacing-sm); }
+.inline-mb-md { margin-bottom: var(--spacing-md); }
+.inline-mb-lg { margin-bottom: var(--spacing-lg); }
+.inline-p-sm { padding: var(--spacing-sm); }
+.inline-p-md { padding: var(--spacing-md); }
+.inline-p-lg { padding: var(--spacing-lg); }
+
+/* Legacy Button Styles */
+.legacy-btn {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all var(--animation-duration) ease;
+}
+
+.legacy-btn-primary {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.legacy-btn-success {
+  background-color: var(--color-success);
+  color: white;
+}
+
+.legacy-btn-warning {
+  background-color: var(--color-warning);
+  color: white;
+}
+
+.legacy-btn-secondary {
+  background-color: var(--text-secondary);
+  color: white;
+}
+
+.legacy-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* Legacy Input Styles */
+.legacy-input {
+  width: 100%;
+  padding: var(--spacing-sm);
+  border: 1px solid var(--border-secondary);
+  border-radius: var(--radius-md);
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.legacy-input:disabled {
+  background-color: var(--bg-quaternary);
+  color: var(--text-secondary);
+  opacity: 0.6;
+}
+
+.legacy-select {
+  width: 100%;
+  padding: var(--spacing-sm);
+  border: 1px solid var(--border-secondary);
+  border-radius: var(--radius-md);
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+/* Legacy Container Styles */
+.legacy-container {
+  padding: var(--spacing-lg);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.legacy-card {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+}
+
+.legacy-filters {
+  display: flex;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+  padding: var(--spacing-md);
+  background-color: var(--bg-tertiary);
+  border-radius: var(--radius-md);
+  flex-wrap: wrap;
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .admin-btn {
+    transition: none;
+  }
+  
+  .admin-btn:hover {
+    transform: none;
+  }
+  
+  .admin-form-input {
+    transition: none;
+  }
+}
+
+/* Admin Panel Layout Fixes */
+.admin-panel {
+  padding: var(--spacing-xl);
+  background-color: var(--bg-primary);
+  min-height: 100vh;
+}
+
+.admin-panel .page-header {
+  margin-bottom: var(--spacing-2xl);
+  padding-bottom: var(--spacing-lg);
+  border-bottom: 2px solid var(--border-primary);
+}
+
+.admin-panel .page-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.admin-panel .section-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: var(--spacing-xl) 0 var(--spacing-lg) 0;
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 1px solid var(--border-secondary);
+}
+
+/* Manager Panel Layout Fixes */
+.manager-panel {
+  padding: var(--spacing-xl);
+  background-color: var(--bg-primary);
+  min-height: 100vh;
+}
+
+.manager-panel .page-header {
+  margin-bottom: var(--spacing-2xl);
+  padding-bottom: var(--spacing-lg);
+  border-bottom: 2px solid var(--border-primary);
+}
+
+.manager-panel .page-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.manager-panel .section-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: var(--spacing-xl) 0 var(--spacing-lg) 0;
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 1px solid var(--border-secondary);
+}
+
+/* Tab Navigation - Professional & Clean */
+.tab-navigation {
+  display: flex;
+  border-bottom: 1px solid var(--border-primary);
+  margin-bottom: var(--spacing-xl);
+  background-color: var(--bg-primary);
+  position: relative;
+  z-index: 1;
+  /* Remove any floating or overlap */
+  overflow: visible;
+}
+
+.tab-button {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md) var(--spacing-lg);
+  background-color: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  /* Ensure no overlap */
+  z-index: auto;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.tab-button:hover {
+  color: var(--text-primary);
+  background-color: var(--bg-tertiary);
+}
+
+.tab-button.active {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+  background-color: transparent;
+  /* NO floating, NO transform, NO elevation */
+}
+
+.tab-button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: -2px;
+}
+
+/* Content Area Fixes */
+.tab-content {
+  position: relative;
+  z-index: 1;
+  padding-top: var(--spacing-lg);
+}
+
+/* Ensure all headings are properly visible */
+.admin-panel h1,
+.admin-panel h2,
+.admin-panel h3,
+.admin-panel h4,
+.manager-panel h1,
+.manager-panel h2,
+.manager-panel h3,
+.manager-panel h4 {
+  position: relative;
+  z-index: 10;
+  margin-top: 0;
+  line-height: 1.3;
+  color: var(--text-primary);
+}
+
+/* Fix for dashboard titles */
+.dashboard-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 var(--spacing-xl) 0;
+  padding-bottom: var(--spacing-md);
+  border-bottom: 2px solid var(--border-primary);
+  position: relative;
+  z-index: 10;
+}
+
+/* Fix for tasks page title */
+.tasks-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-xl);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 2px solid var(--border-primary);
+}
+
+.tasks-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+  position: relative;
+  z-index: 10;
+}
+
+/* Fix for teams section */
+.teams-section {
+  margin-top: var(--spacing-xl);
+}
+
+.teams-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 var(--spacing-lg) 0;
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 1px solid var(--border-secondary);
+  position: relative;
+  z-index: 10;
+}
+
+/* Manager Panel Specific Styles */
+.manager-panel-container {
+  padding: var(--spacing-xl);
+  background-color: var(--bg-primary);
+  min-height: 100vh;
+}
+
+.manager-panel-header {
+  margin-bottom: var(--spacing-2xl);
+  padding-bottom: var(--spacing-lg);
+  border-bottom: 2px solid var(--border-primary);
+}
+
+.manager-panel-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 var(--spacing-sm) 0;
+  line-height: 1.2;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.manager-panel-subtitle {
+  font-size: 1.125rem;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.manager-admin-badge {
+  font-size: 0.75rem;
+  background-color: var(--color-admin);
+  color: white;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-xl);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+/* Manager Empty State */
+.manager-empty-state {
+  text-align: center;
+  padding: var(--spacing-3xl);
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+  margin: var(--spacing-xl) 0;
+}
+
+.manager-empty-icon {
+  font-size: 4rem;
+  margin-bottom: var(--spacing-lg);
+}
+
+.manager-empty-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 var(--spacing-md) 0;
+}
+
+.manager-empty-description {
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* FIXED COLOR HIERARCHY - Professional System */
+
+/* Primary Actions - Only ONE primary color */
+.btn-primary,
+.admin-btn-primary {
+  background-color: var(--color-primary);
+  color: white;
+  border: 1px solid var(--color-primary);
+}
+
+/* Secondary Actions - Neutral, not competing */
+.btn-secondary,
+.admin-btn-secondary {
+  background-color: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--border-primary);
+}
+
+.btn-secondary:hover,
+.admin-btn-secondary:hover {
+  background-color: var(--bg-tertiary);
+  border-color: var(--border-hover);
+}
+
+/* Danger Actions - ONLY for destructive actions */
+.btn-danger,
+.admin-btn-danger {
+  background-color: var(--color-error);
+  color: white;
+  border: 1px solid var(--color-error);
+}
+
+/* Utility Actions - Subtle, not attention-grabbing */
+.btn-utility {
+  background-color: var(--bg-secondary);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-secondary);
+  font-size: 0.875rem;
+  padding: var(--spacing-sm) var(--spacing-md);
+}
+
+.btn-utility:hover {
+  color: var(--text-primary);
+  border-color: var(--border-primary);
+}
+
+/* Action Groups - Clean, organized */
+.admin-actions-primary {
+  display: flex;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.admin-actions-secondary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-secondary);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.admin-actions-secondary .btn-utility {
+  background-color: transparent;
+}
+
+/* Remove color chaos from specific buttons */
+.admin-sync-btn,
+.admin-export-csv-btn,
+.admin-export-excel-btn,
+.admin-import-btn,
+.admin-history-btn {
+  /* All become neutral secondary buttons */
+  background-color: transparent !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-primary) !important;
+}
+
+.admin-sync-btn:hover,
+.admin-export-csv-btn:hover,
+.admin-export-excel-btn:hover,
+.admin-import-btn:hover,
+.admin-history-btn:hover {
+  background-color: var(--bg-tertiary) !important;
+  border-color: var(--border-hover) !important;
+}
+
+/* FIXED BUTTON LAYOUT - Compact & Organized */
+
+/* Compact button sizing */
+.admin-btn-compact {
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: 0.875rem;
+  min-height: auto;
+  height: auto;
+}
+
+/* Horizontal action groups instead of vertical stacks */
+.admin-secondary-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  align-items: center;
+  padding: var(--spacing-md);
+  background-color: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-secondary);
+}
+
+.admin-secondary-actions .btn {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: 0.8125rem;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+/* Icon + text buttons - subtle */
+.btn-icon-text {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.btn-icon-text .icon {
+  font-size: 0.875rem;
+  opacity: 0.8;
+}
+
+/* Dropdown for overflow actions */
+.admin-more-actions {
+  position: relative;
+}
+
+.admin-more-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  min-width: 180px;
+  z-index: 1000;
+  padding: var(--spacing-xs);
+}
+
+.admin-more-dropdown .btn {
+  width: 100%;
+  justify-content: flex-start;
+  padding: var(--spacing-sm);
+  border: none;
+  background: transparent;
+  text-align: left;
+}
+
+.admin-more-dropdown .btn:hover {
+  background-color: var(--bg-tertiary);
+}
+
+/* FIXED CONTENT HIERARCHY - Clear Structure */
+
+/* Section headers - clear hierarchy */
+.admin-section {
+  margin-bottom: var(--spacing-2xl);
+}
+
+.admin-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 1px solid var(--border-secondary);
+}
+
+.admin-section-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.admin-section-subtitle {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin: var(--spacing-xs) 0 0 0;
+}
+
+/* Content cards - consistent spacing */
+.admin-content-card {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+}
+
+.admin-content-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+}
+
+.admin-content-card-title {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+/* User cards - proper integration */
+.admin-user-card {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+  /* Reduced shadow for subtlety */
+  box-shadow: var(--shadow-sm);
+}
+
+.admin-user-card:hover {
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-md);
+}
+
+/* Upload areas - integrated styling */
+.admin-upload-area {
+  border: 2px dashed var(--border-secondary);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  text-align: center;
+  background-color: var(--bg-tertiary);
+  transition: all 0.2s ease;
+  margin: var(--spacing-lg) 0;
+}
+
+.admin-upload-area:hover,
+.admin-upload-area.dragover {
+  border-color: var(--color-primary);
+  background-color: rgba(56, 139, 253, 0.05);
+}
+
+.admin-upload-icon {
+  font-size: 2rem;
+  margin-bottom: var(--spacing-md);
+  opacity: 0.6;
+}
+
+.admin-upload-text {
+  color: var(--text-primary);
+  font-weight: 500;
+  margin-bottom: var(--spacing-sm);
+}
+
+.admin-upload-subtext {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+/* ACCESSIBILITY FIXES - Screen Reader & Keyboard Navigation */
+
+/* Focus indicators - always visible */
+.admin-panel *:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* Skip links for screen readers */
+.admin-skip-link {
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  background: var(--color-primary);
+  color: white;
+  padding: 8px;
+  text-decoration: none;
+  border-radius: var(--radius-md);
+  z-index: 1000;
+  font-weight: 600;
+}
+
+.admin-skip-link:focus {
+  top: 6px;
+}
+
+/* Proper tab navigation - ARIA roles are handled in JavaScript */
+
+.tab-button[aria-selected="true"] {
+  /* Active state for screen readers */
+  background-color: rgba(56, 139, 253, 0.1);
+}
+
+/* Button labels - no color-only meaning */
+.btn-with-icon::before {
+  content: attr(data-action);
+  position: absolute;
+  left: -9999px;
+  /* Screen reader only */
+}
+
+/* Status indicators with text */
+.status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.status-indicator::before {
+  content: attr(data-status);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .tab-button.active {
+    background-color: var(--color-primary);
+    color: white;
+  }
+  
+  .admin-content-card {
+    border-width: 2px;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .tab-button,
+  .admin-content-card,
+  .btn {
+    transition: none;
+  }
+  
+  .instructions-content {
+    transition: none;
+  }
+}
+
+/* Notification System Status Display */
+.notification-features {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.feature-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: var(--surface-color);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--border-color);
+  text-align: left;
+}
+
+.feature-icon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.feature-item span:last-child {
+  color: var(--text-color);
+  font-weight: 500;
+}

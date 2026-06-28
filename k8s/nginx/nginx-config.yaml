@@ -1,0 +1,140 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+  namespace: task-management
+data:
+  default.conf: |
+    server {
+        listen 80;
+        server_name localhost;
+
+        # Security headers
+        add_header X-Frame-Options "SAMEORIGIN" always;
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header X-XSS-Protection "1; mode=block" always;
+        add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+
+        # ----------------------------
+        # API Requests Proxy (Backend)
+        # ----------------------------
+        location /api {
+            proxy_pass http://backend-service:5000;
+            proxy_http_version 1.1;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_set_header X-Forwarded-Host $host;
+            
+            # Increased timeouts for bulk operations (user imports, etc.)
+            proxy_connect_timeout 30s;
+            proxy_send_timeout 600s;    # 10 minutes for large uploads
+            proxy_read_timeout 600s;    # 10 minutes for processing
+            
+            # Increased buffer sizes for large file uploads
+            client_max_body_size 100M;
+            proxy_request_buffering off;
+            proxy_buffering off;
+            proxy_buffer_size 128k;
+            proxy_buffers 4 256k;
+            proxy_busy_buffers_size 256k;
+        }
+
+        # ----------------------------
+        # Keycloak Authentication Proxy
+        # ----------------------------
+        location /auth {
+            proxy_pass http://keycloak-service:8080/auth;
+            proxy_http_version 1.1;
+            
+            # Force HTTPS headers for Keycloak (required for SSL termination)
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto https;
+            proxy_set_header X-Forwarded-Host $host;
+            proxy_set_header X-Forwarded-Port 443;
+            
+            # Additional SSL detection headers
+            proxy_set_header X-Scheme https;
+            proxy_set_header X-Forwarded-Ssl on;
+            
+            # Keycloak specific headers and buffers
+            proxy_buffer_size 128k;
+            proxy_buffers 4 256k;
+            proxy_busy_buffers_size 256k;
+            
+            # Increased timeout settings for auth operations
+            proxy_connect_timeout 30s;
+            proxy_send_timeout 120s;
+            proxy_read_timeout 120s;
+        }
+
+        # ----------------------------
+        # WebSocket (Socket.IO) Proxy - Optimized
+        # ----------------------------
+        location /socket.io/ {
+            proxy_pass http://backend-service:5000/socket.io/;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "Upgrade";
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_set_header X-Forwarded-Host $host;
+            proxy_cache_bypass $http_upgrade;
+            
+            # Optimized timeouts for WebSocket stability
+            proxy_read_timeout 3600s;
+            proxy_send_timeout 3600s;
+            proxy_connect_timeout 5s;
+            
+            # WebSocket specific optimizations
+            proxy_buffering off;
+            proxy_request_buffering off;
+        }
+
+        # ----------------------------
+        # Frontend (React) - Catch All
+        # ----------------------------
+        location / {
+            proxy_pass http://frontend-service:80/;
+            proxy_http_version 1.1;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_set_header X-Forwarded-Host $host;
+            
+            # Timeout settings
+            proxy_connect_timeout 10s;
+            proxy_send_timeout 30s;
+            proxy_read_timeout 30s;
+        }
+
+        # ----------------------------
+        # Security and Performance
+        # ----------------------------
+        
+        # Block access to sensitive files
+        location ~ /\. {
+            deny all;
+            access_log off;
+            log_not_found off;
+        }
+        
+        # Block access to backup files
+        location ~* \.(bak|backup|old|orig|save|swp|tmp)$ {
+            deny all;
+            access_log off;
+            log_not_found off;
+        }
+        
+        # Gzip compression
+        gzip on;
+        gzip_vary on;
+        gzip_min_length 1024;
+        gzip_types text/plain text/css text/xml text/javascript application/javascript application/xml+rss application/json;
+    }

@@ -1,0 +1,506 @@
+name: Build and Deploy
+
+permissions:
+  contents: write
+  pull-requests: write
+
+on:
+  push:
+    branches:
+      - dev
+    paths:
+      - 'backend/**'
+      - 'frontend/**'
+      # Removed workflow file from paths - it will update but won't trigger builds
+  workflow_dispatch:
+    inputs:
+      component:
+        description: Component to build and deploy
+        required: true
+        type: choice
+        options: [backend, frontend, both]
+      version_bump:
+        description: Version bump type
+        required: true
+        default: patch
+        type: choice
+        options: [patch, minor, major]
+
+jobs:
+  # --------------------------------------------------
+  # Detect which components changed
+  # --------------------------------------------------
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+      frontend: ${{ steps.filter.outputs.frontend }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Need history for comparison
+      
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          base: ${{ github.event.before }}  # Compare against previous commit
+          filters: |
+            backend:
+              - 'backend/**'
+            frontend:
+              - 'frontend/**'
+      
+      - name: Debug - Show detected changes
+        run: |
+          echo "=== Path Filter Results ==="
+          echo "Backend changed: ${{ steps.filter.outputs.backend }}"
+          echo "Frontend changed: ${{ steps.filter.outputs.frontend }}"
+          echo "=========================="
+
+  # --------------------------------------------------
+  # Build Backend
+  # --------------------------------------------------
+  build-backend:
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: |
+      (github.event_name == 'push' && needs.detect-changes.outputs.backend == 'true') ||
+      (github.event_name == 'workflow_dispatch' && (github.event.inputs.component == 'backend' || github.event.inputs.component == 'both'))
+    outputs:
+      version: ${{ steps.semver.outputs.new_version }}
+      image: ${{ steps.image_output.outputs.full_image }}
+    
+    env:
+      IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/taskmanagement-backend
+      DOCKER_NAMESPACE: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKER_REPO: taskmanagement-backend
+      DOCKERFILE_PATH: ./backend/Dockerfile
+      BUILD_CONTEXT: ./backend
+    steps:
+      - name: Debug - Backend build decision
+        run: |
+          echo "=== Build Backend Decision ==="
+          echo "Event: ${{ github.event_name }}"
+          echo "Backend changed (from filter): ${{ needs.detect-changes.outputs.backend }}"
+          echo "Manual component selected: ${{ github.event.inputs.component }}"
+          echo "This job IS running (condition passed)"
+          echo "=============================="
+      
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get latest Docker Hub version
+        id: dockerhub_version
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL="https://hub.docker.com/v2/repositories/${DOCKER_NAMESPACE}/${DOCKER_REPO}/tags?page_size=100"
+          
+          echo "Fetching tags from Docker Hub..."
+          RESPONSE="$(curl -fsSL "$URL" 2>/dev/null || echo '{}')"
+          if [[ -z "$RESPONSE" ]] || [[ "$RESPONSE" == "{}" ]]; then
+            echo "No response from Docker Hub, using default version"
+            LATEST="0.0.0"
+          else
+            TAGS="$(echo "$RESPONSE" \
+              | jq -r '.results // [] | .[].name' 2>/dev/null \
+              | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' || echo "")"
+            if [[ -z "$TAGS" ]]; then
+              echo "No semantic version tags found, starting at 0.0.0"
+              LATEST="0.0.0"
+            else
+              LATEST="$(echo "$TAGS" | sed 's/^v//' | sort -V | tail -n 1)"
+              echo "Found latest version: v$LATEST"
+            fi
+          fi
+          echo "current_version=$LATEST" >> "$GITHUB_OUTPUT"
+
+      - name: Calculate next version
+        id: semver
+        shell: bash
+        run: |
+          set -euo pipefail
+          CURRENT="${{ steps.dockerhub_version.outputs.current_version }}"
+          
+          if [[ ! "$CURRENT" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Invalid version '$CURRENT', defaulting to 0.0.0"
+            CURRENT="0.0.0"
+          fi
+          
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT"
+          
+          MAJOR=$((10#$MAJOR))
+          MINOR=$((10#$MINOR))
+          PATCH=$((10#$PATCH))
+          BUMP="${{ github.event.inputs.version_bump || 'patch' }}"
+          case "$BUMP" in
+            major) MAJOR=$((MAJOR + 1)); MINOR=0; PATCH=0 ;;
+            minor) MINOR=$((MINOR + 1)); PATCH=0 ;;
+            patch) PATCH=$((PATCH + 1)) ;;
+          esac
+          NEW_VERSION="${MAJOR}.${MINOR}.${PATCH}"
+          echo "new_version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
+          echo "Backend version: v$NEW_VERSION (was: v$CURRENT)"
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: DockerHub login
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build & push backend image
+        uses: docker/build-push-action@v5
+        with:
+          context: ${{ env.BUILD_CONTEXT }}
+          file: ${{ env.DOCKERFILE_PATH }}
+          push: true
+          tags: |
+            ${{ env.IMAGE_NAME }}:v${{ steps.semver.outputs.new_version }}
+            ${{ env.IMAGE_NAME }}:latest
+          cache-from: type=registry,ref=${{ env.IMAGE_NAME }}:latest
+          cache-to: type=inline
+      
+      - name: Set image output
+        id: image_output
+        run: |
+          FULL_IMAGE="${{ env.IMAGE_NAME }}:v${{ steps.semver.outputs.new_version }}"
+          echo "full_image=$FULL_IMAGE" >> "$GITHUB_OUTPUT"
+          echo "=== Backend Image Output ==="
+          echo "Full image: $FULL_IMAGE"
+          echo "============================"
+
+  # --------------------------------------------------
+  # Build Frontend
+  # --------------------------------------------------
+  build-frontend:
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: |
+      (github.event_name == 'push' && needs.detect-changes.outputs.frontend == 'true') ||
+      (github.event_name == 'workflow_dispatch' && (github.event.inputs.component == 'frontend' || github.event.inputs.component == 'both'))
+    outputs:
+      version: ${{ steps.semver.outputs.new_version }}
+      image: ${{ steps.image_output.outputs.full_image }}
+    
+    env:
+      IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/taskmanagement-frontend
+      DOCKER_NAMESPACE: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKER_REPO: taskmanagement-frontend
+      DOCKERFILE_PATH: ./frontend/Dockerfile
+      BUILD_CONTEXT: ./frontend
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get latest Docker Hub version
+        id: dockerhub_version
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL="https://hub.docker.com/v2/repositories/${DOCKER_NAMESPACE}/${DOCKER_REPO}/tags?page_size=100"
+          
+          echo "Fetching tags from Docker Hub..."
+          RESPONSE="$(curl -fsSL "$URL" 2>/dev/null || echo '{}')"
+          if [[ -z "$RESPONSE" ]] || [[ "$RESPONSE" == "{}" ]]; then
+            echo "No response from Docker Hub, using default version"
+            LATEST="0.0.0"
+          else
+            TAGS="$(echo "$RESPONSE" \
+              | jq -r '.results // [] | .[].name' 2>/dev/null \
+              | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' || echo "")"
+            if [[ -z "$TAGS" ]]; then
+              echo "No semantic version tags found, starting at 0.0.0"
+              LATEST="0.0.0"
+            else
+              LATEST="$(echo "$TAGS" | sed 's/^v//' | sort -V | tail -n 1)"
+              echo "Found latest version: v$LATEST"
+            fi
+          fi
+          echo "current_version=$LATEST" >> "$GITHUB_OUTPUT"
+
+      - name: Calculate next version
+        id: semver
+        shell: bash
+        run: |
+          set -euo pipefail
+          CURRENT="${{ steps.dockerhub_version.outputs.current_version }}"
+          
+          if [[ ! "$CURRENT" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Invalid version '$CURRENT', defaulting to 0.0.0"
+            CURRENT="0.0.0"
+          fi
+          
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT"
+          
+          MAJOR=$((10#$MAJOR))
+          MINOR=$((10#$MINOR))
+          PATCH=$((10#$PATCH))
+          BUMP="${{ github.event.inputs.version_bump || 'patch' }}"
+          case "$BUMP" in
+            major) MAJOR=$((MAJOR + 1)); MINOR=0; PATCH=0 ;;
+            minor) MINOR=$((MINOR + 1)); PATCH=0 ;;
+            patch) PATCH=$((PATCH + 1)) ;;
+          esac
+          NEW_VERSION="${MAJOR}.${MINOR}.${PATCH}"
+          echo "new_version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
+          echo "Frontend version: v$NEW_VERSION (was: v$CURRENT)"
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: DockerHub login
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build & push frontend image
+        uses: docker/build-push-action@v5
+        with:
+          context: ${{ env.BUILD_CONTEXT }}
+          file: ${{ env.DOCKERFILE_PATH }}
+          push: true
+          tags: |
+            ${{ env.IMAGE_NAME }}:v${{ steps.semver.outputs.new_version }}
+            ${{ env.IMAGE_NAME }}:latest
+          cache-from: type=registry,ref=${{ env.IMAGE_NAME }}:latest
+          cache-to: type=inline
+      
+      - name: Set image output
+        id: image_output
+        run: |
+          FULL_IMAGE="${{ env.IMAGE_NAME }}:v${{ steps.semver.outputs.new_version }}"
+          echo "full_image=$FULL_IMAGE" >> "$GITHUB_OUTPUT"
+          echo "=== Frontend Image Output ==="
+          echo "Full image: $FULL_IMAGE"
+          echo "============================="
+
+  # --------------------------------------------------
+  # Deploy to Kubernetes
+  # --------------------------------------------------
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [detect-changes, build-backend, build-frontend]
+    if: always() && (needs.build-backend.result == 'success' || needs.build-frontend.result == 'success')
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: dev
+
+      - name: Debug - Show received values
+        run: |
+          echo "=== Debug Information ==="
+          echo "Backend result: ${{ needs.build-backend.result }}"
+          echo "Backend version: ${{ needs.build-backend.outputs.version }}"
+          echo "Backend image: ${{ needs.build-backend.outputs.image }}"
+          echo ""
+          echo "Frontend result: ${{ needs.build-frontend.result }}"
+          echo "Frontend version: ${{ needs.build-frontend.outputs.version }}"
+          echo "Frontend image: ${{ needs.build-frontend.outputs.image }}"
+          echo "======================="
+
+      - name: Construct image names (fallback)
+        id: images
+        run: |
+          # Backend
+          if [[ "${{ needs.build-backend.result }}" == "success" ]]; then
+            BACKEND_IMAGE="${{ needs.build-backend.outputs.image }}"
+            if [[ -z "$BACKEND_IMAGE" ]]; then
+              # Fallback: construct from Docker Hub username and version
+              BACKEND_IMAGE="${{ secrets.DOCKERHUB_USERNAME }}/taskmanagement-backend:v${{ needs.build-backend.outputs.version }}"
+              echo "Warning: Backend image was empty, constructed: $BACKEND_IMAGE"
+            fi
+            echo "backend_image=$BACKEND_IMAGE" >> "$GITHUB_OUTPUT"
+            echo "Backend image: $BACKEND_IMAGE"
+          fi
+          
+          # Frontend
+          if [[ "${{ needs.build-frontend.result }}" == "success" ]]; then
+            FRONTEND_IMAGE="${{ needs.build-frontend.outputs.image }}"
+            if [[ -z "$FRONTEND_IMAGE" ]]; then
+              # Fallback: construct from Docker Hub username and version
+              FRONTEND_IMAGE="${{ secrets.DOCKERHUB_USERNAME }}/taskmanagement-frontend:v${{ needs.build-frontend.outputs.version }}"
+              echo "Warning: Frontend image was empty, constructed: $FRONTEND_IMAGE"
+            fi
+            echo "frontend_image=$FRONTEND_IMAGE" >> "$GITHUB_OUTPUT"
+            echo "Frontend image: $FRONTEND_IMAGE"
+          fi
+
+      - name: Update backend manifest
+        if: needs.build-backend.result == 'success'
+        run: |
+          IMAGE="${{ steps.images.outputs.backend_image }}"
+          echo "Updating backend manifest with: $IMAGE"
+          sed -i -E "s|(^\s*image:\s*).+|\1${IMAGE}|" k8s/backend/deployment.yaml
+          echo "Updated backend/deployment.yaml:"
+          grep "image:" k8s/backend/deployment.yaml
+
+      - name: Update frontend manifest
+        if: needs.build-frontend.result == 'success'
+        run: |
+          IMAGE="${{ steps.images.outputs.frontend_image }}"
+          echo "Updating frontend manifest with: $IMAGE"
+          sed -i -E "s|(^\s*image:\s*).+|\1${IMAGE}|" k8s/frontend/deployment.yaml
+          echo "Updated frontend/deployment.yaml:"
+          grep "image:" k8s/frontend/deployment.yaml
+
+      - name: Validate manifests
+        run: |
+          if [[ "${{ needs.build-backend.result }}" == "success" ]]; then
+            python3 -c "import yaml; yaml.safe_load(open('k8s/backend/deployment.yaml'))"
+            echo "Backend manifest valid"
+          fi
+          
+          if [[ "${{ needs.build-frontend.result }}" == "success" ]]; then
+            python3 -c "import yaml; yaml.safe_load(open('k8s/frontend/deployment.yaml'))"
+            echo "✅ Frontend manifest valid"
+          fi
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Add changed files
+          if [[ "${{ needs.build-backend.result }}" == "success" ]]; then
+            git add k8s/backend/deployment.yaml
+          fi
+          
+          if [[ "${{ needs.build-frontend.result }}" == "success" ]]; then
+            git add k8s/frontend/deployment.yaml
+          fi
+          
+          # Commit if there are changes
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            # Build commit message
+            if [[ "${{ needs.build-backend.result }}" == "success" ]] && [[ "${{ needs.build-frontend.result }}" == "success" ]]; then
+              MSG="chore(k8s): deploy backend v${{ needs.build-backend.outputs.version }} and frontend v${{ needs.build-frontend.outputs.version }} [skip ci]"
+            elif [[ "${{ needs.build-backend.result }}" == "success" ]]; then
+              MSG="chore(k8s): deploy backend v${{ needs.build-backend.outputs.version }} [skip ci]"
+            else
+              MSG="chore(k8s): deploy frontend v${{ needs.build-frontend.outputs.version }} [skip ci]"
+            fi
+            
+            git commit -m "$MSG"
+            git push origin dev
+            echo "✅ Changes committed and pushed"
+          fi
+
+      - name: Create PR to main
+        if: success()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Check if a PR from dev to main already exists
+          EXISTING_PR=$(gh pr list --base main --head dev --json number --jq '.[0].number' || echo "")
+          
+          if [[ -n "$EXISTING_PR" ]]; then
+            echo "PR #$EXISTING_PR already exists from dev to main"
+            echo "Updating existing PR..."
+            
+            # Update the PR body
+            gh pr edit "$EXISTING_PR" --body "$(cat <<EOF
+          ## Automated Deployment PR (Updated)
+          
+          This PR contains the latest deployment changes from the \`dev\` branch.
+          
+          ### Latest Changes
+          
+          ${{ needs.build-backend.result == 'success' && format('✅ **Backend** deployed: `v{0}`', needs.build-backend.outputs.version) || '' }}
+          ${{ needs.build-frontend.result == 'success' && format('✅ **Frontend** deployed: `v{0}`', needs.build-frontend.outputs.version) || '' }}
+          
+          ### Docker Images
+          
+          ${{ needs.build-backend.result == 'success' && format('- Backend: `{0}/taskmanagement-backend:v{1}`', secrets.DOCKERHUB_USERNAME, needs.build-backend.outputs.version) || '' }}
+          ${{ needs.build-frontend.result == 'success' && format('- Frontend: `{0}/taskmanagement-frontend:v{1}`', secrets.DOCKERHUB_USERNAME, needs.build-frontend.outputs.version) || '' }}
+          
+          ### Review Checklist
+          
+          - [ ] Verify Docker images are built correctly
+          - [ ] Check K8s manifest updates
+          - [ ] Confirm version numbers are correct
+          - [ ] Ready to merge to production
+          
+          ---
+          
+          **Last Updated:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          **Workflow Run:** [#${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          EOF
+          )"
+            
+            echo "✅ Updated existing PR #$EXISTING_PR"
+            echo "pr_number=$EXISTING_PR" >> "$GITHUB_OUTPUT"
+          else
+            echo "No existing PR found. Creating new PR..."
+            
+            # Create new PR from dev to main
+            PR_URL=$(gh pr create \
+              --base main \
+              --head dev \
+              --title "chore: deploy to production" \
+              --body "$(cat <<EOF
+          ## 🚀 Automated Deployment PR
+          
+          This PR contains the latest deployment changes from the \`dev\` branch.
+          
+          ### Changes
+          
+          ${{ needs.build-backend.result == 'success' && format('✅ **Backend** deployed: `v{0}`', needs.build-backend.outputs.version) || '' }}
+          ${{ needs.build-frontend.result == 'success' && format('✅ **Frontend** deployed: `v{0}`', needs.build-frontend.outputs.version) || '' }}
+          
+          ### Docker Images
+          
+          ${{ needs.build-backend.result == 'success' && format('- Backend: `{0}/taskmanagement-backend:v{1}`', secrets.DOCKERHUB_USERNAME, needs.build-backend.outputs.version) || '' }}
+          ${{ needs.build-frontend.result == 'success' && format('- Frontend: `{0}/taskmanagement-frontend:v{1}`', secrets.DOCKERHUB_USERNAME, needs.build-frontend.outputs.version) || '' }}
+          
+          ### Review Checklist
+          
+          - [ ] Verify Docker images are built correctly
+          - [ ] Check K8s manifest updates
+          - [ ] Confirm version numbers are correct
+          - [ ] Ready to merge to production
+          
+          ---
+          
+          **Created:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          **Workflow Run:** [#${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          EOF
+          )")
+            
+            echo "✅ Created PR: $PR_URL"
+          fi
+
+      - name: Deployment summary
+        run: |
+          {
+            echo "## 🚀 Deployment Complete"
+            echo ""
+            echo "| Component | Version | Image |"
+            echo "|-----------|---------|-------|"
+            
+            if [[ "${{ needs.build-backend.result }}" == "success" ]]; then
+              echo "| Backend | v${{ needs.build-backend.outputs.version }} | \`${{ steps.images.outputs.backend_image }}\` |"
+            fi
+            
+            if [[ "${{ needs.build-frontend.result }}" == "success" ]]; then
+              echo "| Frontend | v${{ needs.build-frontend.outputs.version }} | \`${{ steps.images.outputs.frontend_image }}\` |"
+            fi
+            
+            echo ""
+            echo "✅ All changes committed to \`dev\` branch"
+            echo ""
+            echo "### 🔀 Pull Request"
+            echo "A PR from \`dev\` to \`main\` has been created/updated for production deployment."
+            echo "View PRs: [${{ github.server_url }}/${{ github.repository }}/pulls](https://github.com/${{ github.repository }}/pulls)"
+          } >> "$GITHUB_STEP_SUMMARY"

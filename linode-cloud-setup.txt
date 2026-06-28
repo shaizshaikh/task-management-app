@@ -1,0 +1,13 @@
+linode-cli lke cluster-create --label workforce-cluster --region in-bom-2 --k8s_version 1.33 --node_pools "[{\"type\":\"g6-standard-2\",\"count\":2}]"
+
+
+
+
+linode-cli lke clusters-list
+
+
+
+linode-cli lke kubeconfig-view 572307 --text --no-headers | Out-File -FilePath kubeconfig.b64; [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String((Get-Content kubeconfig.b64))) | Out-File -FilePath kubeconfig.yaml; $env:KUBECONFIG = "$PWD\kubeconfig.yaml"; kubectl cluster-info
+
+
+linode-cli lke cluster-delete 572303

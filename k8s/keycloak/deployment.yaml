@@ -1,0 +1,116 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: keycloak-pvc
+  namespace: task-management
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keycloak
+  namespace: task-management
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: keycloak
+  template:
+    metadata:
+      labels:
+        app: keycloak
+    spec:
+      securityContext:
+        fsGroup: 1000
+      initContainers:
+      - name: copy-realm-config
+        image: busybox:latest
+        command:
+        - sh
+        - -c
+        - |
+          mkdir -p /keycloak-data/import
+          cp /config/realm-export.json /keycloak-data/import/realm-export.json
+          chmod 644 /keycloak-data/import/realm-export.json
+          # Fix permissions for Keycloak user (UID 1000)
+          chown -R 1000:1000 /keycloak-data
+          chmod -R 755 /keycloak-data
+          echo "Realm config copied and permissions fixed successfully"
+        volumeMounts:
+        - name: keycloak-realm-config
+          mountPath: /config
+        - name: keycloak-storage
+          mountPath: /keycloak-data
+        securityContext:
+          runAsUser: 0
+      containers:
+      - name: keycloak
+        image: quay.io/keycloak/keycloak:23.0.0
+        ports:
+        - containerPort: 8080
+          name: http
+        command:
+        - /opt/keycloak/bin/kc.sh
+        args:
+        - start-dev
+        - --import-realm
+        - --http-relative-path=/auth
+        securityContext:
+          runAsUser: 1000
+          runAsGroup: 1000
+        env:
+        - name: KEYCLOAK_ADMIN
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: KEYCLOAK_ADMIN_USERNAME
+        - name: KEYCLOAK_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: KEYCLOAK_ADMIN_PASSWORD
+        - name: KC_DB
+          value: "dev-file"
+        - name: KC_HEALTH_ENABLED
+          value: "true"
+        - name: KC_HOSTNAME_STRICT
+          value: "false"
+        - name: KC_HOSTNAME
+          value: "shaiztech.work.gd"
+        - name: KC_PROXY
+          value: "edge"
+        - name: KC_HTTP_ENABLED
+          value: "true"
+        - name: KC_HOSTNAME_STRICT_HTTPS
+          value: "false"
+        - name: KC_PROXY_ADDRESS_FORWARDING
+          value: "true"
+        volumeMounts:
+        - name: keycloak-storage
+          mountPath: /opt/keycloak/data
+        livenessProbe:
+          httpGet:
+            path: /auth/health/live
+            port: 8080
+          initialDelaySeconds: 90
+          periodSeconds: 10
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /auth/health/ready
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 5
+          timeoutSeconds: 5
+      volumes:
+      - name: keycloak-storage
+        persistentVolumeClaim:
+          claimName: keycloak-pvc
+      - name: keycloak-realm-config
+        configMap:
+          name: keycloak-realm-config

@@ -1,0 +1,45 @@
+<svg width="192" height="192" viewBox="0 0 192 192" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle with Gradient -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="prismGradient1" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="prismGradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="prismGradient3" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#f472b6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ec4899;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <circle cx="96" cy="96" r="96" fill="url(#bgGradient)"/>
+  
+  <!-- Prism Shape - Three triangular facets representing different aspects -->
+  <!-- Left facet (Users/Teams) -->
+  <path d="M 96 40 L 50 96 L 96 96 Z" fill="url(#prismGradient1)" opacity="0.9"/>
+  
+  <!-- Right facet (Tasks/Collaboration) -->
+  <path d="M 96 40 L 96 96 L 142 96 Z" fill="url(#prismGradient2)" opacity="0.9"/>
+  
+  <!-- Bottom facet (Security/Audit) -->
+  <path d="M 50 96 L 96 96 L 96 152 L 73 124 Z" fill="url(#prismGradient3)" opacity="0.85"/>
+  <path d="M 96 96 L 142 96 L 96 152 L 119 124 Z" fill="url(#prismGradient3)" opacity="0.75"/>
+  
+  <!-- Center highlight - representing unified platform -->
+  <circle cx="96" cy="96" r="12" fill="white" opacity="0.95"/>
+  <circle cx="96" cy="96" r="8" fill="url(#bgGradient)" opacity="0.8"/>
+  
+  <!-- Subtle connecting lines -->
+  <line x1="96" y1="40" x2="96" y2="84" stroke="white" stroke-width="1.5" opacity="0.4"/>
+  <line x1="96" y1="108" x2="96" y2="152" stroke="white" stroke-width="1.5" opacity="0.4"/>
+  <line x1="50" y1="96" x2="84" y2="96" stroke="white" stroke-width="1.5" opacity="0.4"/>
+  <line x1="108" y1="96" x2="142" y2="96" stroke="white" stroke-width="1.5" opacity="0.4"/>
+</svg>
